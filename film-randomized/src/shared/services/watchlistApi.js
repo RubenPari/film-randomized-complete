@@ -12,15 +12,18 @@ import { apiClient, ApiError } from './apiClient';
  * @param {number} media.id - TMDB ID
  * @param {string} media.title - Title (for movies)
  * @param {string} media.name - Title (for TV shows)
- * @param {boolean} mediaType - true for movie, false for TV show
+ * @param {boolean|'movie'|'tv'} mediaType - true or 'movie' for film, false or 'tv' for TV
  * @param {string} token - JWT token for authentication
  * @returns {Promise<Object>} Promise that resolves to the created watchlist item
  * @throws {import('./apiClient').ApiError} If the request fails
  */
 export async function addToWatchlist(media, mediaType, token) {
+  const mediaTypeStr =
+    mediaType === true || mediaType === 'movie' ? 'movie' : 'tv';
+
   const payload = {
     tmdb_id: media.id,
-    media_type: mediaType,
+    media_type: mediaTypeStr,
     title: media.title || media.name,
     original_title: media.original_title || media.original_name,
     overview: media.overview,
