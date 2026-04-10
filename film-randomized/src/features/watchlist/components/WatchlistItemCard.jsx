@@ -16,21 +16,34 @@ import { IMAGE_BASE_URL } from '../../../shared/constants/api.js';
  */
 function WatchlistItemCard({ item, onRemove }) {
   const { t } = useTranslation();
-  const genres = item.genres ? JSON.parse(item.genres) : [];
+  let genres = [];
+  if (item.genres) {
+    if (Array.isArray(item.genres)) {
+      genres = item.genres;
+    } else {
+      try {
+        genres = JSON.parse(item.genres);
+      } catch {
+        genres = [];
+      }
+    }
+  }
+  const tmdbId = item.tmdb_id ?? item.tmdbId;
+  const isTv = item.media_type === 'tv' || item.mediaType === 'tv';
 
   return (
     <div className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 rounded-2xl border border-slate-700/50 overflow-hidden hover:border-cyan-500/40 shadow-lg hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 hover:scale-105 backdrop-blur-sm">
       <div className="relative">
         <a
-          href={`https://www.themoviedb.org/${item.media_type ? 'movie' : 'tv'}/${item.tmdb_id}`}
+          href={`https://www.themoviedb.org/${isTv ? 'tv' : 'movie'}/${tmdbId}`}
           target="_blank"
           rel="noopener noreferrer"
           className="block relative aspect-[2/3] bg-slate-900 overflow-hidden group/poster"
           title={t('media.onTmdb', { title: item.title })}
         >
-          {item.poster_path ? (
+          {(item.poster_path ?? item.posterPath) ? (
             <img
-              src={`${IMAGE_BASE_URL}${item.poster_path}`}
+              src={`${IMAGE_BASE_URL}${item.poster_path ?? item.posterPath}`}
               alt={item.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover/poster:scale-110"
             />
@@ -43,13 +56,13 @@ function WatchlistItemCard({ item, onRemove }) {
           )}
 
           <div className="absolute top-3 right-3 px-3 py-1.5 bg-gradient-to-r from-cyan-600/90 to-blue-600/90 backdrop-blur-xl rounded-lg text-xs font-bold text-white shadow-lg border border-cyan-400/30">
-            {item.media_type ? t('common.movies').slice(0, -1) : 'TV'}
+            {isTv ? 'TV' : t('common.movies').slice(0, -1)}
           </div>
         </a>
 
         <button
           onClick={() => {
-            onRemove(item.tmdb_id);
+            onRemove(tmdbId);
           }}
           className="absolute top-3 left-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white p-2.5 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl z-10 transform hover:scale-110"
           title={t('media.remove')}
@@ -66,17 +79,17 @@ function WatchlistItemCard({ item, onRemove }) {
         </h3>
 
         <div className="flex items-center justify-between text-xs text-slate-400 mb-2 space-x-2">
-          {item.release_date && (
+          {(item.release_date ?? item.releaseDate) && (
             <span className="px-2 py-1 bg-slate-700/40 rounded-md font-medium">
-              {new Date(item.release_date).getFullYear()}
+              {new Date(item.release_date ?? item.releaseDate).getFullYear()}
             </span>
           )}
-          {item.vote_average && (
+          {(item.vote_average ?? item.voteAverage) != null && (
             <span className="text-amber-400 flex items-center gap-1.5 px-2 py-1 bg-amber-500/10 rounded-md font-semibold">
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                 <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
               </svg>
-              {item.vote_average.toFixed(1)}
+              {(item.vote_average ?? item.voteAverage).toFixed(1)}
             </span>
           )}
         </div>
