@@ -38,7 +38,9 @@ function WatchlistContent({ watchlistPromise, filter, token }) {
     if (!token) return;
 
     startTransition(() => {
-      setWatchlist((prev) => prev.filter((item) => item.tmdb_id !== tmdbId));
+      setWatchlist((prev) =>
+        prev.filter((item) => (item.tmdb_id ?? item.tmdbId) !== tmdbId),
+      );
     });
 
     try {
@@ -51,8 +53,9 @@ function WatchlistContent({ watchlistPromise, filter, token }) {
   };
 
   const filteredWatchlist = watchlist.filter((item) => {
-    if (filter === 'movies') return item.media_type === true;
-    if (filter === 'tv') return item.media_type === false;
+    const mt = item.media_type ?? item.mediaType;
+    if (filter === 'movies') return mt === 'movie' || mt === true;
+    if (filter === 'tv') return mt === 'tv' || mt === false;
     return true;
   });
 
