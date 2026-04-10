@@ -6,7 +6,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './shared/context/AuthContext.jsx';
 import ErrorBoundary from './shared/components/ErrorBoundary.jsx';
-import ProtectedRoute from './shared/components/ProtectedRoute.jsx';
+import MainAppLayout from './shared/components/MainAppLayout.jsx';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
@@ -32,38 +32,12 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/watchlist"
-            element={
-              <ProtectedRoute>
-                <WatchlistPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/discovered"
-            element={
-              <ProtectedRoute>
-                <DiscoveredPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ChangePasswordPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route element={<MainAppLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/watchlist" element={<WatchlistPage />} />
+            <Route path="/discovered" element={<DiscoveredPage />} />
+            <Route path="/profile" element={<ChangePasswordPage />} />
+          </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AuthProvider>

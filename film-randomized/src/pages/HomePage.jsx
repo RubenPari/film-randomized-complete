@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
-import { FilterProvider, useMediaResults } from '../features/media/context/FilterContext.jsx';
+import { useMediaResults } from '../features/media/context/FilterContext.jsx';
 import FilterPanel from '../features/media/components/filters/FilterPanel.jsx';
 import MediaCard from '../features/media/components/MediaCard.jsx';
 import HomeHeader from './home/HomeHeader.jsx';
@@ -13,7 +13,7 @@ import HomeHero from './home/HomeHero.jsx';
 import GenerateButton from './home/GenerateButton.jsx';
 import MobileFiltersToggle from './home/MobileFiltersToggle.jsx';
 
-function HomePageContent() {
+function HomePage() {
   const { t } = useTranslation();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const { user, logout } = useAuth();
@@ -88,14 +88,6 @@ function HomePageContent() {
         <GenerateButton variant="mobile" isLoading={isLoading} onGenerate={generateRandomMedia} />
       </div>
     </div>
-  );
-}
-
-function HomePage() {
-  return (
-    <FilterProvider>
-      <HomePageContent />
-    </FilterProvider>
   );
 }
 
