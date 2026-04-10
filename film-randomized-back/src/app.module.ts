@@ -8,6 +8,7 @@ import { DatabaseModule } from './database/database.module.js';
 import { UsersModule } from './users/users.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { WatchlistModule } from './watchlist/watchlist.module.js';
+import { DiscoveredModule } from './discovered/discovered.module.js';
 import { EmailModule } from './email/email.module.js';
 import { HealthModule } from './health/health.module.js';
 
@@ -31,6 +32,7 @@ import { HealthModule } from './health/health.module.js';
     UsersModule,
     AuthModule,
     WatchlistModule,
+    DiscoveredModule,
     EmailModule,
     HealthModule,
   ],
