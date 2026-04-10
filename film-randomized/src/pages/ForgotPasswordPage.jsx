@@ -16,12 +16,12 @@ function ForgotPasswordPage() {
     setIsLoading(true);
 
     try {
-      console.log('Submitting forgot password for email:', email);
       await forgotPassword(email);
-      console.log('Forgot password request successful');
       setSuccess('If that email exists, a password reset link has been sent.');
     } catch (err) {
-      console.error('Forgot password component error:', err);
+      if (import.meta.env.DEV) {
+        console.error('Forgot password component error:', err);
+      }
       setError(err.message || 'An error occurred while requesting password reset.');
     } finally {
       setIsLoading(false);

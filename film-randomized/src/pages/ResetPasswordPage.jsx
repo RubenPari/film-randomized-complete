@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../shared/context/AuthContext.jsx';
-import { validatePasswordForm } from '../shared/utils/passwordValidation';
+import { validatePasswordForm } from '../shared/utils/passwordValidation.js';
 
 function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
@@ -18,9 +18,10 @@ function ResetPasswordPage() {
   const token = queryParams.get('token');
 
   useEffect(() => {
-    console.log('ResetPasswordPage mounted, token from URL:', token);
     if (!token) {
-      console.warn('No reset token found in URL query parameters');
+      if (import.meta.env.DEV) {
+        console.warn('No reset token found in URL query parameters');
+      }
       setError('No reset token found in URL.');
     }
   }, [token]);
@@ -39,15 +40,15 @@ function ResetPasswordPage() {
     setIsLoading(true);
 
     try {
-      console.log('Submitting reset password with token:', token);
       await resetPassword(token, newPassword);
-      console.log('Password reset successful, redirecting to login');
       setSuccess('Password has been reset successfully. Redirecting to login...');
       setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (err) {
-      console.error('Reset password component error:', err);
+      if (import.meta.env.DEV) {
+        console.error('Reset password component error:', err);
+      }
       setError(err.message || 'An error occurred while resetting password.');
     } finally {
       setIsLoading(false);
