@@ -4,6 +4,7 @@ import { join } from 'path';
 import { DataSource } from 'typeorm';
 import { User } from './entities/user.entity.js';
 import { WatchlistItem } from './entities/watchlist-item.entity.js';
+import { DiscoveredItem } from './entities/discovered-item.entity.js';
 
 // TypeORM CLI entry point used by `npm run typeorm:generate` / `typeorm:run`.
 // Loads .env from the backend dir or the monorepo root, in that order.
@@ -21,7 +22,7 @@ export default new DataSource({
   username: process.env.DB_USERNAME ?? 'postgres',
   password: process.env.DB_PASSWORD ?? 'postgres',
   database: process.env.DB_DATABASE ?? 'film_randomized',
-  entities: [User, WatchlistItem],
+  entities: [User, WatchlistItem, DiscoveredItem],
   migrations: [
     join(__dirname, 'migrations', '*.ts'),
     join(__dirname, 'migrations', '*.js'),

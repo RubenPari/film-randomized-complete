@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { WatchlistItem } from './watchlist-item.entity.js';
+import { DiscoveredItem } from './discovered-item.entity.js';
 
 @Entity('users')
 export class User {
@@ -36,4 +37,7 @@ export class User {
 
   @OneToMany(() => WatchlistItem, (item) => item.user)
   watchlistItems: WatchlistItem[];
+
+  @OneToMany(() => DiscoveredItem, (item) => item.user)
+  discoveredItems: DiscoveredItem[];
 }

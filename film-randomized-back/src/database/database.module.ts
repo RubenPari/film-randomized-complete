@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../entities/user.entity.js';
 import { WatchlistItem } from '../entities/watchlist-item.entity.js';
+import { DiscoveredItem } from '../entities/discovered-item.entity.js';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { WatchlistItem } from '../entities/watchlist-item.entity.js';
           username: configService.get<string>('DB_USERNAME', 'postgres'),
           password: configService.get<string>('DB_PASSWORD', 'postgres'),
           database: configService.get<string>('DB_DATABASE', 'film_randomized'),
-          entities: [User, WatchlistItem],
+          entities: [User, WatchlistItem, DiscoveredItem],
           synchronize: configService.get<boolean>('DB_SYNCHRONIZE', false),
           ssl: sslEnabled ? { rejectUnauthorized } : false,
         };
