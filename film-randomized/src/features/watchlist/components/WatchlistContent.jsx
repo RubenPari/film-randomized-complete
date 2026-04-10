@@ -6,6 +6,7 @@ import React, { useState, useEffect, use, startTransition } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { removeFromWatchlist } from '../../../shared/services/watchlistApi.js';
+import { matchesMediaListFilter } from '../../../shared/utils/mediaUtils.js';
 import WatchlistItemCard from './WatchlistItemCard.jsx';
 
 /**
@@ -52,12 +53,7 @@ function WatchlistContent({ watchlistPromise, filter, token }) {
     }
   };
 
-  const filteredWatchlist = watchlist.filter((item) => {
-    const mt = item.media_type ?? item.mediaType;
-    if (filter === 'movies') return mt === 'movie' || mt === true;
-    if (filter === 'tv') return mt === 'tv' || mt === false;
-    return true;
-  });
+  const filteredWatchlist = watchlist.filter((item) => matchesMediaListFilter(item, filter));
 
   if (filteredWatchlist.length === 0) {
     return (

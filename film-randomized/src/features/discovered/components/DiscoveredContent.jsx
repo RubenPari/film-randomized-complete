@@ -5,6 +5,7 @@ import React, { useState, useEffect, use, startTransition } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { removeDiscovered } from '../../../shared/services/discoveredApi.js';
+import { getMediaType, matchesMediaListFilter } from '../../../shared/utils/mediaUtils.js';
 import WatchlistItemCard from '../../watchlist/components/WatchlistItemCard.jsx';
 
 /**
@@ -30,7 +31,7 @@ function DiscoveredContent({ discoveredPromise, filter, token }) {
       setItems((prev) =>
         prev.filter((item) => {
           const id = item.tmdb_id ?? item.tmdbId;
-          const mt = item.media_type === 'tv' || item.mediaType === 'tv' ? 'tv' : 'movie';
+          const mt = getMediaType(item) ?? 'movie';
           return !(id === tmdbId && mt === mediaType);
         }),
       );
@@ -43,12 +44,7 @@ function DiscoveredContent({ discoveredPromise, filter, token }) {
     }
   };
 
-  const filtered = items.filter((item) => {
-    const mt = item.media_type ?? item.mediaType;
-    if (filter === 'movies') return mt === 'movie' || mt === true;
-    if (filter === 'tv') return mt === 'tv' || mt === false;
-    return true;
-  });
+  const filtered = items.filter((item) => matchesMediaListFilter(item, filter));
 
   if (filtered.length === 0) {
     return (

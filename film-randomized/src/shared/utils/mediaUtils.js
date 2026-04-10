@@ -4,15 +4,31 @@
  */
 
 /**
- * @param {Object} item - Watchlist or discovered row (normalized or API)
+ * Normalizes media type from API/watchlist/discovered rows (snake_case or camelCase; legacy booleans).
+ *
+ * @param {Object} item - Row with media_type and/or mediaType
  * @returns {'movie'|'tv'|null}
  */
-function normalizeItemMediaType(item) {
-  let mt = item.media_type ?? item.mediaType;
+export function getMediaType(item) {
+  const mt = item.media_type ?? item.mediaType;
   if (mt === true) return 'movie';
   if (mt === false) return 'tv';
   if (mt === 'movie' || mt === 'tv') return mt;
   return null;
+}
+
+/**
+ * @param {Object} item - Watchlist or discovered row
+ * @param {'all'|'movies'|'tv'} filter - Tab filter from collection pages
+ * @returns {boolean}
+ */
+export function matchesMediaListFilter(item, filter) {
+  if (filter === 'all') return true;
+  const mt = getMediaType(item);
+  if (!mt) return false;
+  if (filter === 'movies') return mt === 'movie';
+  if (filter === 'tv') return mt === 'tv';
+  return true;
 }
 
 /**
@@ -35,7 +51,7 @@ export function isExcludedForCurrentType(tmdbId, currentMediaType, excludedItems
   if (!excludedItems || excludedItems.length === 0) return false;
   return excludedItems.some(function (item) {
     const id = item.tmdb_id ?? item.tmdbId;
-    const mt = normalizeItemMediaType(item);
+    const mt = getMediaType(item);
     return id === tmdbId && mt === currentMediaType;
   });
 }
