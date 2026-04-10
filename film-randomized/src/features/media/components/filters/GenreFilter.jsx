@@ -21,7 +21,7 @@ function GenreFilter({ genres, selectedGenres, handleGenreToggle }) {
   return (
     <div>
       <h2 className="filter-title">{t('filters.genres')}</h2>
-      <div className="max-h-64 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-cyan-600 scrollbar-track-slate-800">
+      <div className="h-96 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-cyan-600 scrollbar-track-slate-800">
         <div className="grid grid-cols-1 gap-2">
           {genres.map(function(genre) {
             const isSelected = selectedGenres.includes(genre.id);
