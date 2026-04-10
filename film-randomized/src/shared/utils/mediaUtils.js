@@ -4,32 +4,62 @@
  */
 
 /**
- * Filters out media that has already been viewed, is in the watchlist, or doesn't have a valid description.
- * 
+ * @param {Object} item - Watchlist or discovered row (normalized or API)
+ * @returns {'movie'|'tv'|null}
+ */
+function normalizeItemMediaType(item) {
+  let mt = item.media_type ?? item.mediaType;
+  if (mt === true) return 'movie';
+  if (mt === false) return 'tv';
+  if (mt === 'movie' || mt === 'tv') return mt;
+  return null;
+}
+
+/**
+ * @param {boolean|'movie'|'tv'} mediaType - Current generator mode
+ * @returns {'movie'|'tv'}
+ */
+export function resolveMediaTypeString(mediaType) {
+  return mediaType === true || mediaType === 'movie' ? 'movie' : 'tv';
+}
+
+/**
+ * Whether this tmdb id is excluded for the current bucket (same media type only).
+ *
+ * @param {number} tmdbId - TMDb id for current list (movie or tv)
+ * @param {'movie'|'tv'} currentMediaType
+ * @param {Array<Object>} excludedItems - Watchlist and/or discovered rows
+ * @returns {boolean}
+ */
+export function isExcludedForCurrentType(tmdbId, currentMediaType, excludedItems) {
+  if (!excludedItems || excludedItems.length === 0) return false;
+  return excludedItems.some(function (item) {
+    const id = item.tmdb_id ?? item.tmdbId;
+    const mt = normalizeItemMediaType(item);
+    return id === tmdbId && mt === currentMediaType;
+  });
+}
+
+/**
+ * Filters out media in the exclusion list (watchlist + discovered) or without a valid description.
+ *
  * @param {Array<Object>} results - Array of media items from API
- * @param {Array<Object>} viewedMedia - Array of already viewed media items
- * @param {Array<Object>} watchlist - Array of items in the user's watchlist
+ * @param {Array<Object>} excludedItems - Items to skip (watchlist + discovered)
+ * @param {boolean|'movie'|'tv'} currentMediaType - Active generator mode
  * @returns {Array<Object>} Filtered array of valid media items
  */
-export function filterValidMedia(results, viewedMedia, watchlist = []) {
-    return results.filter(
-        function(media) {
-            // Check if already viewed in this session
-            const isViewed = viewedMedia.some(function(viewed) { 
-                return viewed.id === media.id; 
-            });
+export function filterValidMedia(results, excludedItems = [], currentMediaType) {
+  const mt = resolveMediaTypeString(currentMediaType);
+  return results.filter(function (media) {
+    const excluded = isExcludedForCurrentType(media.id, mt, excludedItems);
 
-            // Check if already in user's watchlist
-            const isInWatchlist = watchlist.some(function(item) {
-                return item.tmdb_id === media.id;
-            });
-
-            return !isViewed && !isInWatchlist &&
-            media.overview &&
-            media.overview.trim() !== '' &&
-            media.overview !== 'Nessuna descrizione disponibile in italiano.';
-        }
+    return (
+      !excluded &&
+      media.overview &&
+      media.overview.trim() !== '' &&
+      media.overview !== 'Nessuna descrizione disponibile in italiano.'
     );
+  });
 }
 
 /**
