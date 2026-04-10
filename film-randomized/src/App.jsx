@@ -14,6 +14,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import WatchlistPage from './features/watchlist/WatchlistPage.jsx';
+import DiscoveredPage from './features/discovered/DiscoveredPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
 /**
@@ -44,6 +45,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <WatchlistPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/discovered"
+            element={
+              <ProtectedRoute>
+                <DiscoveredPage />
               </ProtectedRoute>
             }
           />

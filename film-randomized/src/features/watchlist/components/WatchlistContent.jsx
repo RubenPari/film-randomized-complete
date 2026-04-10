@@ -101,7 +101,7 @@ function WatchlistContent({ watchlistPromise, filter, token }) {
             </p>
           </div>
           <div className="hidden md:block text-slate-600">
-            <p className="text-sm">{filteredWatchlist.length} {filteredWatchlist.length === 1 ? t('watchlist.item') : t('watchlist.items')} {t('home.sessionInfo')}</p>
+            <p className="text-sm">{filteredWatchlist.length} {filteredWatchlist.length === 1 ? t('watchlist.item') : t('watchlist.items')} {t('watchlist.inList')}</p>
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@ import { IMAGE_BASE_URL } from '../../../shared/constants/api.js';
  *
  * @param {Object} props - Component props
  * @param {Object} props.item - Watchlist item data
- * @param {Function} props.onRemove - Callback to remove item from watchlist
+ * @param {Function} [props.onRemove] - (tmdbId, 'movie'|'tv') => void; omit to hide remove
  * @returns {JSX.Element} Watchlist item card
  */
 function WatchlistItemCard({ item, onRemove }) {
@@ -60,17 +60,20 @@ function WatchlistItemCard({ item, onRemove }) {
           </div>
         </a>
 
-        <button
-          onClick={() => {
-            onRemove(tmdbId);
-          }}
-          className="absolute top-3 left-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white p-2.5 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl z-10 transform hover:scale-110"
-          title={t('media.remove')}
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        </button>
+        {onRemove ? (
+          <button
+            type="button"
+            onClick={() => {
+              onRemove(tmdbId, isTv ? 'tv' : 'movie');
+            }}
+            className="absolute top-3 left-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white p-2.5 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl z-10 transform hover:scale-110"
+            title={t('media.remove')}
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        ) : null}
       </div>
 
       <div className="p-4 space-y-3">
