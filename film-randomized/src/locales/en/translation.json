@@ -4,6 +4,7 @@
     "error": "Error",
     "logout": "Logout",
     "watchlist": "Watchlist",
+    "discovered": "Discovered",
     "back": "Back",
     "home": "Home",
     "showMore": "Show more",
@@ -25,16 +26,7 @@
     "generate": "Generate Random Content",
     "generateMobile": "Generate a new {{type}}",
     "movieMobile": "movie",
-    "tvMobile": "TV content",
-    "discoveredCount": "You've discovered {{count}} content items",
-    "sessionInfo": "in this session",
-    "exportSession": "Export Session",
-    "importSession": "Import Session",
-    "importSuccess": "Session imported successfully!",
-    "importError": "Failed to import session. Please check the file."
-  },
-  "session": {
-    "empty": "No content discovered yet in this session."
+    "tvMobile": "TV content"
   },
   "notFound": {
     "title": "Page not found",
@@ -64,7 +56,19 @@
     "discoverContent": "Discover new content",
     "totalItems": "Total Items",
     "item": "item",
-    "items": "items"
+    "items": "items",
+    "inList": "in list"
+  },
+  "discovered": {
+    "title": "Discovered titles",
+    "loading": "Loading discovered titles...",
+    "empty": "No discovered titles yet",
+    "emptyMovies": "No discovered movies yet",
+    "emptyTv": "No discovered TV shows yet",
+    "emptyDescription": "Titles you generate appear here and will not be suggested again until you remove them.",
+    "generateMore": "Generate random titles",
+    "totalItems": "Total discovered",
+    "inList": "discovered"
   },
   "media": {
     "adding": "Adding...",

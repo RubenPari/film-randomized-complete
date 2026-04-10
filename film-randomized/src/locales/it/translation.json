@@ -4,6 +4,7 @@
     "error": "Errore",
     "logout": "Esci",
     "watchlist": "Watchlist",
+    "discovered": "Scoperti",
     "back": "Indietro",
     "home": "Home",
     "showMore": "Mostra di più",
@@ -25,16 +26,7 @@
     "generate": "Genera Contenuto Casuale",
     "generateMobile": "Genera un nuovo {{type}}",
     "movieMobile": "film",
-    "tvMobile": "contenuto TV",
-    "discoveredCount": "Hai scoperto {{count}} contenuti",
-    "sessionInfo": "in questa sessione",
-    "exportSession": "Esporta Sessione",
-    "importSession": "Importa Sessione",
-    "importSuccess": "Sessione importata con successo!",
-    "importError": "Errore nell'importazione della sessione. Controlla il file."
-  },
-  "session": {
-    "empty": "Nessun contenuto scoperto ancora in questa sessione."
+    "tvMobile": "contenuto TV"
   },
   "notFound": {
     "title": "Pagina non trovata",
@@ -64,7 +56,19 @@
     "discoverContent": "Scopri nuovi contenuti",
     "totalItems": "Elementi Totali",
     "item": "elemento",
-    "items": "elementi"
+    "items": "elementi",
+    "inList": "in elenco"
+  },
+  "discovered": {
+    "title": "Titoli scoperti",
+    "loading": "Caricamento titoli scoperti...",
+    "empty": "Nessun titolo scoperto",
+    "emptyMovies": "Nessun film scoperto",
+    "emptyTv": "Nessuna serie scoperta",
+    "emptyDescription": "I titoli che generi compaiono qui e non verranno più proposti finché non li rimuovi.",
+    "generateMore": "Genera altri titoli",
+    "totalItems": "Totale scoperti",
+    "inList": "scoperti"
   },
   "media": {
     "adding": "Aggiunta...",
