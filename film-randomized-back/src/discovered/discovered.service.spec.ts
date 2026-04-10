@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DiscoveredService } from './discovered.service.js';
 import { DiscoveredItem } from '../entities/discovered-item.entity.js';
-import { CreateWatchlistDto } from '../watchlist/dto/create-watchlist.dto.js';
+import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 
 describe('DiscoveredService', () => {
   let service: DiscoveredService;
@@ -16,7 +16,7 @@ describe('DiscoveredService', () => {
 
   const mockUserId = 'user-123';
 
-  const createDto: CreateWatchlistDto = {
+  const createDto: TmdbMediaPayloadDto = {
     tmdb_id: 12345,
     media_type: 'movie',
     title: 'Test Movie',

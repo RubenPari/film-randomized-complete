@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WatchlistItem } from '../entities/watchlist-item.entity.js';
-import { CreateWatchlistDto } from './dto/create-watchlist.dto.js';
+import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 
 @Injectable()
 export class WatchlistService {
@@ -11,7 +11,7 @@ export class WatchlistService {
     private readonly watchlistRepository: Repository<WatchlistItem>,
   ) {}
 
-  async create(userId: string, dto: CreateWatchlistDto): Promise<WatchlistItem> {
+  async create(userId: string, dto: TmdbMediaPayloadDto): Promise<WatchlistItem> {
     const existing = await this.watchlistRepository.findOne({
       where: { tmdbId: dto.tmdb_id, userId },
     });

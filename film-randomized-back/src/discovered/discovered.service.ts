@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DiscoveredItem } from '../entities/discovered-item.entity.js';
-import { CreateWatchlistDto } from '../watchlist/dto/create-watchlist.dto.js';
+import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 
 @Injectable()
 export class DiscoveredService {
@@ -16,7 +16,7 @@ export class DiscoveredService {
    */
   async record(
     userId: string,
-    dto: CreateWatchlistDto,
+    dto: TmdbMediaPayloadDto,
   ): Promise<DiscoveredItem> {
     const existing = await this.discoveredRepository.findOne({
       where: {

@@ -10,11 +10,12 @@ import {
 } from 'class-validator';
 
 /**
+ * Shared TMDb-shaped payload for creating watchlist items or recording discovered titles.
+ *
  * NOTE: snake_case field names are intentional and must NOT be renamed.
- * The frontend (`watchlistApi.js`) sends payloads using snake_case so the
- * mapping in `WatchlistService.create` can stay as-is.
+ * The frontend sends payloads using snake_case so service mapping stays unchanged.
  */
-export class CreateWatchlistDto {
+export class TmdbMediaPayloadDto {
   @IsInt()
   @Min(1)
   tmdb_id!: number;

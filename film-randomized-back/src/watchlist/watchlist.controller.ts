@@ -13,7 +13,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import type { AuthenticatedUser } from '../auth/types/authenticated-user.js';
-import { CreateWatchlistDto } from './dto/create-watchlist.dto.js';
+import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 import { WatchlistService } from './watchlist.service.js';
 
 @Controller('watchlist')
@@ -23,7 +23,7 @@ export class WatchlistController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  async create(@CurrentUser() user: AuthenticatedUser, @Body() dto: CreateWatchlistDto) {
+  async create(@CurrentUser() user: AuthenticatedUser, @Body() dto: TmdbMediaPayloadDto) {
     return this.watchlistService.create(user.id, dto);
   }
 

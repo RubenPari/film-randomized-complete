@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WatchlistService } from './watchlist.service.js';
 import { WatchlistItem } from '../entities/watchlist-item.entity.js';
-import { CreateWatchlistDto } from './dto/create-watchlist.dto.js';
+import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 
 describe('WatchlistService', () => {
   let service: WatchlistService;
@@ -37,7 +37,7 @@ describe('WatchlistService', () => {
   });
 
   describe('create', () => {
-    const createDto: CreateWatchlistDto = {
+    const createDto: TmdbMediaPayloadDto = {
       tmdb_id: 12345,
       media_type: 'movie',
       title: 'Test Movie',

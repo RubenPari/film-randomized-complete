@@ -14,7 +14,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import type { AuthenticatedUser } from '../auth/types/authenticated-user.js';
-import { CreateWatchlistDto } from '../watchlist/dto/create-watchlist.dto.js';
+import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 import { DiscoveredService } from './discovered.service.js';
 
 const MEDIA_TYPES = ['movie', 'tv'] as const;
@@ -36,7 +36,7 @@ export class DiscoveredController {
   @HttpCode(HttpStatus.OK)
   async record(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() dto: CreateWatchlistDto,
+    @Body() dto: TmdbMediaPayloadDto,
   ) {
     return this.discoveredService.record(user.id, dto);
   }
