@@ -1,4 +1,4 @@
-import { apiClient, ApiError } from './apiClient';
+import { apiClient, ApiError } from './apiClient.js';
 
 /**
  * Watchlist API service.
