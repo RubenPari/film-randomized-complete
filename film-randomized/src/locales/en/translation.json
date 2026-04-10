@@ -1,0 +1,91 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "logout": "Logout",
+    "watchlist": "Watchlist",
+    "back": "Back",
+    "home": "Home",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "noImage": "No image available",
+    "trailer": "Trailer",
+    "remove": "Remove",
+    "all": "All",
+    "movies": "Movies",
+    "tvShows": "TV Shows"
+  },
+  "home": {
+    "title": "Random {{type}} Generator",
+    "movie": "Movie",
+    "tvShow": "TV Show",
+    "description": "Discover random movies and TV shows based on your preferences. Filter by genre, year, and rating to find your next favorite entertainment.",
+    "hideFilters": "Hide filters",
+    "showFilters": "Show filters",
+    "generate": "Generate Random Content",
+    "generateMobile": "Generate a new {{type}}",
+    "movieMobile": "movie",
+    "tvMobile": "TV content",
+    "discoveredCount": "You've discovered {{count}} content items",
+    "sessionInfo": "in this session",
+    "exportSession": "Export Session",
+    "importSession": "Import Session",
+    "importSuccess": "Session imported successfully!",
+    "importError": "Failed to import session. Please check the file."
+  },
+  "session": {
+    "empty": "No content discovered yet in this session."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "goHome": "Back to home"
+  },
+  "filters": {
+    "mediaType": "Media Type",
+    "rating": "Rating",
+    "year": "Release Year",
+    "yearDescription": "Choose a year range to limit the search.",
+    "voteCount": "Minimum Number of Votes",
+    "genres": "Genres",
+    "from": "From",
+    "to": "To",
+    "any": "Any"
+  },
+  "watchlist": {
+    "title": "My Watchlist",
+    "loading": "Loading your watchlist...",
+    "errorTitle": "Error Loading Watchlist",
+    "empty": "Your watchlist is empty",
+    "emptyMovies": "No movies yet",
+    "emptyTv": "No TV shows yet",
+    "emptyDescription": "Start building your watchlist by adding movies and TV shows you want to watch.",
+    "emptyFilterDescription": "You haven't added any {{type}} to your watchlist yet.",
+    "discoverContent": "Discover new content",
+    "totalItems": "Total Items",
+    "item": "item",
+    "items": "items"
+  },
+  "media": {
+    "adding": "Adding...",
+    "removing": "Removing...",
+    "save": "Add to Watchlist",
+    "saved": "In Watchlist",
+    "remove": "Remove from watchlist",
+    "onTmdb": "View {{title}} on TMDB"
+  },
+  "auth": {
+    "welcome": "Welcome Back",
+    "signInToContinue": "Sign in to continue your journey",
+    "username": "Username",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one now",
+    "usernamePlaceholder": "Enter your username",
+    "passwordPlaceholder": "Enter your password",
+    "loginError": "Error during login"
+  }
+}

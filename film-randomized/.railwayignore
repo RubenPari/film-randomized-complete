@@ -1,0 +1,6 @@
+../film-randomized-back/
+../.env
+../docker-compose.yml
+../*.md
+../Dockerfile.frontend
+

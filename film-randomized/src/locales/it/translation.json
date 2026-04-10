@@ -1,0 +1,91 @@
+{
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "logout": "Esci",
+    "watchlist": "Watchlist",
+    "back": "Indietro",
+    "home": "Home",
+    "showMore": "Mostra di più",
+    "showLess": "Mostra meno",
+    "noImage": "Nessuna immagine disponibile",
+    "trailer": "Trailer",
+    "remove": "Rimuovi",
+    "all": "Tutti",
+    "movies": "Film",
+    "tvShows": "Serie TV"
+  },
+  "home": {
+    "title": "Generatore di {{type}} Casuali",
+    "movie": "Film",
+    "tvShow": "Serie TV",
+    "description": "Scopri film e serie TV casuali in base alle tue preferenze. Filtra per genere, anno e valutazione per trovare il tuo prossimo intrattenimento preferito.",
+    "hideFilters": "Nascondi filtri",
+    "showFilters": "Mostra filtri",
+    "generate": "Genera Contenuto Casuale",
+    "generateMobile": "Genera un nuovo {{type}}",
+    "movieMobile": "film",
+    "tvMobile": "contenuto TV",
+    "discoveredCount": "Hai scoperto {{count}} contenuti",
+    "sessionInfo": "in questa sessione",
+    "exportSession": "Esporta Sessione",
+    "importSession": "Importa Sessione",
+    "importSuccess": "Sessione importata con successo!",
+    "importError": "Errore nell'importazione della sessione. Controlla il file."
+  },
+  "session": {
+    "empty": "Nessun contenuto scoperto ancora in questa sessione."
+  },
+  "notFound": {
+    "title": "Pagina non trovata",
+    "description": "La pagina che cerchi non esiste o è stata spostata.",
+    "goHome": "Torna alla home"
+  },
+  "filters": {
+    "mediaType": "Tipo di Media",
+    "rating": "Valutazione",
+    "year": "Anno di Rilascio",
+    "yearDescription": "Scegli un intervallo di anni per limitare la ricerca.",
+    "voteCount": "Numero Minimo di Voti",
+    "genres": "Generi",
+    "from": "Da",
+    "to": "A",
+    "any": "Qualsiasi"
+  },
+  "watchlist": {
+    "title": "La Mia Watchlist",
+    "loading": "Caricamento della tua watchlist...",
+    "errorTitle": "Errore nel Caricamento della Watchlist",
+    "empty": "La tua watchlist è vuota",
+    "emptyMovies": "Ancora nessun film",
+    "emptyTv": "Ancora nessuna serie TV",
+    "emptyDescription": "Inizia a costruire la tua watchlist aggiungendo film e serie TV che vuoi guardare.",
+    "emptyFilterDescription": "Non hai ancora aggiunto {{type}} alla tua watchlist.",
+    "discoverContent": "Scopri nuovi contenuti",
+    "totalItems": "Elementi Totali",
+    "item": "elemento",
+    "items": "elementi"
+  },
+  "media": {
+    "adding": "Aggiunta...",
+    "removing": "Rimozione...",
+    "save": "Aggiungi alla Watchlist",
+    "saved": "Nella Watchlist",
+    "remove": "Rimuovi dalla watchlist",
+    "onTmdb": "Vedi {{title}} su TMDB"
+  },
+  "auth": {
+    "welcome": "Bentornato",
+    "signInToContinue": "Accedi per continuare il tuo viaggio",
+    "username": "Nome utente",
+    "password": "Password",
+    "forgotPassword": "Password dimenticata?",
+    "signIn": "Accedi",
+    "signingIn": "Accesso in corso...",
+    "noAccount": "Non hai un account?",
+    "createAccount": "Creane uno ora",
+    "usernamePlaceholder": "Inserisci il tuo nome utente",
+    "passwordPlaceholder": "Inserisci la tua password",
+    "loginError": "Errore durante l'accesso"
+  }
+}
