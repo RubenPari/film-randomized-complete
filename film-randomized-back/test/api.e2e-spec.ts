@@ -7,11 +7,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../src/entities/user.entity.js';
 import { WatchlistItem } from '../src/entities/watchlist-item.entity.js';
+import { DiscoveredItem } from '../src/entities/discovered-item.entity.js';
 
 describe('Film Randomized API (e2e)', () => {
   let app: INestApplication<App>;
   let userRepository: Repository<User>;
   let watchlistRepository: Repository<WatchlistItem>;
+  let discoveredRepository: Repository<DiscoveredItem>;
   let authToken: string;
   let userId: string;
 
@@ -26,6 +28,7 @@ describe('Film Randomized API (e2e)', () => {
 
     userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
     watchlistRepository = moduleFixture.get<Repository<WatchlistItem>>(getRepositoryToken(WatchlistItem));
+    discoveredRepository = moduleFixture.get<Repository<DiscoveredItem>>(getRepositoryToken(DiscoveredItem));
   });
 
   afterAll(async () => {
@@ -35,6 +38,7 @@ describe('Film Randomized API (e2e)', () => {
   beforeEach(async () => {
     // Clean up data before each test
     await watchlistRepository.clear();
+    await discoveredRepository.clear();
     await userRepository.clear();
     authToken = '';
     userId = '';
@@ -385,6 +389,127 @@ describe('Film Randomized API (e2e)', () => {
 
         return request(app.getHttpServer())
           .delete('/api/watchlist/12345')
+          .set('Authorization', `Bearer ${authToken}`)
+          .expect(404);
+      });
+    });
+  });
+
+  // ==================== DISCOVERED TESTS ====================
+
+  describe('Discovered CRUD', () => {
+    const testMovie = {
+      tmdb_id: 54321,
+      media_type: 'movie',
+      title: 'Discovered Movie',
+      original_title: 'Discovered Movie Original',
+      overview: 'Overview',
+      poster_path: '/p.jpg',
+      backdrop_path: '/b.jpg',
+      vote_average: 8,
+      vote_count: 50,
+      release_date: '2023-06-01',
+      genres: JSON.stringify([{ id: 2, name: 'Drama' }]),
+      runtime: 99,
+    };
+
+    beforeEach(async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/register')
+        .send({
+          username: 'discovereduser',
+          email: 'discovered@example.com',
+          password: 'securePassword123',
+        });
+      authToken = response.body.token;
+      userId = response.body.user.id;
+    });
+
+    describe('POST /api/discovered', () => {
+      it('should record discovered item', () => {
+        return request(app.getHttpServer())
+          .post('/api/discovered')
+          .set('Authorization', `Bearer ${authToken}`)
+          .send(testMovie)
+          .expect(200)
+          .expect((res) => {
+            expect(res.body.tmdbId).toBe(54321);
+            expect(res.body.title).toBe('Discovered Movie');
+            expect(res.body.mediaType).toBe('movie');
+          });
+      });
+
+      it('should return existing item on duplicate (idempotent)', async () => {
+        const first = await request(app.getHttpServer())
+          .post('/api/discovered')
+          .set('Authorization', `Bearer ${authToken}`)
+          .send(testMovie)
+          .expect(200);
+
+        const second = await request(app.getHttpServer())
+          .post('/api/discovered')
+          .set('Authorization', `Bearer ${authToken}`)
+          .send(testMovie)
+          .expect(200);
+
+        expect(second.body.id).toBe(first.body.id);
+      });
+
+      it('should reject request without token', () => {
+        return request(app.getHttpServer()).post('/api/discovered').send(testMovie).expect(401);
+      });
+    });
+
+    describe('GET /api/discovered', () => {
+      beforeEach(async () => {
+        await request(app.getHttpServer())
+          .post('/api/discovered')
+          .set('Authorization', `Bearer ${authToken}`)
+          .send(testMovie);
+      });
+
+      it('should return all discovered items for user', () => {
+        return request(app.getHttpServer())
+          .get('/api/discovered')
+          .set('Authorization', `Bearer ${authToken}`)
+          .expect(200)
+          .expect((res) => {
+            expect(Array.isArray(res.body)).toBe(true);
+            expect(res.body.length).toBe(1);
+            expect(res.body[0].title).toBe('Discovered Movie');
+          });
+      });
+
+      it('should reject request without token', () => {
+        return request(app.getHttpServer()).get('/api/discovered').expect(401);
+      });
+    });
+
+    describe('DELETE /api/discovered/:mediaType/:tmdbId', () => {
+      beforeEach(async () => {
+        await request(app.getHttpServer())
+          .post('/api/discovered')
+          .set('Authorization', `Bearer ${authToken}`)
+          .send(testMovie);
+      });
+
+      it('should remove discovered item', () => {
+        return request(app.getHttpServer())
+          .delete('/api/discovered/movie/54321')
+          .set('Authorization', `Bearer ${authToken}`)
+          .expect(200)
+          .expect((res) => {
+            expect(res.body.message).toBe('Item removed from discovered list');
+          });
+      });
+
+      it('should return 404 for already removed item', async () => {
+        await request(app.getHttpServer())
+          .delete('/api/discovered/movie/54321')
+          .set('Authorization', `Bearer ${authToken}`);
+
+        return request(app.getHttpServer())
+          .delete('/api/discovered/movie/54321')
           .set('Authorization', `Bearer ${authToken}`)
           .expect(404);
       });
