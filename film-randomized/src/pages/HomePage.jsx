@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import { FilterProvider, useMediaResults } from '../features/media/context/FilterContext.jsx';
 import FilterPanel from '../features/media/components/filters/FilterPanel.jsx';
-import SessionControls from '../features/media/components/SessionControls.jsx';
 import MediaCard from '../features/media/components/MediaCard.jsx';
 import HomeHeader from './home/HomeHeader.jsx';
 import HomeHero from './home/HomeHero.jsx';
@@ -24,9 +23,6 @@ function HomePageContent() {
     isLoading,
     error,
     generateRandomMedia,
-    viewedMedia,
-    exportViewedMedia,
-    importViewedMedia,
   } = useMediaResults();
 
   return (
@@ -69,12 +65,6 @@ function HomePageContent() {
             )}
 
             {randomMedia && !isLoading && <MediaCard media={randomMedia} mediaType={mediaType} />}
-
-            <SessionControls
-              viewedMedia={viewedMedia}
-              exportViewedMedia={exportViewedMedia}
-              importViewedMedia={importViewedMedia}
-            />
           </div>
 
           <div

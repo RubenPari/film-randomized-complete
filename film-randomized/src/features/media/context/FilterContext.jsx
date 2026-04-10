@@ -46,7 +46,7 @@ export function useFilterContext() {
 }
 
 /**
- * Generated media, loading/error, and session actions.
+ * Generated media, loading/error, and generate action.
  */
 export function useMediaResults() {
   const v = useMediaGeneratorContext();
@@ -56,8 +56,5 @@ export function useMediaResults() {
     isLoading: v.isLoading,
     error: v.error,
     generateRandomMedia: v.generateRandomMedia,
-    viewedMedia: v.viewedMedia,
-    exportViewedMedia: v.exportViewedMedia,
-    importViewedMedia: v.importViewedMedia,
   };
 }

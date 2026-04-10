@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../../shared/context/AuthContext.jsx';
 import { getWatchlist } from '../../../shared/services/watchlistApi.js';
+import { getDiscovered, recordDiscovered } from '../../../shared/services/discoveredApi.js';
 import {
   discoverMedia,
   fetchMediaPage,
@@ -12,9 +13,11 @@ import {
   hasValidDescription,
   getRandomPage,
   getRandomMedia,
+  isExcludedForCurrentType,
+  resolveMediaTypeString,
 } from '../../../shared/utils/mediaUtils.js';
 
-export function useMediaFetcher(viewedMediaManager) {
+export function useMediaFetcher() {
   const { token } = useAuth();
   const [randomMedia, setRandomMedia] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,13 +28,31 @@ export function useMediaFetcher(viewedMediaManager) {
     setError(null);
 
     try {
-      const watchlist = await fetchUserWatchlist(token);
+      const excludedItems = await fetchExcludedItems(token);
       const { discoverUrl, totalPages } = await discoverMedia(mediaType, filters);
 
-      const details = await findValidRandomMedia(discoverUrl, totalPages, mediaType, watchlist, 0);
+      const details = await findValidRandomMedia(
+        discoverUrl,
+        totalPages,
+        mediaType,
+        excludedItems,
+        0,
+      );
+
+      if (token) {
+        try {
+          await recordDiscovered(details, mediaType, token);
+        } catch (recordErr) {
+          console.error('Failed to record discovered title:', recordErr);
+          setError(
+            recordErr.message ||
+              'Could not save this title to your discovered list. Please try again.',
+          );
+          return;
+        }
+      }
 
       setRandomMedia(details);
-      viewedMediaManager.addViewedMedia(details);
     } catch (err) {
       setError(err.message || 'An error occurred. Please try again later.');
     } finally {
@@ -39,16 +60,30 @@ export function useMediaFetcher(viewedMediaManager) {
     }
   };
 
-  const fetchUserWatchlist = async (token) => {
-    if (!token) return [];
+  const fetchExcludedItems = async (authToken) => {
+    if (!authToken) return [];
+    let watchlist = [];
+    let discovered = [];
     try {
-      return await getWatchlist(token);
+      watchlist = await getWatchlist(authToken);
     } catch {
-      return [];
+      watchlist = [];
     }
+    try {
+      discovered = await getDiscovered(authToken);
+    } catch {
+      discovered = [];
+    }
+    return [...watchlist, ...discovered];
   };
 
-  const findValidRandomMedia = async (discoverUrl, totalPages, mediaType, watchlist, attempt) => {
+  const findValidRandomMedia = async (
+    discoverUrl,
+    totalPages,
+    mediaType,
+    excludedItems,
+    attempt,
+  ) => {
     if (attempt >= MAX_GENERATION_ATTEMPTS) {
       throw new Error('No content found. Try modifying the filters.');
     }
@@ -56,26 +91,38 @@ export function useMediaFetcher(viewedMediaManager) {
     const randomPage = getRandomPage(totalPages);
     const pageData = await fetchMediaPage(discoverUrl, randomPage);
 
-    const activeViewedMedia = viewedMediaManager.clearViewedMediaCacheIfTooLarge();
-    const filteredResults = filterValidMedia(pageData.results, activeViewedMedia, watchlist);
+    const filteredResults = filterValidMedia(pageData.results, excludedItems, mediaType);
 
     if (filteredResults.length === 0) {
-      return findValidRandomMedia(discoverUrl, totalPages, mediaType, watchlist, attempt + 1);
+      return findValidRandomMedia(
+        discoverUrl,
+        totalPages,
+        mediaType,
+        excludedItems,
+        attempt + 1,
+      );
     }
 
     const selectedMedia = getRandomMedia(filteredResults);
     const details = await fetchMediaDetails(mediaType, selectedMedia.id);
 
-    if (!isValidMedia(details, watchlist)) {
-      return findValidRandomMedia(discoverUrl, totalPages, mediaType, watchlist, attempt + 1);
+    if (!isValidMedia(details, excludedItems, mediaType)) {
+      return findValidRandomMedia(
+        discoverUrl,
+        totalPages,
+        mediaType,
+        excludedItems,
+        attempt + 1,
+      );
     }
 
     return details;
   };
 
-  const isValidMedia = (details, watchlist) => {
-    const isInWatchlist = watchlist.some((item) => item.tmdb_id === details.id);
-    return hasValidDescription(details) && !isInWatchlist;
+  const isValidMedia = (details, excludedItems, mediaType) => {
+    const mt = resolveMediaTypeString(mediaType);
+    const excluded = isExcludedForCurrentType(details.id, mt, excludedItems);
+    return hasValidDescription(details) && !excluded;
   };
 
   return {
