@@ -1,35 +1,25 @@
-/**
- * Watchlist item card component.
- * Displays a single watchlist item with poster, title, and remove button.
- */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { IMAGE_BASE_URL } from '../../../shared/constants/api.js';
 
 /**
- * Watchlist item card component.
+ * Card used by every collection grid (watchlist, discovered). Assumes the
+ * caller has already normalised the row into snake_case via
+ * `normalizeMediaItem` — no camel/snake fallback logic here.
  *
- * @param {Object} props - Component props
- * @param {Object} props.item - Watchlist item data
- * @param {Function} [props.onRemove] - (tmdbId, 'movie'|'tv') => void; omit to hide remove
- * @returns {JSX.Element} Watchlist item card
+ * @param {Object} props
+ * @param {Object} props.item - Normalised media row (tmdb_id, media_type, poster_path, ...).
+ * @param {(tmdbId: number, mediaType: 'movie'|'tv') => void} [props.onRemove]
  */
 function WatchlistItemCard({ item, onRemove }) {
   const { t } = useTranslation();
-  let genres = [];
-  if (item.genres) {
-    if (Array.isArray(item.genres)) {
-      genres = item.genres;
-    } else {
-      try {
-        genres = JSON.parse(item.genres);
-      } catch {
-        genres = [];
-      }
-    }
-  }
-  const tmdbId = item.tmdb_id ?? item.tmdbId;
-  const isTv = item.media_type === 'tv' || item.mediaType === 'tv';
+
+  const genres = parseGenres(item.genres);
+  const tmdbId = item.tmdb_id;
+  const isTv = item.media_type === 'tv';
+  const year = item.release_date
+    ? new Date(item.release_date).getFullYear()
+    : null;
 
   return (
     <div className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 rounded-2xl border border-slate-700/50 overflow-hidden hover:border-cyan-500/40 shadow-lg hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 hover:scale-105 backdrop-blur-sm">
@@ -41,9 +31,9 @@ function WatchlistItemCard({ item, onRemove }) {
           className="block relative aspect-[2/3] bg-slate-900 overflow-hidden group/poster"
           title={t('media.onTmdb', { title: item.title })}
         >
-          {(item.poster_path ?? item.posterPath) ? (
+          {item.poster_path ? (
             <img
-              src={`${IMAGE_BASE_URL}${item.poster_path ?? item.posterPath}`}
+              src={`${IMAGE_BASE_URL}${item.poster_path}`}
               alt={item.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover/poster:scale-110"
             />
@@ -63,9 +53,7 @@ function WatchlistItemCard({ item, onRemove }) {
         {onRemove ? (
           <button
             type="button"
-            onClick={() => {
-              onRemove(tmdbId, isTv ? 'tv' : 'movie');
-            }}
+            onClick={() => onRemove(tmdbId, isTv ? 'tv' : 'movie')}
             className="absolute top-3 left-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white p-2.5 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl z-10 transform hover:scale-110"
             title={t('media.remove')}
           >
@@ -82,17 +70,17 @@ function WatchlistItemCard({ item, onRemove }) {
         </h3>
 
         <div className="flex items-center justify-between text-xs text-slate-400 mb-2 space-x-2">
-          {(item.release_date ?? item.releaseDate) && (
+          {year && (
             <span className="px-2 py-1 bg-slate-700/40 rounded-md font-medium">
-              {new Date(item.release_date ?? item.releaseDate).getFullYear()}
+              {year}
             </span>
           )}
-          {(item.vote_average ?? item.voteAverage) != null && (
+          {item.vote_average != null && (
             <span className="text-amber-400 flex items-center gap-1.5 px-2 py-1 bg-amber-500/10 rounded-md font-semibold">
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
                 <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
               </svg>
-              {(item.vote_average ?? item.voteAverage).toFixed(1)}
+              {item.vote_average.toFixed(1)}
             </span>
           )}
         </div>
@@ -109,6 +97,21 @@ function WatchlistItemCard({ item, onRemove }) {
       </div>
     </div>
   );
+}
+
+/**
+ * The backend stores `genres` as a JSON string (legacy column shape). Parse it
+ * defensively so malformed rows do not crash the grid.
+ */
+function parseGenres(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 export default WatchlistItemCard;

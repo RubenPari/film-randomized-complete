@@ -1,30 +1,5 @@
 import { apiClient } from './apiClient.js';
-
-/**
- * Normalizes a discovered row from the API for UI (snake_case, media_type).
- * @param {Object} item - Raw row from API
- * @returns {Object}
- */
-function normalizeDiscoveredItem(item) {
-  if (!item || typeof item !== 'object') return item;
-  const rawTmdb = item.tmdb_id ?? item.tmdbId;
-  const tmdb_id = typeof rawTmdb === 'string' ? Number(rawTmdb) : rawTmdb;
-  let media_type = item.media_type ?? item.mediaType;
-  if (media_type === true) media_type = 'movie';
-  if (media_type === false) media_type = 'tv';
-
-  return {
-    ...item,
-    tmdb_id,
-    media_type,
-    poster_path: item.poster_path ?? item.posterPath,
-    backdrop_path: item.backdrop_path ?? item.backdropPath,
-    original_title: item.original_title ?? item.originalTitle,
-    vote_average: item.vote_average ?? item.voteAverage,
-    vote_count: item.vote_count ?? item.voteCount,
-    release_date: item.release_date ?? item.releaseDate,
-  };
-}
+import { normalizeMediaItem } from '../utils/normalizeMediaItem.js';
 
 /**
  * @param {string} token - JWT
@@ -32,7 +7,7 @@ function normalizeDiscoveredItem(item) {
  */
 export async function getDiscovered(token) {
   const list = await apiClient.get('/discovered', token);
-  return Array.isArray(list) ? list.map(normalizeDiscoveredItem) : list;
+  return Array.isArray(list) ? list.map(normalizeMediaItem) : list;
 }
 
 /**
@@ -63,7 +38,7 @@ export async function recordDiscovered(media, mediaType, token) {
   };
 
   const created = await apiClient.post('/discovered', payload, token);
-  return normalizeDiscoveredItem(created);
+  return normalizeMediaItem(created);
 }
 
 /**

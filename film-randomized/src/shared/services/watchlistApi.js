@@ -1,4 +1,5 @@
 import { apiClient, ApiError } from './apiClient.js';
+import { normalizeMediaItem } from '../utils/normalizeMediaItem.js';
 
 /**
  * Watchlist API service.
@@ -6,34 +7,8 @@ import { apiClient, ApiError } from './apiClient.js';
  */
 
 /**
- * Nest/TypeORM JSON uses camelCase (`tmdbId`, `posterPath`); UI code expects snake_case.
- * @param {Object} item - Raw watchlist row from API
- * @returns {Object} Item with normalized snake_case fields and string `media_type` ('movie' | 'tv')
- */
-function normalizeWatchlistItem(item) {
-  if (!item || typeof item !== 'object') return item;
-  const rawTmdb = item.tmdb_id ?? item.tmdbId;
-  const tmdb_id = typeof rawTmdb === 'string' ? Number(rawTmdb) : rawTmdb;
-  let media_type = item.media_type ?? item.mediaType;
-  if (media_type === true) media_type = 'movie';
-  if (media_type === false) media_type = 'tv';
-
-  return {
-    ...item,
-    tmdb_id,
-    media_type,
-    poster_path: item.poster_path ?? item.posterPath,
-    backdrop_path: item.backdrop_path ?? item.backdropPath,
-    original_title: item.original_title ?? item.originalTitle,
-    vote_average: item.vote_average ?? item.voteAverage,
-    vote_count: item.vote_count ?? item.voteCount,
-    release_date: item.release_date ?? item.releaseDate,
-  };
-}
-
-/**
  * Adds a media item to the watchlist.
- * 
+ *
  * @param {Object} media - Media object with all details from TMDb
  * @param {number} media.id - TMDB ID
  * @param {string} media.title - Title (for movies)
@@ -61,28 +36,28 @@ export async function addToWatchlist(media, mediaType, token) {
     genres: JSON.stringify(media.genres || []),
     runtime: media.runtime || null,
     number_of_seasons: media.number_of_seasons || null,
-    number_of_episodes: media.number_of_episodes || null
+    number_of_episodes: media.number_of_episodes || null,
   };
 
   const created = await apiClient.post('/watchlist', payload, token);
-  return normalizeWatchlistItem(created);
+  return normalizeMediaItem(created);
 }
 
 /**
  * Gets all items from the watchlist.
- * 
+ *
  * @param {string} token - JWT token for authentication
  * @returns {Promise<Array<Object>>} Promise that resolves to array of watchlist items
  * @throws {import('./apiClient').ApiError} If the request fails
  */
 export async function getWatchlist(token) {
   const list = await apiClient.get('/watchlist', token);
-  return Array.isArray(list) ? list.map(normalizeWatchlistItem) : list;
+  return Array.isArray(list) ? list.map(normalizeMediaItem) : list;
 }
 
 /**
  * Checks if a media item is in the watchlist.
- * 
+ *
  * @param {number} tmdbId - TMDB ID of the media
  * @param {string} token - JWT token for authentication
  * @returns {Promise<boolean>} Promise that resolves to true if item is in watchlist
@@ -102,7 +77,7 @@ export async function checkInWatchlist(tmdbId, token) {
 
 /**
  * Removes a media item from the watchlist.
- * 
+ *
  * @param {number} tmdbId - TMDB ID of the media to remove
  * @param {string} token - JWT token for authentication
  * @returns {Promise<void>} Promise that resolves when item is removed
