@@ -1,73 +1,65 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { WatchlistItem } from '../entities/watchlist-item.entity.js';
 import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
+import { MediaCollectionService } from '../common/services/media-collection.service.js';
+
+const NOT_FOUND_MESSAGE = 'Item not found in watchlist';
 
 @Injectable()
-export class WatchlistService {
+export class WatchlistService extends MediaCollectionService<WatchlistItem> {
   constructor(
     @InjectRepository(WatchlistItem)
-    private readonly watchlistRepository: Repository<WatchlistItem>,
-  ) {}
+    repository: Repository<WatchlistItem>,
+  ) {
+    super(repository, WatchlistItem, NOT_FOUND_MESSAGE);
+  }
 
-  async create(userId: string, dto: TmdbMediaPayloadDto): Promise<WatchlistItem> {
-    const existing = await this.watchlistRepository.findOne({
-      where: { tmdbId: dto.tmdb_id, userId },
-    });
+  async create(
+    userId: string,
+    dto: TmdbMediaPayloadDto,
+  ): Promise<WatchlistItem> {
+    // Historical behaviour: a (userId, tmdbId) pair is considered a duplicate
+    // even if the existing row has a different mediaType. The DB-level unique
+    // index on (userId, tmdbId, mediaType) is stricter, so this check is the
+    // user-visible contract — keep it.
+    const existing = await this.findOneFor({
+      tmdbId: dto.tmdb_id,
+      userId,
+    } as FindOptionsWhere<WatchlistItem>);
 
     if (existing) {
       throw new ConflictException('Item already in watchlist');
     }
 
-    const item = new WatchlistItem();
-    item.tmdbId = dto.tmdb_id;
-    item.mediaType = dto.media_type;
-    item.title = dto.title;
-    item.originalTitle = dto.original_title ?? null;
-    item.overview = dto.overview ?? null;
-    item.posterPath = dto.poster_path ?? null;
-    item.backdropPath = dto.backdrop_path ?? null;
-    item.voteAverage = dto.vote_average ?? null;
-    item.voteCount = dto.vote_count ?? null;
-    item.releaseDate = dto.release_date ?? null;
-    item.genres = dto.genres ?? null;
-    item.runtime = dto.runtime ?? null;
-    item.numberOfSeasons = dto.number_of_seasons ?? null;
-    item.numberOfEpisodes = dto.number_of_episodes ?? null;
-    item.userId = userId;
-
-    return this.watchlistRepository.save(item);
+    return this.saveFromDto(userId, dto);
   }
 
-  async findAll(userId: string): Promise<WatchlistItem[]> {
-    return this.watchlistRepository.find({
-      where: { userId },
-      order: { createdAt: 'DESC' },
-    });
-  }
-
-  async findOneByTmdbId(tmdbId: number, userId: string): Promise<WatchlistItem> {
-    const item = await this.watchlistRepository.findOne({
-      where: { tmdbId, userId },
-    });
+  async findOneByTmdbId(
+    tmdbId: number,
+    userId: string,
+  ): Promise<WatchlistItem> {
+    const item = await this.findOneFor({
+      tmdbId,
+      userId,
+    } as FindOptionsWhere<WatchlistItem>);
 
     if (!item) {
-      throw new NotFoundException('Item not found in watchlist');
+      throw new NotFoundException(NOT_FOUND_MESSAGE);
     }
 
     return item;
   }
 
   async remove(tmdbId: number, userId: string): Promise<void> {
-    const item = await this.watchlistRepository.findOne({
-      where: { tmdbId, userId },
-    });
-
-    if (!item) {
-      throw new NotFoundException('Item not found in watchlist');
-    }
-
-    await this.watchlistRepository.remove(item);
+    await this.deleteWhere({
+      tmdbId,
+      userId,
+    } as FindOptionsWhere<WatchlistItem>);
   }
 }

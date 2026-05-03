@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { DiscoveredService } from './discovered.service.js';
 import { DiscoveredItem } from '../entities/discovered-item.entity.js';
 import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
+import { MediaType } from '../common/enums/media-type.enum.js';
 
 describe('DiscoveredService', () => {
   let service: DiscoveredService;
@@ -11,7 +12,7 @@ describe('DiscoveredService', () => {
     findOne: jest.fn(),
     find: jest.fn(),
     save: jest.fn(),
-    remove: jest.fn(),
+    delete: jest.fn(),
   };
 
   const mockUserId = 'user-123';
@@ -48,23 +49,30 @@ describe('DiscoveredService', () => {
   });
 
   describe('record', () => {
-    it('should save a new discovered item', async () => {
+    it('should save a new discovered item via the shared mapper', async () => {
       mockDiscoveredRepository.findOne.mockResolvedValue(null);
-      mockDiscoveredRepository.save.mockResolvedValue({
-        id: 'item-id',
-        tmdbId: 12345,
-        mediaType: 'movie',
-        title: 'Test Movie',
-        userId: mockUserId,
-      });
+      mockDiscoveredRepository.save.mockImplementation((entity) =>
+        Promise.resolve({ id: 'item-id', ...entity }),
+      );
 
       const result = await service.record(mockUserId, createDto);
 
       expect(result.tmdbId).toBe(12345);
-      expect(mockDiscoveredRepository.save).toHaveBeenCalled();
+      expect(result.mediaType).toBe('movie');
+      expect(result.title).toBe('Test Movie');
+      expect(result.userId).toBe(mockUserId);
+      expect(result.posterPath).toBe('/poster.jpg');
+      expect(mockDiscoveredRepository.save).toHaveBeenCalledTimes(1);
+      expect(mockDiscoveredRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tmdbId: 12345,
+          mediaType: 'movie',
+          userId: mockUserId,
+        }),
+      );
     });
 
-    it('should return existing item without saving again', async () => {
+    it('should return existing item without saving again (idempotent)', async () => {
       const existing = {
         id: 'existing-id',
         tmdbId: 12345,
@@ -100,26 +108,31 @@ describe('DiscoveredService', () => {
   });
 
   describe('remove', () => {
-    it('should remove a discovered item', async () => {
-      const mockItem = {
-        id: '1',
+    it('should delete in a single query keyed by (mediaType, tmdbId, userId)', async () => {
+      mockDiscoveredRepository.delete.mockResolvedValue({
+        affected: 1,
+        raw: [],
+      });
+
+      await service.remove(MediaType.MOVIE, 12345, mockUserId);
+
+      expect(mockDiscoveredRepository.delete).toHaveBeenCalledWith({
+        mediaType: MediaType.MOVIE,
         tmdbId: 12345,
-        mediaType: 'movie',
         userId: mockUserId,
-      };
-      mockDiscoveredRepository.findOne.mockResolvedValue(mockItem);
-
-      await service.remove('movie', 12345, mockUserId);
-
-      expect(mockDiscoveredRepository.remove).toHaveBeenCalledWith(mockItem);
+      });
+      expect(mockDiscoveredRepository.findOne).not.toHaveBeenCalled();
     });
 
-    it('should throw if item not found', async () => {
-      mockDiscoveredRepository.findOne.mockResolvedValue(null);
+    it('should throw NotFoundException when delete affects 0 rows', async () => {
+      mockDiscoveredRepository.delete.mockResolvedValue({
+        affected: 0,
+        raw: [],
+      });
 
-      await expect(service.remove('movie', 99999, mockUserId)).rejects.toThrow(
-        'Item not found in discovered list',
-      );
+      await expect(
+        service.remove(MediaType.MOVIE, 99999, mockUserId),
+      ).rejects.toThrow('Item not found in discovered list');
     });
   });
 });

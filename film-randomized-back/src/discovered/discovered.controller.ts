@@ -15,16 +15,17 @@ import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import type { AuthenticatedUser } from '../auth/types/authenticated-user.js';
 import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
+import {
+  MEDIA_TYPE_VALUES,
+  MediaType,
+} from '../common/enums/media-type.enum.js';
 import { DiscoveredService } from './discovered.service.js';
 
-const MEDIA_TYPES = ['movie', 'tv'] as const;
-type MediaTypeParam = (typeof MEDIA_TYPES)[number];
-
-function parseMediaType(value: string): MediaTypeParam {
-  if (!MEDIA_TYPES.includes(value as MediaTypeParam)) {
+function parseMediaType(value: string): MediaType {
+  if (!MEDIA_TYPE_VALUES.includes(value as MediaType)) {
     throw new BadRequestException('mediaType must be movie or tv');
   }
-  return value as MediaTypeParam;
+  return value as MediaType;
 }
 
 @Controller('discovered')
@@ -53,8 +54,11 @@ export class DiscoveredController {
     @Param('tmdbId', ParseIntPipe) tmdbId: number,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    const mt = parseMediaType(mediaType);
-    await this.discoveredService.remove(mt, tmdbId, user.id);
+    await this.discoveredService.remove(
+      parseMediaType(mediaType),
+      tmdbId,
+      user.id,
+    );
     return { message: 'Item removed from discovered list' };
   }
 }

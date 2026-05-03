@@ -13,8 +13,7 @@ describe('WatchlistService', () => {
     findOne: jest.fn(),
     find: jest.fn(),
     save: jest.fn(),
-    remove: jest.fn(),
-    create: jest.fn(),
+    delete: jest.fn(),
   };
 
   const mockUserId = 'user-123';
@@ -31,7 +30,9 @@ describe('WatchlistService', () => {
     }).compile();
 
     service = module.get<WatchlistService>(WatchlistService);
-    repository = module.get<Repository<WatchlistItem>>(getRepositoryToken(WatchlistItem));
+    repository = module.get<Repository<WatchlistItem>>(
+      getRepositoryToken(WatchlistItem),
+    );
 
     jest.clearAllMocks();
   });
@@ -52,21 +53,30 @@ describe('WatchlistService', () => {
       runtime: 120,
     };
 
-    it('should create a watchlist item', async () => {
+    it('should create a watchlist item using the shared mapper', async () => {
       mockWatchlistRepository.findOne.mockResolvedValue(null);
-      mockWatchlistRepository.save.mockResolvedValue({
-        id: 'item-id',
-        tmdbId: 12345,
-        mediaType: 'movie',
-        title: 'Test Movie',
-        userId: mockUserId,
-      });
+      mockWatchlistRepository.save.mockImplementation((entity) =>
+        Promise.resolve({ id: 'item-id', ...entity }),
+      );
 
       const result = await service.create(mockUserId, createDto);
 
       expect(result.tmdbId).toBe(12345);
+      expect(result.mediaType).toBe('movie');
       expect(result.title).toBe('Test Movie');
-      expect(mockWatchlistRepository.save).toHaveBeenCalled();
+      expect(result.userId).toBe(mockUserId);
+      // every TMDb-shaped field on the DTO must round-trip through the mapper
+      expect(result.posterPath).toBe('/poster.jpg');
+      expect(result.voteAverage).toBe(7.5);
+      expect(result.runtime).toBe(120);
+      expect(mockWatchlistRepository.save).toHaveBeenCalledTimes(1);
+      expect(mockWatchlistRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          tmdbId: 12345,
+          mediaType: 'movie',
+          userId: mockUserId,
+        }),
+      );
     });
 
     it('should throw ConflictException if item already exists', async () => {
@@ -75,6 +85,7 @@ describe('WatchlistService', () => {
       await expect(service.create(mockUserId, createDto)).rejects.toThrow(
         'Item already in watchlist',
       );
+      expect(mockWatchlistRepository.save).not.toHaveBeenCalled();
     });
   });
 
@@ -98,7 +109,12 @@ describe('WatchlistService', () => {
 
   describe('findOneByTmdbId', () => {
     it('should return a watchlist item by tmdbId', async () => {
-      const mockItem = { id: '1', tmdbId: 12345, title: 'Test Movie', userId: mockUserId };
+      const mockItem = {
+        id: '1',
+        tmdbId: 12345,
+        title: 'Test Movie',
+        userId: mockUserId,
+      };
       mockWatchlistRepository.findOne.mockResolvedValue(mockItem);
 
       const result = await service.findOneByTmdbId(12345, mockUserId);
@@ -116,17 +132,26 @@ describe('WatchlistService', () => {
   });
 
   describe('remove', () => {
-    it('should remove a watchlist item', async () => {
-      const mockItem = { id: '1', tmdbId: 12345, title: 'Test Movie', userId: mockUserId };
-      mockWatchlistRepository.findOne.mockResolvedValue(mockItem);
+    it('should delete in a single query and not call findOne first', async () => {
+      mockWatchlistRepository.delete.mockResolvedValue({
+        affected: 1,
+        raw: [],
+      });
 
       await service.remove(12345, mockUserId);
 
-      expect(mockWatchlistRepository.remove).toHaveBeenCalledWith(mockItem);
+      expect(mockWatchlistRepository.delete).toHaveBeenCalledWith({
+        tmdbId: 12345,
+        userId: mockUserId,
+      });
+      expect(mockWatchlistRepository.findOne).not.toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException if item not found', async () => {
-      mockWatchlistRepository.findOne.mockResolvedValue(null);
+    it('should throw NotFoundException when delete affects 0 rows', async () => {
+      mockWatchlistRepository.delete.mockResolvedValue({
+        affected: 0,
+        raw: [],
+      });
 
       await expect(service.remove(99999, mockUserId)).rejects.toThrow(
         'Item not found in watchlist',
