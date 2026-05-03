@@ -87,7 +87,7 @@ Questo comando:
 - builda ed esegue il **backend NestJS** (`backend`, migrazioni TypeORM all’avvio, API sulla porta 8000 nella rete Docker)
 - builda il **frontend** Vite e lo serve con **Nginx** (`frontend`, porta **80** sull’host)
 
-Nginx inoltra le richieste `/api/*` al backend (vedi `nginx.conf` in questa cartella).
+Nginx inoltra le richieste `/api/*` al backend (template `nginx.conf.template`, variabile `BACKEND_UPSTREAM`, default `backend:8000` nel Dockerfile).
 
 ### URL di accesso
 
@@ -152,7 +152,8 @@ film-randomized/
 │   └── index.css
 ├── public/
 ├── Dockerfile                # Build Vite + Nginx (usato da docker-compose nella root del monorepo)
-├── nginx.conf
+├── nginx.conf.template       # Proxy /api → http://${BACKEND_UPSTREAM}/api/
+├── fly.toml                  # Deploy Fly.io (web)
 ├── vite.config.js
 ├── tailwind.config.js
 ├── package.json

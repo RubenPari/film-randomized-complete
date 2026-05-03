@@ -1,6 +1,5 @@
 # Frontend Dockerfile for Film Randomized React/Vite app
-# Multi-stage build for optimized image size
-# Optimized for Railway deployment
+# Multi-stage build — nginx serves static files and proxies /api to BACKEND_UPSTREAM
 
 # Build stage
 FROM node:20-alpine AS build
@@ -27,16 +26,15 @@ RUN npm run build
 # Production stage - use nginx for serving static files
 FROM nginx:alpine AS production
 
+# Default for Docker Compose / local stack; override on Fly via [env] or fly secrets
+ENV BACKEND_UPSTREAM=backend:8000
+
 # Copy built files from build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Template → /etc/nginx/conf.d/default.conf via nginx image entrypoint (envsubst)
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
-# Expose port (Railway will set PORT env variable)
-# Nginx listens on port 80 by default, but Railway may assign a different port
 EXPOSE 80
 
-# Start nginx
-# Railway sets PORT automatically, nginx will listen on 80
 CMD ["nginx", "-g", "daemon off;"]

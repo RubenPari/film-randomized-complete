@@ -1,0 +1,25 @@
+# Fly.io — static frontend + nginx proxy to API (Dockerfile in this directory)
+# Deploy:
+#   fly deploy --build-arg VITE_TMDB_API_KEY=<your_tmdb_key>
+# Match BACKEND_UPSTREAM to your API Fly app name (must match film-randomized-back/fly.toml app name + .internal:8000)
+
+app = 'film-randomized-web'
+primary_region = 'fra'
+
+[build]
+
+[env]
+  BACKEND_UPSTREAM = 'film-randomized-api.internal:8000'
+
+[http_service]
+  internal_port = 80
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
