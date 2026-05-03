@@ -1,0 +1,32 @@
+# Fly.io — NestJS API (Dockerfile in this directory)
+# Before first deploy:
+#   fly postgres create && fly postgres attach <pg-app> -a film-randomized-api
+#   fly secrets set JWT_SECRET=<32+ chars> FRONTEND_URL=https://<web-app>.fly.dev
+# Optional: MAILTRAP_TOKEN, MAILTRAP_SENDER_EMAIL
+# If not using DATABASE_URL, set DB_HOST DB_PORT DB_USERNAME DB_PASSWORD DB_DATABASE
+# Fly Postgres often needs: fly secrets set DB_SSL=true DB_SSL_REJECT_UNAUTHORIZED=false
+
+app = 'film-randomized-api'
+primary_region = 'fra'
+
+[build]
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[http_service.checks]]
+  grace_period = '15s'
+  interval = '30s'
+  method = 'GET'
+  timeout = '5s'
+  path = '/api/health'
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
