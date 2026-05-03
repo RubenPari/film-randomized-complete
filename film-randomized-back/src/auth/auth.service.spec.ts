@@ -119,12 +119,20 @@ describe('AuthService', () => {
       expect(result).not.toHaveProperty('password');
     });
 
-    it('should return null if user not found', async () => {
+    it('throws NotFoundException if user not found', async () => {
       mockUsersService.findById.mockResolvedValue(null);
 
-      const result = await service.getMe('invalid-id');
+      await expect(service.getMe('invalid-id')).rejects.toThrow('User not found');
+    });
 
-      expect(result).toBeNull();
+    it('never exposes the password field on the serialized response', async () => {
+      mockUsersService.findById.mockResolvedValue(mockUser);
+
+      const result = await service.getMe('test-user-id');
+
+      expect(result).not.toHaveProperty('password');
+      expect(result).not.toHaveProperty('resetToken');
+      expect(result).not.toHaveProperty('resetTokenExpiry');
     });
   });
 
