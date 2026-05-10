@@ -1,0 +1,161 @@
+{
+  "@@locale": "en",
+
+  "commonLoading": "Loading...",
+  "commonError": "Error",
+  "commonLogout": "Logout",
+  "commonWatchlist": "Watchlist",
+  "commonDiscovered": "Discovered",
+  "commonBack": "Back",
+  "commonHome": "Home",
+  "commonShowMore": "Show more",
+  "commonShowLess": "Show less",
+  "commonNoImage": "No image available",
+  "commonTrailer": "Trailer",
+  "commonRemove": "Remove",
+  "commonAll": "All",
+  "commonMovies": "Movies",
+  "commonTvShows": "TV Shows",
+
+  "homeTitle": "Random {type} Generator",
+  "@homeTitle": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "homeMovie": "Movie",
+  "homeTvShow": "TV Show",
+  "homeDescription": "Discover random movies and TV shows based on your preferences. Filter by genre, year, and rating to find your next favorite entertainment.",
+  "homeHideFilters": "Hide filters",
+  "homeShowFilters": "Show filters",
+  "homeGenerate": "Generate Random Content",
+  "homeGenerateMobile": "Generate a new {type}",
+  "@homeGenerateMobile": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "homeMovieMobile": "movie",
+  "homeTvMobile": "TV content",
+
+  "notFoundTitle": "Page not found",
+  "notFoundDescription": "The page you are looking for does not exist or has been moved.",
+  "notFoundGoHome": "Back to home",
+
+  "filtersMediaType": "Media Type",
+  "filtersRating": "Rating",
+  "filtersYear": "Release Year",
+  "filtersYearDescription": "Choose a year range to limit the search.",
+  "filtersVoteCount": "Minimum Number of Votes",
+  "filtersGenres": "Genres",
+  "filtersFrom": "From",
+  "filtersTo": "To",
+  "filtersAny": "Any",
+
+  "watchlistTitle": "My Watchlist",
+  "watchlistLoading": "Loading your watchlist...",
+  "watchlistErrorTitle": "Error Loading Watchlist",
+  "watchlistEmpty": "Your watchlist is empty",
+  "watchlistEmptyMovies": "No movies yet",
+  "watchlistEmptyTv": "No TV shows yet",
+  "watchlistEmptyDescription": "Start building your watchlist by adding movies and TV shows you want to watch.",
+  "watchlistEmptyFilterDescription": "You haven't added any {type} to your watchlist yet.",
+  "@watchlistEmptyFilterDescription": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "watchlistDiscoverContent": "Discover new content",
+  "watchlistTotalItems": "Total Items",
+  "watchlistItem": "item",
+  "watchlistItems": "items",
+  "watchlistInList": "in list",
+
+  "discoveredTitle": "Discovered titles",
+  "discoveredLoading": "Loading discovered titles...",
+  "discoveredEmpty": "No discovered titles yet",
+  "discoveredEmptyMovies": "No discovered movies yet",
+  "discoveredEmptyTv": "No discovered TV shows yet",
+  "discoveredEmptyDescription": "Titles you generate appear here and will not be suggested again until you remove them.",
+  "discoveredGenerateMore": "Generate random titles",
+  "discoveredTotalItems": "Total discovered",
+  "discoveredInList": "discovered",
+
+  "mediaAdding": "Adding...",
+  "mediaRemoving": "Removing...",
+  "mediaSave": "Add to Watchlist",
+  "mediaSaved": "In Watchlist",
+  "mediaRemove": "Remove from watchlist",
+  "mediaOnTmdb": "View {title} on TMDB",
+  "@mediaOnTmdb": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+
+  "authWelcome": "Welcome Back",
+  "authSignInToContinue": "Sign in to continue your journey",
+  "authUsername": "Username",
+  "authPassword": "Password",
+  "authForgotPassword": "Forgot password?",
+  "authSignIn": "Sign In",
+  "authSigningIn": "Signing in...",
+  "authNoAccount": "Don't have an account?",
+  "authCreateAccount": "Create one now",
+  "authUsernamePlaceholder": "Enter your username",
+  "authPasswordPlaceholder": "Enter your password",
+  "authLoginError": "Error during login",
+  "authEmail": "Email",
+  "authEmailPlaceholder": "Enter your email",
+  "authConfirmPassword": "Confirm Password",
+  "authConfirmPasswordPlaceholder": "Confirm your password",
+  "authRegister": "Create Account",
+  "authRegistering": "Creating account...",
+  "authAlreadyHaveAccount": "Already have an account?",
+  "authSignInInstead": "Sign in instead",
+  "authForgotPasswordTitle": "Forgot your password?",
+  "authForgotPasswordDescription": "Enter your email and we'll send you a link to reset your password.",
+  "authSendResetLink": "Send Reset Link",
+  "authSending": "Sending...",
+  "authForgotPasswordSuccess": "If an account with that email exists, a password reset link has been sent.",
+  "authBackToLogin": "Back to login",
+  "authResetPasswordTitle": "Reset your password",
+  "authNewPassword": "New Password",
+  "authNewPasswordPlaceholder": "Enter your new password",
+  "authResetPassword": "Reset Password",
+  "authResetting": "Resetting...",
+  "authResetPasswordSuccess": "Password has been reset successfully.",
+  "authChangePasswordTitle": "Change Password",
+  "authCurrentPassword": "Current Password",
+  "authCurrentPasswordPlaceholder": "Enter your current password",
+  "authChangePassword": "Change Password",
+  "authChanging": "Updating...",
+  "authChangePasswordSuccess": "Password changed successfully.",
+  "authPasswordMinLength": "Password must be at least {min} characters",
+  "@authPasswordMinLength": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "authPasswordsDoNotMatch": "Passwords do not match",
+  "authRegisterTitle": "Join Us",
+  "authRegisterDescription": "Create your account and start discovering",
+  "authProfile": "Profile",
+  "authUsernameRequired": "Username is required",
+  "authEmailRequired": "Email is required",
+  "authInvalidEmail": "Enter a valid email",
+  "authPasswordRequired": "Password is required",
+  "authResetTokenError": "No reset token found. Please request a new password reset link.",
+  "authInvalidLink": "Invalid Link",
+  "authRequired": "Required"
+}
