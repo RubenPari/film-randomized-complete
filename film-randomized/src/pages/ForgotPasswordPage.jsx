@@ -1,8 +1,21 @@
+/**
+ * Forgot password page component.
+ * Handles password reset email requests.
+ */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
+import LanguageSwitcher from '../shared/components/LanguageSwitcher.jsx';
 
+/**
+ * Forgot password page component.
+ * Provides a form for requesting a password reset email.
+ *
+ * @returns {JSX.Element} Forgot password page with reset form
+ */
 function ForgotPasswordPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -17,12 +30,12 @@ function ForgotPasswordPage() {
 
     try {
       await forgotPassword(email);
-      setSuccess('If that email exists, a password reset link has been sent.');
+      setSuccess(t('forgotPassword.successMessage'));
     } catch (err) {
       if (import.meta.env.DEV) {
         console.error('Forgot password component error:', err);
       }
-      setError(err.message || 'An error occurred while requesting password reset.');
+      setError(err.message || t('forgotPassword.errorMessage'));
     } finally {
       setIsLoading(false);
     }
@@ -30,12 +43,15 @@ function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md mb-4">
+        <LanguageSwitcher />
+      </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-          Forgot your password?
+          {t('forgotPassword.title')}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">
-          Enter your email and we'll send you a link to reset your password.
+          {t('forgotPassword.description')}
         </p>
       </div>
 
@@ -55,7 +71,7 @@ function ForgotPasswordPage() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                Email address
+                {t('forgotPassword.emailLabel')}
               </label>
               <div className="mt-1">
                 <input
@@ -77,14 +93,14 @@ function ForgotPasswordPage() {
                 disabled={isLoading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:opacity-50"
               >
-                {isLoading ? 'Sending...' : 'Send Reset Link'}
+                {isLoading ? t('forgotPassword.sending') : t('forgotPassword.sendResetLink')}
               </button>
             </div>
           </form>
 
           <div className="mt-6 text-center">
             <Link to="/login" className="font-medium text-cyan-400 hover:text-cyan-300">
-              Back to login
+              {t('forgotPassword.backToLogin')}
             </Link>
           </div>
         </div>

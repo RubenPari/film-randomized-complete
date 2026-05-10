@@ -91,5 +91,34 @@
     "usernamePlaceholder": "Inserisci il tuo nome utente",
     "passwordPlaceholder": "Inserisci la tua password",
     "loginError": "Errore durante l'accesso"
+  },
+  "forgotPassword": {
+    "title": "Password dimenticata?",
+    "description": "Inserisci la tua email e ti invieremo un link per reimpostare la password.",
+    "emailLabel": "Indirizzo email",
+    "sending": "Invio in corso...",
+    "sendResetLink": "Invia link di ripristino",
+    "successMessage": "Se l'email esiste, è stato inviato un link per reimpostare la password.",
+    "errorMessage": "Si è verificato un errore durante la richiesta di reimpostazione della password.",
+    "backToLogin": "Torna al login"
+  },
+  "register": {
+    "title": "Unisciti a noi",
+    "description": "Crea il tuo account e inizia a scoprire",
+    "username": "Nome utente",
+    "usernamePlaceholder": "Scegli un nome utente",
+    "email": "Email",
+    "emailPlaceholder": "tua.email@esempio.com",
+    "password": "Password",
+    "passwordPlaceholder": "Minimo 6 caratteri",
+    "confirmPassword": "Conferma Password",
+    "confirmPasswordPlaceholder": "Ripeti la tua password",
+    "passwordTooShort": "La password deve contenere almeno 6 caratteri",
+    "passwordsDoNotMatch": "Le password non corrispondono",
+    "registrationError": "Errore durante la registrazione",
+    "creatingAccount": "Creazione account...",
+    "createAccount": "Crea Account",
+    "hasAccount": "Hai già un account?",
+    "signInInstead": "Accedi invece"
   }
 }

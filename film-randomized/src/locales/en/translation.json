@@ -91,5 +91,34 @@
     "usernamePlaceholder": "Enter your username",
     "passwordPlaceholder": "Enter your password",
     "loginError": "Error during login"
+  },
+  "forgotPassword": {
+    "title": "Forgot your password?",
+    "description": "Enter your email and we'll send you a link to reset your password.",
+    "emailLabel": "Email address",
+    "sending": "Sending...",
+    "sendResetLink": "Send Reset Link",
+    "successMessage": "If that email exists, a password reset link has been sent.",
+    "errorMessage": "An error occurred while requesting password reset.",
+    "backToLogin": "Back to login"
+  },
+  "register": {
+    "title": "Join Us",
+    "description": "Create your account and start discovering",
+    "username": "Username",
+    "usernamePlaceholder": "Choose a username",
+    "email": "Email",
+    "emailPlaceholder": "your.email@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Minimum 6 characters",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Repeat your password",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "registrationError": "Error during registration",
+    "creatingAccount": "Creating account...",
+    "createAccount": "Create Account",
+    "hasAccount": "Already have an account?",
+    "signInInstead": "Sign in instead"
   }
 }
