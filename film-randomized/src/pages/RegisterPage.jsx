@@ -4,15 +4,18 @@
  */
 import React, { useActionState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
+import LanguageSwitcher from '../shared/components/LanguageSwitcher.jsx';
 
 /**
  * Register page component.
  * Provides a form for user registration using React 19 useActionState.
- * 
+ *
  * @returns {JSX.Element} Register page with registration form
  */
 function RegisterPage() {
+  const { t } = useTranslation();
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -23,21 +26,21 @@ function RegisterPage() {
       const email = formData.get('email');
       const password = formData.get('password');
       const confirmPassword = formData.get('confirmPassword');
-      
+
       if (password.length < 6) {
-        return 'Password must be at least 6 characters';
+        return t('register.passwordTooShort');
       }
 
       if (password !== confirmPassword) {
-        return 'Passwords do not match';
+        return t('register.passwordsDoNotMatch');
       }
-      
+
       try {
         await register(username, email, password);
         navigate('/');
         return null;
       } catch (err) {
-        return err.message || 'Error during registration';
+        return err.message || t('register.registrationError');
       }
     },
     null
@@ -47,6 +50,9 @@ function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full animate-fade-in">
         <div className="glass-effect rounded-3xl p-8 shadow-2xl">
+          <div className="text-center mb-6">
+            <LanguageSwitcher />
+          </div>
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 mb-4 shadow-xl shadow-cyan-500/20">
               <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -54,9 +60,9 @@ function RegisterPage() {
               </svg>
             </div>
             <h1 className="text-4xl font-extrabold bg-gradient-to-r from-cyan-300 via-blue-400 to-cyan-300 bg-clip-text text-transparent mb-2">
-              Join Us
+              {t('register.title')}
             </h1>
-            <p className="text-slate-400 text-lg">Create your account and start discovering</p>
+            <p className="text-slate-400 text-lg">{t('register.description')}</p>
           </div>
 
           {error && (
@@ -71,7 +77,7 @@ function RegisterPage() {
           <form action={submitAction} className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-bold text-slate-300 mb-2">
-                Username
+                {t('register.username')}
               </label>
               <input
                 id="username"
@@ -79,14 +85,14 @@ function RegisterPage() {
                 type="text"
                 required
                 className="w-full px-4 py-3.5 bg-slate-700/30 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
-                placeholder="Choose a username"
+                placeholder={t('register.usernamePlaceholder')}
                 disabled={isPending}
               />
             </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-bold text-slate-300 mb-2">
-                Email
+                {t('register.email')}
               </label>
               <input
                 id="email"
@@ -94,14 +100,14 @@ function RegisterPage() {
                 type="email"
                 required
                 className="w-full px-4 py-3.5 bg-slate-700/30 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
-                placeholder="your.email@example.com"
+                placeholder={t('register.emailPlaceholder')}
                 disabled={isPending}
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-bold text-slate-300 mb-2">
-                Password
+                {t('register.password')}
               </label>
               <input
                 id="password"
@@ -110,14 +116,14 @@ function RegisterPage() {
                 required
                 minLength={6}
                 className="w-full px-4 py-3.5 bg-slate-700/30 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
-                placeholder="Minimum 6 characters"
+                placeholder={t('register.passwordPlaceholder')}
                 disabled={isPending}
               />
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-bold text-slate-300 mb-2">
-                Confirm Password
+                {t('register.confirmPassword')}
               </label>
               <input
                 id="confirmPassword"
@@ -125,7 +131,7 @@ function RegisterPage() {
                 type="password"
                 required
                 className="w-full px-4 py-3.5 bg-slate-700/30 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 backdrop-blur-sm"
-                placeholder="Repeat your password"
+                placeholder={t('register.confirmPasswordPlaceholder')}
                 disabled={isPending}
               />
             </div>
@@ -138,11 +144,11 @@ function RegisterPage() {
               {isPending ? (
                 <div className="flex items-center justify-center gap-3">
                   <div className="loading-spinner w-5 h-5"></div>
-                  <span>Creating account...</span>
+                  <span>{t('register.creatingAccount')}</span>
                 </div>
               ) : (
                 <div className="flex items-center justify-center gap-3">
-                  <span>Create Account</span>
+                  <span>{t('register.createAccount')}</span>
                   <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
@@ -153,9 +159,9 @@ function RegisterPage() {
 
           <div className="mt-8 text-center">
             <p className="text-slate-400">
-              Already have an account?{' '}
+              {t('register.hasAccount')}{' '}
               <Link to="/login" className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors">
-                Sign in instead
+                {t('register.signInInstead')}
               </Link>
             </p>
           </div>
