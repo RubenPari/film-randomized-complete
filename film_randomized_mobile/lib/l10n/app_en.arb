@@ -157,5 +157,13 @@
   "authPasswordRequired": "Password is required",
   "authResetTokenError": "No reset token found. Please request a new password reset link.",
   "authInvalidLink": "Invalid Link",
-  "authRequired": "Required"
+  "authRequired": "Required",
+
+  "commonUnknown": "Unknown",
+  "commonProfile": "Profile",
+  "commonItem": "item",
+  "commonItems": "items",
+  "commonInList": "in list",
+  "homeLoading": "Finding something great...",
+  "mediaImageUnavailable": "Image unavailable"
 }

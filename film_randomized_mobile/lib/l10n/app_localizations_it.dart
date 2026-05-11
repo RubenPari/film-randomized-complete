@@ -373,4 +373,25 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get authRequired => 'Obbligatorio';
+
+  @override
+  String get commonUnknown => 'Sconosciuto';
+
+  @override
+  String get commonProfile => 'Profilo';
+
+  @override
+  String get commonItem => 'elemento';
+
+  @override
+  String get commonItems => 'elementi';
+
+  @override
+  String get commonInList => 'in elenco';
+
+  @override
+  String get homeLoading => 'Ricerca in corso...';
+
+  @override
+  String get mediaImageUnavailable => 'Immagine non disponibile';
 }

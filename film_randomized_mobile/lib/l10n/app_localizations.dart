@@ -787,6 +787,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Required'**
   String get authRequired;
+
+  /// No description provided for @commonUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get commonUnknown;
+
+  /// No description provided for @commonProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get commonProfile;
+
+  /// No description provided for @commonItem.
+  ///
+  /// In en, this message translates to:
+  /// **'item'**
+  String get commonItem;
+
+  /// No description provided for @commonItems.
+  ///
+  /// In en, this message translates to:
+  /// **'items'**
+  String get commonItems;
+
+  /// No description provided for @commonInList.
+  ///
+  /// In en, this message translates to:
+  /// **'in list'**
+  String get commonInList;
+
+  /// No description provided for @homeLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding something great...'**
+  String get homeLoading;
+
+  /// No description provided for @mediaImageUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Image unavailable'**
+  String get mediaImageUnavailable;
 }
 
 class _AppLocalizationsDelegate

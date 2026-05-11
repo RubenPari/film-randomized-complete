@@ -122,5 +122,13 @@
   "authPasswordRequired": "La password è obbligatoria",
   "authResetTokenError": "Nessun token di ripristino trovato. Richiedi un nuovo link per reimpostare la password.",
   "authInvalidLink": "Link non valido",
-  "authRequired": "Obbligatorio"
+  "authRequired": "Obbligatorio",
+
+  "commonUnknown": "Sconosciuto",
+  "commonProfile": "Profilo",
+  "commonItem": "elemento",
+  "commonItems": "elementi",
+  "commonInList": "in elenco",
+  "homeLoading": "Ricerca in corso...",
+  "mediaImageUnavailable": "Immagine non disponibile"
 }

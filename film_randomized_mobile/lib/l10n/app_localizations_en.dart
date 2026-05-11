@@ -372,4 +372,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authRequired => 'Required';
+
+  @override
+  String get commonUnknown => 'Unknown';
+
+  @override
+  String get commonProfile => 'Profile';
+
+  @override
+  String get commonItem => 'item';
+
+  @override
+  String get commonItems => 'items';
+
+  @override
+  String get commonInList => 'in list';
+
+  @override
+  String get homeLoading => 'Finding something great...';
+
+  @override
+  String get mediaImageUnavailable => 'Image unavailable';
 }
