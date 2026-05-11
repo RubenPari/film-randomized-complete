@@ -31,7 +31,7 @@ export class ErrorBoundary extends React.Component {
    * @returns {Object} State update object
    */
   static getDerivedStateFromError(error) {
-    return { hasError: true };
+    return { hasError: true, error };
   }
 
   /**
@@ -84,7 +84,7 @@ export class ErrorBoundary extends React.Component {
             >
               Reload Page
             </button>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <details className="mt-6 text-left">
                 <summary className="text-sm text-gray-500 cursor-pointer mb-2">
                   Error Details (Development Only)

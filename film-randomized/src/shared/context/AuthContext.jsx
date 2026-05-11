@@ -58,15 +58,11 @@ export function AuthProvider({ children }) {
    * @throws {Error} If login fails
    */
   const login = async (username, password) => {
-    try {
-      const response = await authApi.login(username, password);
-      setToken(response.token);
-      setUser(response.user);
-      localStorage.setItem('token', response.token);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await authApi.login(username, password);
+    setToken(response.token);
+    setUser(response.user);
+    localStorage.setItem('token', response.token);
+    return response;
   };
 
   /**
@@ -79,15 +75,11 @@ export function AuthProvider({ children }) {
    * @throws {Error} If registration fails
    */
   const register = async (username, email, password) => {
-    try {
-      const response = await authApi.register(username, email, password);
-      setToken(response.token);
-      setUser(response.user);
-      localStorage.setItem('token', response.token);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await authApi.register(username, email, password);
+    setToken(response.token);
+    setUser(response.user);
+    localStorage.setItem('token', response.token);
+    return response;
   };
 
   /**
