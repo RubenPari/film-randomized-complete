@@ -2,6 +2,12 @@ node_modules
 dist
 coverage
 .git
+.vscode
+.cursor
 *.md
+*.log
 .env
 .env.*
+.DS_Store
+*.swp
+*.swo
