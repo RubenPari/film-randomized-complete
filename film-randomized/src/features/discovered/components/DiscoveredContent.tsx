@@ -1,6 +1,8 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import CollectionContent from '../../../shared/components/CollectionContent.jsx';
 import { removeDiscovered } from '../../../shared/services/discoveredApi.js';
+import type { MediaItem, MediaType } from '../../../shared/types/index.js';
+import type { NormalizableItem } from '../../../shared/utils/normalizeMediaItem.js';
 
 const DISCOVERED_COPY = {
   totalItemsKey: 'discovered.totalItems',
@@ -17,16 +19,16 @@ const DISCOVERED_COPY = {
   ctaLabelKey: 'discovered.generateMore',
 };
 
-/**
- * @param {Object} props
- * @param {Promise<Array<Object>>} props.discoveredPromise
- * @param {'all'|'movies'|'tv'} props.filter
- * @param {string} props.token
- */
-function DiscoveredContent({ discoveredPromise, filter, token }) {
+interface DiscoveredContentProps {
+  discoveredPromise: Promise<MediaItem[]>;
+  filter: 'all' | 'movies' | 'tv';
+  token: string | null;
+}
+
+function DiscoveredContent({ discoveredPromise, filter, token }: DiscoveredContentProps) {
   const onRemove = useCallback(
-    (item, authToken) =>
-      removeDiscovered(item.media_type, item.tmdb_id, authToken),
+    (item: NormalizableItem, authToken: string) =>
+      removeDiscovered(item.media_type as MediaType, item.tmdb_id as number, authToken),
     [],
   );
 

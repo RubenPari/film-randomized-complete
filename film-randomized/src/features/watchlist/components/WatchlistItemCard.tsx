@@ -1,17 +1,18 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { IMAGE_BASE_URL } from '../../../shared/constants/api.js';
+import type { MediaItem } from '../../../shared/types/index.js';
+
+interface WatchlistItemCardProps {
+  item: MediaItem;
+  onRemove?: (tmdbId: number, mediaType: 'movie' | 'tv') => void;
+}
 
 /**
  * Card used by every collection grid (watchlist, discovered). Assumes the
  * caller has already normalised the row into snake_case via
  * `normalizeMediaItem` — no camel/snake fallback logic here.
- *
- * @param {Object} props
- * @param {Object} props.item - Normalised media row (tmdb_id, media_type, poster_path, ...).
- * @param {(tmdbId: number, mediaType: 'movie'|'tv') => void} [props.onRemove]
  */
-function WatchlistItemCard({ item, onRemove }) {
+function WatchlistItemCard({ item, onRemove }: WatchlistItemCardProps) {
   const { t } = useTranslation();
 
   const genres = parseGenres(item.genres);
@@ -103,11 +104,11 @@ function WatchlistItemCard({ item, onRemove }) {
  * The backend stores `genres` as a JSON string (legacy column shape). Parse it
  * defensively so malformed rows do not crash the grid.
  */
-function parseGenres(raw) {
+function parseGenres(raw: unknown): { id: number; name: string }[] {
   if (!raw) return [];
-  if (Array.isArray(raw)) return raw;
+  if (Array.isArray(raw)) return raw as { id: number; name: string }[];
   try {
-    const parsed = JSON.parse(raw);
+    const parsed = JSON.parse(raw as string);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];

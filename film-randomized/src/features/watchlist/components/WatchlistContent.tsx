@@ -1,6 +1,8 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import CollectionContent from '../../../shared/components/CollectionContent.jsx';
 import { removeFromWatchlist } from '../../../shared/services/watchlistApi.js';
+import type { MediaItem } from '../../../shared/types/index.js';
+import type { NormalizableItem } from '../../../shared/utils/normalizeMediaItem.js';
 
 const WATCHLIST_COPY = {
   totalItemsKey: 'watchlist.totalItems',
@@ -17,15 +19,15 @@ const WATCHLIST_COPY = {
   ctaLabelKey: 'watchlist.discoverContent',
 };
 
-/**
- * @param {Object} props
- * @param {Promise<Array<Object>>} props.watchlistPromise
- * @param {'all'|'movies'|'tv'} props.filter
- * @param {string} props.token
- */
-function WatchlistContent({ watchlistPromise, filter, token }) {
+interface WatchlistContentProps {
+  watchlistPromise: Promise<MediaItem[]>;
+  filter: 'all' | 'movies' | 'tv';
+  token: string | null;
+}
+
+function WatchlistContent({ watchlistPromise, filter, token }: WatchlistContentProps) {
   const onRemove = useCallback(
-    (item, authToken) => removeFromWatchlist(item.tmdb_id, authToken),
+    (item: NormalizableItem, authToken: string) => removeFromWatchlist(item.tmdb_id as number, authToken),
     [],
   );
 
