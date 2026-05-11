@@ -40,10 +40,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const token = this.jwtService.sign({
-      sub: user.id,
-      username: user.username,
-    });
+    const token = this.jwtService.sign(
+      { sub: user.id, username: user.username },
+      { expiresIn: '7d' },
+    );
 
     return toLoginResponse(token, user);
   }
