@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/brand_gradients.dart';
@@ -52,22 +53,24 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+
     if (widget.token == null) {
       return AuthFormLayout(
         icon: Icons.error_outline,
-        title: 'Invalid Link',
-        error: 'No reset token found. Please request a new password reset link.',
+        title: t.authInvalidLink,
+        error: t.authResetTokenError,
         child: TextButton(
           onPressed: () => context.go('/login'),
-          child: const Text('Back to login',
-              style: TextStyle(color: AppTheme.brandAccent)),
+          child: Text(t.authBackToLogin,
+              style: const TextStyle(color: AppTheme.brandAccent)),
         ),
       );
     }
 
     return AuthFormLayout(
       icon: Icons.password_rounded,
-      title: 'Reset your password',
+      title: t.authResetPasswordTitle,
       error: _error,
       child: _success
           ? Container(
@@ -77,14 +80,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFF22c55e)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.check_circle_outline, color: Color(0xFF22c55e)),
-                  SizedBox(width: 8),
+                  const Icon(Icons.check_circle_outline, color: Color(0xFF22c55e)),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Password has been reset successfully.',
-                      style: TextStyle(color: Color(0xFF86efac)),
+                      t.authResetPasswordSuccess,
+                      style: const TextStyle(color: Color(0xFF86efac)),
                     ),
                   ),
                 ],
@@ -99,18 +102,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     enabled: !_isLoading,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
-                      labelText: 'New Password',
-                      hintText: 'Enter your new password',
+                      labelText: t.authNewPassword,
+                      hintText: t.authNewPasswordPlaceholder,
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(_obscurePassword
                             ? Icons.visibility_off
                             : Icons.visibility),
-                        onPressed: () => setState(
-                            () => _obscurePassword = !_obscurePassword),
+                        onPressed: () =>
+                            setState(() => _obscurePassword = !_obscurePassword),
                       ),
                     ),
-                    validator: (v) => validatePassword(v ?? ''),
+                    validator: (v) =>
+                        translateValidationError(validatePassword(v ?? ''), t),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -118,8 +122,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     enabled: !_isLoading,
                     obscureText: _obscureConfirm,
                     decoration: InputDecoration(
-                      labelText: 'Confirm Password',
-                      hintText: 'Confirm your new password',
+                      labelText: t.authConfirmPassword,
+                      hintText: t.authConfirmPasswordPlaceholder,
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(_obscureConfirm
@@ -129,8 +133,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             setState(() => _obscureConfirm = !_obscureConfirm),
                       ),
                     ),
-                    validator: (v) => validatePasswordMatch(
-                        _passwordController.text, v ?? ''),
+                    validator: (v) => translateValidationError(
+                        validatePasswordMatch(
+                            _passwordController.text, v ?? ''),
+                        t),
                   ),
                   const SizedBox(height: 24),
                   Container(
@@ -155,8 +161,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               height: 20,
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white))
-                          : const Text('Reset Password',
-                              style: TextStyle(
+                          : Text(t.authResetPassword,
+                              style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),

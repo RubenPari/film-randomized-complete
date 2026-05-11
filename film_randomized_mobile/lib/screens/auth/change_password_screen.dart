@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/auth_provider.dart';
 import '../../theme/brand_gradients.dart';
@@ -56,10 +57,11 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider).valueOrNull;
+    final t = AppLocalizations.of(context)!;
 
     return AuthFormLayout(
       icon: Icons.key_rounded,
-      title: 'Change Password',
+      title: t.authChangePasswordTitle,
       subtitle: auth?.user?.email ?? '',
       error: _error,
       child: _success
@@ -70,14 +72,14 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFF22c55e)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.check_circle_outline, color: Color(0xFF22c55e)),
-                  SizedBox(width: 8),
+                  const Icon(Icons.check_circle_outline, color: Color(0xFF22c55e)),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Password changed successfully.',
-                      style: TextStyle(color: Color(0xFF86efac)),
+                      t.authChangePasswordSuccess,
+                      style: const TextStyle(color: Color(0xFF86efac)),
                     ),
                   ),
                 ],
@@ -91,38 +93,39 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                     controller: _currentController,
                     enabled: !_isLoading,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Current Password',
-                      hintText: 'Enter your current password',
-                      prefixIcon: Icon(Icons.lock_outline),
+                    decoration: InputDecoration(
+                      labelText: t.authCurrentPassword,
+                      hintText: t.authCurrentPasswordPlaceholder,
+                      prefixIcon: const Icon(Icons.lock_outline),
                     ),
                     validator: (v) =>
-                        v == null || v.isEmpty ? 'Required' : null,
+                        v == null || v.isEmpty ? t.authRequired : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _newController,
                     enabled: !_isLoading,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'New Password',
-                      hintText: 'Enter your new password',
-                      prefixIcon: Icon(Icons.lock_outline),
+                    decoration: InputDecoration(
+                      labelText: t.authNewPassword,
+                      hintText: t.authNewPasswordPlaceholder,
+                      prefixIcon: const Icon(Icons.lock_outline),
                     ),
-                    validator: (v) => validatePassword(v ?? ''),
+                    validator: (v) =>
+                        translateValidationError(validatePassword(v ?? ''), t),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _confirmController,
                     enabled: !_isLoading,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Confirm Password',
-                      hintText: 'Confirm your new password',
-                      prefixIcon: Icon(Icons.lock_outline),
+                    decoration: InputDecoration(
+                      labelText: t.authConfirmPassword,
+                      hintText: t.authConfirmPasswordPlaceholder,
+                      prefixIcon: const Icon(Icons.lock_outline),
                     ),
-                    validator: (v) => validatePasswordMatch(
-                        _newController.text, v ?? ''),
+                    validator: (v) => translateValidationError(
+                        validatePasswordMatch(_newController.text, v ?? ''), t),
                   ),
                   const SizedBox(height: 24),
                   Container(
@@ -147,8 +150,8 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                               height: 20,
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white))
-                          : const Text('Change Password',
-                              style: TextStyle(
+                          : Text(t.authChangePassword,
+                              style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),

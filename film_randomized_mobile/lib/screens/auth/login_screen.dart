@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/brand_gradients.dart';
+import '../../utils/password_validation.dart';
 import 'auth_form_layout.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -42,29 +44,42 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final auth = ref.watch(authProvider).valueOrNull;
     final isLoading = auth?.isLoading ?? false;
+    final t = AppLocalizations.of(context)!;
 
     return AuthFormLayout(
       icon: Icons.login_rounded,
-      title: 'Welcome Back',
-      subtitle: 'Sign in to continue your journey',
+      title: t.authWelcome,
+      subtitle: t.authSignInToContinue,
       error: auth?.error,
-      footer: TextButton(
-        onPressed: () => context.go('/register'),
-        child: RichText(
-          text: const TextSpan(
-            style: TextStyle(color: AppTheme.textSecondary),
-            children: [
-              TextSpan(text: "Don't have an account? "),
-              TextSpan(
-                text: 'Create one now',
-                style: TextStyle(
-                  color: AppTheme.brandAccent,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+      footer: Column(
+        children: [
+          TextButton(
+            onPressed: () => context.go('/forgot-password'),
+            child: Text(
+              t.authForgotPassword,
+              style: const TextStyle(color: AppTheme.brandAccent),
+            ),
           ),
-        ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () => context.go('/register'),
+            child: RichText(
+              text: TextSpan(
+                style: const TextStyle(color: AppTheme.textSecondary),
+                children: [
+                  TextSpan(text: '${t.authNoAccount} '),
+                  TextSpan(
+                    text: t.authCreateAccount,
+                    style: const TextStyle(
+                      color: AppTheme.brandAccent,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       child: Form(
         key: _formKey,
@@ -73,13 +88,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             TextFormField(
               controller: _usernameController,
               enabled: !isLoading,
-              decoration: const InputDecoration(
-                labelText: 'Username',
-                hintText: 'Enter your username',
-                prefixIcon: Icon(Icons.person_outline),
+              decoration: InputDecoration(
+                labelText: t.authUsername,
+                hintText: t.authUsernamePlaceholder,
+                prefixIcon: const Icon(Icons.person_outline),
               ),
               validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Username is required' : null,
+                  v == null || v.trim().isEmpty ? t.authUsernameRequired : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
@@ -87,8 +102,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               enabled: !isLoading,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                labelText: 'Password',
-                hintText: 'Enter your password',
+                labelText: t.authPassword,
+                hintText: t.authPasswordPlaceholder,
                 prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -99,7 +114,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
               validator: (v) =>
-                  v == null || v.isEmpty ? 'Password is required' : null,
+                  v == null || v.isEmpty ? t.authPasswordRequired : null,
             ),
             const SizedBox(height: 24),
             Container(
@@ -134,9 +149,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text(
-                        'Sign In',
-                        style: TextStyle(
+                    : Text(
+                        t.authSignIn,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
