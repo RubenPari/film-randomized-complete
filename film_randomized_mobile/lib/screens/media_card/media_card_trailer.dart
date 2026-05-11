@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../theme/app_theme.dart';
 
@@ -33,6 +34,7 @@ class _MediaCardTrailerState extends State<MediaCardTrailer> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,7 +44,7 @@ class _MediaCardTrailerState extends State<MediaCardTrailer> {
             const Icon(Icons.play_circle_outline,
                 size: 18, color: AppTheme.textBrand),
             const SizedBox(width: 6),
-            Text('Trailer',
+            Text(t.commonTrailer,
                 style: TextStyle(
                     color: AppTheme.textBrand,
                     fontWeight: FontWeight.bold,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../config/constants.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/brand_gradients.dart';
@@ -38,7 +39,8 @@ class _MediaCardInfoState extends State<MediaCardInfo> {
   @override
   Widget build(BuildContext context) {
     final media = widget.media;
-    final title = media['title'] ?? media['name'] ?? 'Unknown';
+    final t = AppLocalizations.of(context)!;
+    final title = media['title'] ?? media['name'] ?? t.commonUnknown;
     final overview = media['overview'] as String? ?? '';
     final voteAverage = (media['vote_average'] as num?)?.toDouble() ?? 0.0;
     final releaseDate = media['release_date'] as String? ??
@@ -145,7 +147,7 @@ class _MediaCardInfoState extends State<MediaCardInfo> {
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                   child: Text(
-                    _showFullOverview ? 'Show less' : 'Show more',
+                    _showFullOverview ? t.commonShowLess : t.commonShowMore,
                     style: const TextStyle(
                         color: AppTheme.brandAccent, fontSize: 13),
                   ),

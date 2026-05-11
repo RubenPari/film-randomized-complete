@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/media_type.dart';
 import '../../providers/trailer_provider.dart';
-import '../../theme/app_theme.dart';
-import '../../theme/brand_gradients.dart';
 import '../../theme/glass_effects.dart';
 import 'media_card_poster.dart';
 import 'media_card_info.dart';
@@ -42,7 +39,11 @@ class MediaCard extends ConsumerWidget {
                   // Poster (40% width)
                   SizedBox(
                     width: 120,
-                    child: MediaCardPoster(posterPath: posterPath),
+                    child: MediaCardPoster(
+                      posterPath: posterPath,
+                      tmdbId: mediaId,
+                      mediaType: mediaTypeStr,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   // Info (60% width)
