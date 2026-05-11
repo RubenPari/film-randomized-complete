@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../providers/filter_provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/brand_gradients.dart';
+import '../../models/media_type.dart';
 
-class HomeHero extends StatelessWidget {
+class HomeHero extends ConsumerWidget {
   const HomeHero({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final filter = ref.watch(filterProvider);
+    final t = AppLocalizations.of(context)!;
+    final typeLabel = filter.mediaType == MediaType.movie
+        ? t.homeMovie
+        : t.homeTvShow;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Column(
@@ -14,9 +24,9 @@ class HomeHero extends StatelessWidget {
           ShaderMask(
             shaderCallback: (bounds) =>
                 BrandGradients.titleText.createShader(bounds),
-            child: const Text(
-              'Random Movie/TV Generator',
-              style: TextStyle(
+            child: Text(
+              t.homeTitle(typeLabel),
+              style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
@@ -25,9 +35,9 @@ class HomeHero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Discover random movies and TV shows based on your preferences. Filter by genre, year, and rating to find your next favorite entertainment.',
-            style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+          Text(
+            t.homeDescription,
+            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
             textAlign: TextAlign.center,
           ),
         ],

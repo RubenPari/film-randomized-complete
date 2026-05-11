@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/media_type.dart';
 import '../../providers/filter_provider.dart';
@@ -14,7 +15,10 @@ class GenerateButton extends ConsumerWidget {
     final filter = ref.watch(filterProvider);
     final generator = ref.watch(mediaGeneratorProvider);
     final isLoading = generator.isLoading;
-    final typeLabel = filter.mediaType == MediaType.movie ? 'movie' : 'TV content';
+    final t = AppLocalizations.of(context)!;
+    final typeLabel = filter.mediaType == MediaType.movie
+        ? t.homeMovieMobile
+        : t.homeTvMobile;
 
     return Container(
       width: double.infinity,
@@ -43,19 +47,19 @@ class GenerateButton extends ConsumerWidget {
           ),
         ),
         child: isLoading
-            ? const Row(
+            ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: Colors.white),
                   ),
-                  SizedBox(width: 12),
-                  Text('Loading...',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(width: 12),
+                  Text(t.commonLoading,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold)),
                 ],
               )
             : Row(
@@ -63,7 +67,7 @@ class GenerateButton extends ConsumerWidget {
                 children: [
                   const Icon(Icons.casino, size: 22),
                   const SizedBox(width: 10),
-                  Text('Generate a new $typeLabel',
+                  Text(t.homeGenerateMobile(typeLabel),
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.bold)),
                 ],
