@@ -10,8 +10,13 @@ async function bootstrap() {
 
   app.use(helmet());
   app.setGlobalPrefix('api');
+  const frontendUrl = config.get<string>('FRONTEND_URL');
+  const corsOrigins = frontendUrl
+    ? frontendUrl.split(',').map((u) => u.trim()).filter(Boolean)
+    : ['http://localhost:5173'];
+
   app.enableCors({
-    origin: config.get<string>('FRONTEND_URL'),
+    origin: corsOrigins,
     credentials: true,
   });
   app.useGlobalPipes(
@@ -24,6 +29,7 @@ async function bootstrap() {
   );
 
   const port = config.get<number>('PORT', 8000);
+  app.enableShutdownHooks();
   await app.listen(port);
 }
 bootstrap();
