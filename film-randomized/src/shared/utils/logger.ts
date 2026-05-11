@@ -12,7 +12,9 @@
 
 const isProd = import.meta.env?.MODE === 'production';
 
-function emit(level, scope, payload, extra) {
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+function emit(level: LogLevel, scope: string, payload: unknown, extra?: unknown): void {
   if (isProd && level === 'debug') return;
 
   const prefix = `[${scope}]`;
@@ -24,16 +26,16 @@ function emit(level, scope, payload, extra) {
 }
 
 export const logger = {
-  debug(scope, payload, extra) {
+  debug(scope: string, payload: unknown, extra?: unknown): void {
     emit('debug', scope, payload, extra);
   },
-  info(scope, payload, extra) {
+  info(scope: string, payload: unknown, extra?: unknown): void {
     emit('info', scope, payload, extra);
   },
-  warn(scope, payload, extra) {
+  warn(scope: string, payload: unknown, extra?: unknown): void {
     emit('warn', scope, payload, extra);
   },
-  error(scope, payload, extra) {
+  error(scope: string, payload: unknown, extra?: unknown): void {
     emit('error', scope, payload, extra);
   },
 };

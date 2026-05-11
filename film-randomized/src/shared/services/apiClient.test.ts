@@ -19,7 +19,7 @@ describe('apiClient', () => {
           ok: true,
           status: 200,
           json: () => Promise.resolve({}),
-        }),
+        } as Response),
       ),
     );
   });
@@ -34,7 +34,7 @@ describe('apiClient', () => {
       ok: true,
       status: 200,
       json: () => Promise.resolve({ id: 1 }),
-    });
+    } as Response);
 
     const data = await apiClient.get('/foo');
 
@@ -54,7 +54,7 @@ describe('apiClient', () => {
       ok: true,
       status: 200,
       json: () => Promise.resolve({}),
-    });
+    } as Response);
 
     await apiClient.get('/auth/me', 'tok');
 
@@ -75,7 +75,7 @@ describe('apiClient', () => {
       status: 400,
       statusText: 'Bad Request',
       json: () => Promise.resolve({ error: 'Invalid payload' }),
-    });
+    } as Response);
 
     await expect(apiClient.post('/x', {})).rejects.toMatchObject({
       name: 'ApiError',
@@ -90,7 +90,7 @@ describe('apiClient', () => {
       status: 422,
       statusText: 'Unprocessable',
       json: () => Promise.resolve({ detail: 'Validation failed' }),
-    });
+    } as Response);
 
     await expect(apiClient.put('/x', {})).rejects.toMatchObject({
       message: 'Validation failed',
@@ -104,7 +104,7 @@ describe('apiClient', () => {
       status: 502,
       statusText: 'Bad Gateway',
       json: () => Promise.reject(new Error('not json')),
-    });
+    } as Response);
 
     await expect(apiClient.get('/down')).rejects.toMatchObject({
       message: 'HTTP 502: Bad Gateway',
@@ -116,7 +116,7 @@ describe('apiClient', () => {
     vi.mocked(globalThis.fetch).mockResolvedValueOnce({
       status: 204,
       ok: true,
-    });
+    } as Response);
 
     await expect(apiClient.delete('/item/1')).resolves.toBeUndefined();
   });

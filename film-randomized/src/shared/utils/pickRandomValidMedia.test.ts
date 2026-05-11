@@ -3,7 +3,7 @@ import { pickRandomValidMedia } from './pickRandomValidMedia.js';
 
 const ITALIAN_EMPTY = 'Nessuna descrizione disponibile in italiano.';
 
-function makeMovie(id, overview = `A valid overview for ${id}.`) {
+function makeMovie(id: number, overview = `A valid overview for ${id}.`) {
   return { id, title: `Movie ${id}`, overview };
 }
 
