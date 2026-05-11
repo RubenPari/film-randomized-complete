@@ -1,8 +1,9 @@
+/// <reference types="vite/client" />
 /**
  * Forgot password page component.
  * Handles password reset email requests.
  */
-import React, { useState } from 'react';
+import { useState, type FormEvent, type JSX } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
@@ -14,7 +15,7 @@ import LanguageSwitcher from '../shared/components/LanguageSwitcher.jsx';
  *
  * @returns {JSX.Element} Forgot password page with reset form
  */
-function ForgotPasswordPage() {
+function ForgotPasswordPage(): JSX.Element {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -22,7 +23,7 @@ function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { forgotPassword } = useAuth();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -35,7 +36,7 @@ function ForgotPasswordPage() {
       if (import.meta.env.DEV) {
         console.error('Forgot password component error:', err);
       }
-      setError(err.message || t('forgotPassword.errorMessage'));
+      setError((err as Error).message || t('forgotPassword.errorMessage'));
     } finally {
       setIsLoading(false);
     }

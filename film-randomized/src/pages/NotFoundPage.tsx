@@ -1,11 +1,11 @@
 /**
  * 404 page for unknown routes.
  */
-import React from 'react';
+import { type JSX } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-function NotFoundPage() {
+function NotFoundPage(): JSX.Element {
   const { t } = useTranslation();
 
   return (

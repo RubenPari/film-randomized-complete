@@ -1,19 +1,33 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+/// <reference types="vite/client" />
+import { useState, useEffect, type FormEvent, type JSX } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import { validatePasswordForm } from '../shared/utils/passwordValidation.js';
 
-function ChangePasswordPage() {
-  const [currentPassword, setCurrentPassword] = useState('');
+function ResetPasswordPage(): JSX.Element {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { changePassword, user } = useAuth();
+  const { resetPassword } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get('token');
+
+  useEffect(() => {
+    if (!token) {
+      if (import.meta.env.DEV) {
+        console.warn('No reset token found in URL query parameters');
+      }
+      setError('No reset token found in URL.');
+    }
+  }, [token]);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -27,40 +41,35 @@ function ChangePasswordPage() {
     setIsLoading(true);
 
     try {
-      await changePassword(currentPassword, newPassword);
-      setSuccess('Password has been changed successfully.');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
+      if (!token) {
+        setError('Invalid or missing reset token.');
+        return;
+      }
+      await resetPassword(token, newPassword);
+      setSuccess('Password has been reset successfully. Redirecting to login...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
     } catch (err) {
-      setError(err.message || 'An error occurred while changing password.');
+      if (import.meta.env.DEV) {
+        console.error('Reset password component error:', err);
+      }
+      setError((err as Error).message || 'An error occurred while resetting password.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-extrabold text-white">Profile Settings</h1>
-        <Link
-          to="/"
-          className="bg-gray-800 text-gray-300 hover:text-white px-4 py-2 rounded-md text-sm font-medium border border-gray-700"
-        >
-          Back to Home
-        </Link>
+    <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+          Reset your password
+        </h2>
       </div>
 
-      <div className="max-w-md mx-auto">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <h2 className="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-2">
-            Change Password
-          </h2>
-          
-          <p className="text-sm text-gray-400 mb-6">
-            Account: <span className="text-cyan-400 font-medium">{user?.email}</span>
-          </p>
-
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-red-900 border border-red-500 text-red-200 px-4 py-3 rounded relative">
@@ -74,23 +83,6 @@ function ChangePasswordPage() {
             )}
 
             <div>
-              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-300">
-                Current Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="currentPassword"
-                  name="currentPassword"
-                  type="password"
-                  required
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
               <label htmlFor="newPassword" className="block text-sm font-medium text-gray-300">
                 New Password
               </label>
@@ -100,6 +92,7 @@ function ChangePasswordPage() {
                   name="newPassword"
                   type="password"
                   required
+                  disabled={(!token || success) as boolean}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
@@ -117,6 +110,7 @@ function ChangePasswordPage() {
                   name="confirmPassword"
                   type="password"
                   required
+                  disabled={(!token || success) as boolean}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
@@ -127,17 +121,23 @@ function ChangePasswordPage() {
             <div>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={(isLoading || !token || success) as boolean}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:opacity-50"
               >
-                {isLoading ? 'Updating...' : 'Update Password'}
+                {isLoading ? 'Resetting...' : 'Reset Password'}
               </button>
             </div>
           </form>
+
+          <div className="mt-6 text-center">
+            <Link to="/login" className="font-medium text-cyan-400 hover:text-cyan-300">
+              Back to login
+            </Link>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export default ChangePasswordPage;
+export default ResetPasswordPage;

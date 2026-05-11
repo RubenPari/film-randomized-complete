@@ -2,7 +2,7 @@
  * Login page component.
  * Handles user authentication with username and password.
  */
-import React, { useActionState } from 'react';
+import { useActionState, type JSX } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
@@ -11,26 +11,26 @@ import LanguageSwitcher from '../shared/components/LanguageSwitcher.jsx';
 /**
  * Login page component.
  * Provides a form for user authentication using React 19 useActionState.
- * 
+ *
  * @returns {JSX.Element} Login page with authentication form
  */
-function LoginPage() {
+function LoginPage(): JSX.Element {
   const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
 
   // React 19 action state for forms
   const [error, submitAction, isPending] = useActionState(
-    async (previousState, formData) => {
-      const username = formData.get('username');
-      const password = formData.get('password');
-      
+    async (_previousState: string | null, formData: FormData): Promise<string | null> => {
+      const username = formData.get('username') as string;
+      const password = formData.get('password') as string;
+
       try {
         await login(username, password);
         navigate('/');
         return null;
       } catch (err) {
-        return err.message || t('auth.loginError');
+        return (err as Error).message || t('auth.loginError');
       }
     },
     null

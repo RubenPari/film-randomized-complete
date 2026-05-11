@@ -1,14 +1,14 @@
 /**
  * Home title and description.
  */
-import React from 'react';
+import { type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/**
- * @param {Object} props
- * @param {boolean} props.mediaType
- */
-function HomeHero({ mediaType }) {
+interface Props {
+  mediaType: boolean;
+}
+
+function HomeHero({ mediaType }: Props): JSX.Element {
   const { t } = useTranslation();
 
   return (

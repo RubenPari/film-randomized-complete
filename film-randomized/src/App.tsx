@@ -2,7 +2,7 @@
  * Main application component with routing.
  * Sets up React Router routes and provides authentication context.
  */
-import React from 'react';
+import { type JSX } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './shared/context/AuthContext.jsx';
 import ErrorBoundary from './shared/components/ErrorBoundary.jsx';
@@ -23,7 +23,7 @@ import NotFoundPage from './pages/NotFoundPage.jsx';
  *
  * @returns {JSX.Element} Application with routing
  */
-function App() {
+function App(): JSX.Element {
   return (
     <ErrorBoundary>
       <AuthProvider>

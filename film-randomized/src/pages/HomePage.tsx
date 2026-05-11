@@ -2,7 +2,7 @@
  * Home page component with media generator.
  * Main page where users generate random media based on filters.
  */
-import React, { useState } from 'react';
+import { useState, type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import { useMediaResults } from '../features/media/context/FilterContext.jsx';
@@ -13,7 +13,7 @@ import HomeHero from './home/HomeHero.jsx';
 import GenerateButton from './home/GenerateButton.jsx';
 import MobileFiltersToggle from './home/MobileFiltersToggle.jsx';
 
-function HomePage() {
+function HomePage(): JSX.Element {
   const { t } = useTranslation();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const { user, logout } = useAuth();

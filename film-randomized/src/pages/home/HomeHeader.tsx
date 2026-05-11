@@ -1,17 +1,17 @@
 /**
  * Home top bar: language, user info, watchlist link, logout.
  */
-import React from 'react';
+import { type JSX } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../../shared/components/LanguageSwitcher.jsx';
 
-/**
- * @param {Object} props
- * @param {{ username?: string, email?: string } | null} props.user
- * @param {() => void} props.onLogout
- */
-function HomeHeader({ user, onLogout }) {
+interface Props {
+  user: { username?: string; email?: string } | null;
+  onLogout: () => void;
+}
+
+function HomeHeader({ user, onLogout }: Props): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
 

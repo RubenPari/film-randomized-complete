@@ -1,15 +1,15 @@
 /**
  * Toggle visibility of filter column on small screens.
  */
-import React from 'react';
+import { type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/**
- * @param {Object} props
- * @param {boolean} props.filtersOpen
- * @param {(open: boolean) => void} props.onToggle
- */
-function MobileFiltersToggle({ filtersOpen, onToggle }) {
+interface Props {
+  filtersOpen: boolean;
+  onToggle: (open: boolean) => void;
+}
+
+function MobileFiltersToggle({ filtersOpen, onToggle }: Props): JSX.Element {
   const { t } = useTranslation();
 
   return (

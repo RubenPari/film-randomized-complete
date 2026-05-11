@@ -2,7 +2,7 @@
  * Register page component.
  * Handles new user registration with username, email, and password.
  */
-import React, { useActionState } from 'react';
+import { useActionState, type JSX } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
@@ -14,18 +14,18 @@ import LanguageSwitcher from '../shared/components/LanguageSwitcher.jsx';
  *
  * @returns {JSX.Element} Register page with registration form
  */
-function RegisterPage() {
+function RegisterPage(): JSX.Element {
   const { t } = useTranslation();
   const { register } = useAuth();
   const navigate = useNavigate();
 
   // React 19 action state for forms
   const [error, submitAction, isPending] = useActionState(
-    async (previousState, formData) => {
-      const username = formData.get('username');
-      const email = formData.get('email');
-      const password = formData.get('password');
-      const confirmPassword = formData.get('confirmPassword');
+    async (_previousState: string | null, formData: FormData): Promise<string | null> => {
+      const username = formData.get('username') as string;
+      const email = formData.get('email') as string;
+      const password = formData.get('password') as string;
+      const confirmPassword = formData.get('confirmPassword') as string;
 
       if (password.length < 6) {
         return t('register.passwordTooShort');
@@ -40,7 +40,7 @@ function RegisterPage() {
         navigate('/');
         return null;
       } catch (err) {
-        return err.message || t('register.registrationError');
+        return (err as Error).message || t('register.registrationError');
       }
     },
     null

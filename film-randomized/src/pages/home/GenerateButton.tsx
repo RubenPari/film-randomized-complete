@@ -1,16 +1,16 @@
 /**
  * Primary "Generate" action — shared layout for desktop and mobile sticky bar.
  */
-import React from 'react';
+import { type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/**
- * @param {Object} props
- * @param {boolean} props.isLoading
- * @param {() => void} props.onGenerate
- * @param {'desktop' | 'mobile'} props.variant
- */
-function GenerateButton({ isLoading, onGenerate, variant }) {
+interface Props {
+  isLoading: boolean;
+  onGenerate: () => void;
+  variant: 'desktop' | 'mobile';
+}
+
+function GenerateButton({ isLoading, onGenerate, variant }: Props): JSX.Element {
   const { t } = useTranslation();
 
   if (variant === 'desktop') {
