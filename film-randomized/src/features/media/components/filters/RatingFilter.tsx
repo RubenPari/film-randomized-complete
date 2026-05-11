@@ -2,20 +2,19 @@
  * Rating filter component.
  * Allows users to filter media by minimum and maximum rating.
  */
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+
+interface RatingFilterProps {
+  minRating: number;
+  maxRating: number;
+  setMinRating: (val: number) => void;
+  setMaxRating: (val: number) => void;
+}
 
 /**
  * Component for filtering media by rating range (min and max).
- *
- * @param {Object} props - Component props
- * @param {number} props.minRating - Minimum rating value (0-10)
- * @param {number} props.maxRating - Maximum rating value (0-10)
- * @param {Function} props.setMinRating - Function to update minimum rating
- * @param {Function} props.setMaxRating - Function to update maximum rating
- * @returns {JSX.Element} Rating filter component
  */
-function RatingFilter({ minRating, maxRating, setMinRating, setMaxRating }) {
+function RatingFilter({ minRating, maxRating, setMinRating, setMaxRating }: RatingFilterProps) {
   const { t } = useTranslation();
 
   return (

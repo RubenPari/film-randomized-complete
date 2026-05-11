@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
 import { fetchGenres } from '../../../shared/services/tmdbApi.js';
+import type { Genre } from '../../../shared/types/index.js';
+
+export interface UseGenresReturn {
+  genres: Genre[];
+  error: string | null;
+}
 
 /**
  * Loads genres for filter UI. Caching lives only in tmdbApi.fetchGenres (module-level).
  */
-export function useGenres() {
-  const [genres, setGenres] = useState([]);
-  const [error, setError] = useState(null);
+export function useGenres(): UseGenresReturn {
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -15,7 +21,7 @@ export function useGenres() {
       try {
         const data = await fetchGenres();
         if (isMounted) {
-          setGenres(data);
+          setGenres(data as Genre[]);
         }
       } catch (err) {
         if (isMounted) {

@@ -2,7 +2,7 @@
  * Component for saving media items to watchlist.
  * Handles adding and removing items from the user's watchlist.
  */
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../shared/context/AuthContext.jsx';
 import {
@@ -10,22 +10,22 @@ import {
   removeFromWatchlist,
   checkInWatchlist,
 } from '../../../shared/services/watchlistApi.js';
+import type { TmdbMedia, MediaType } from '../../../shared/types/index.js';
+
+interface SaveButtonsProps {
+  media: TmdbMedia;
+  mediaType: MediaType | boolean;
+}
 
 /**
  * Save buttons component for watchlist management.
- * 
- * @param {Object} props - Component props
- * @param {Object} props.media - Media object to save
- * @param {number} props.media.id - TMDB ID of the media
- * @param {boolean} props.mediaType - true for movie, false for TV show
- * @returns {JSX.Element} Save buttons component
  */
-function SaveButtons({ media, mediaType }) {
+function SaveButtons({ media, mediaType }: SaveButtonsProps) {
   const { t } = useTranslation();
   const { token } = useAuth();
   const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   /**
    * Checks if media is already in watchlist on mount.
@@ -36,7 +36,7 @@ function SaveButtons({ media, mediaType }) {
       
       const checkStatus = async function () {
         try {
-          const inWatchlist = await checkInWatchlist(media.id, token);
+          const inWatchlist = await checkInWatchlist(media.id as number, token);
           setIsInWatchlist(inWatchlist);
         } catch (err) {
           console.error('Error checking watchlist status:', err);
@@ -58,10 +58,10 @@ function SaveButtons({ media, mediaType }) {
     setError(null);
 
     try {
-      await addToWatchlist(media, mediaType, token);
+      await addToWatchlist(media, mediaType as boolean, token);
       setIsInWatchlist(true);
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'Error adding to watchlist');
       console.error('Error adding to watchlist:', err);
     } finally {
       setIsLoading(false);
@@ -78,10 +78,10 @@ function SaveButtons({ media, mediaType }) {
     setError(null);
 
     try {
-      await removeFromWatchlist(media.id, token);
+      await removeFromWatchlist(media.id as number, token);
       setIsInWatchlist(false);
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : 'Error removing from watchlist');
       console.error('Error removing from watchlist:', err);
     } finally {
       setIsLoading(false);

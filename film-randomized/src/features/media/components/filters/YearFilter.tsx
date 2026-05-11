@@ -2,21 +2,20 @@
  * Year filter component.
  * Allows users to filter media by release year range.
  */
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { MIN_RELEASE_YEAR } from '../../../../shared/constants/config.js';
 
+interface YearFilterProps {
+  releaseYearFrom: number;
+  releaseYearTo: number;
+  setReleaseYearFrom: (val: number) => void;
+  setReleaseYearTo: (val: number) => void;
+}
+
 /**
  * Component for filtering media by release year range.
- *
- * @param {Object} props - Component props
- * @param {number} props.releaseYearFrom - Start year for filtering (1900-current year)
- * @param {number} props.releaseYearTo - End year for filtering (1900-current year)
- * @param {Function} props.setReleaseYearFrom - Function to update start year
- * @param {Function} props.setReleaseYearTo - Function to update end year
- * @returns {JSX.Element} Year filter component
  */
-function YearFilter({ releaseYearFrom, releaseYearTo, setReleaseYearFrom, setReleaseYearTo }) {
+function YearFilter({ releaseYearFrom, releaseYearTo, setReleaseYearFrom, setReleaseYearTo }: YearFilterProps) {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 

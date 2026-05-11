@@ -2,7 +2,6 @@
  * Filter panel component.
  * Contains all filter controls for media generation.
  */
-import React from 'react';
 import { useFilterContext } from '../../context/FilterContext.jsx';
 import MediaTypeSelector from './MediaTypeSelector.jsx';
 import RatingFilter from './RatingFilter.jsx';

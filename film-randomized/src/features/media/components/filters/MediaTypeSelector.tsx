@@ -2,18 +2,17 @@
  * Media type selector component.
  * Allows users to switch between movies and TV shows.
  */
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+
+interface MediaTypeSelectorProps {
+  mediaType: boolean;
+  setMediaType: (val: boolean) => void;
+}
 
 /**
  * Component for selecting between movies and TV shows.
- * 
- * @param {Object} props - Component props
- * @param {boolean} props.mediaType - Current media type (true for movie, false for TV show)
- * @param {Function} props.setMediaType - Function to update media type
- * @returns {JSX.Element} Media type selector component
  */
-function MediaTypeSelector({ mediaType, setMediaType }) {
+function MediaTypeSelector({ mediaType, setMediaType }: MediaTypeSelectorProps) {
   const { t } = useTranslation();
 
   return (

@@ -4,35 +4,44 @@
  */
 import { useState, useEffect } from 'react';
 import { fetchMediaVideos } from '../../../shared/services/tmdbApi.js';
+import type { MediaType, TmdbVideosResponse } from '../../../shared/types/index.js';
 
 /**
  * Hook to fetch and select media trailer video.
  * Prioritizes YouTube trailers, then teasers, then any YouTube video.
  *
- * @param {boolean} mediaType - True for movies, false for TV shows
- * @param {number} mediaId - TMDB ID of the media
- * @returns {string|null} Trailer video key or null if no trailer found
+ * @param mediaType - True for movies, false for TV shows
+ * @param mediaId - TMDB ID of the media
+ * @returns Trailer video key or null if no trailer found
  */
-const useMediaTrailer = (mediaType, mediaId) => {
-  const [trailerKey, setTrailerKey] = useState(null);
+export default function useMediaTrailer(
+  mediaType: boolean | MediaType,
+  mediaId: number,
+): string | null {
+  const [trailerKey, setTrailerKey] = useState<string | null>(null);
 
   useEffect(() => {
     const loadTrailer = async () => {
       try {
-        const videosData = await fetchMediaVideos(mediaType, mediaId);
+        const mt = typeof mediaType === 'string' ? mediaType === 'movie' : mediaType;
+        const videosData = (await fetchMediaVideos(mt, mediaId)) as TmdbVideosResponse;
         const videos = videosData.results || [];
 
         // 1. Try to find a YouTube Trailer
-        let trailer = videos.find(v => v.site === 'YouTube' && v.type === 'Trailer');
+        let trailer = videos.find(
+          (v: { site: string; type: string }) => v.site === 'YouTube' && v.type === 'Trailer',
+        );
 
         // 2. If not found, try a Teaser
         if (!trailer) {
-          trailer = videos.find(v => v.site === 'YouTube' && v.type === 'Teaser');
+          trailer = videos.find(
+            (v: { site: string; type: string }) => v.site === 'YouTube' && v.type === 'Teaser',
+          );
         }
 
         // 3. If still not found, take the first available YouTube video
         if (!trailer) {
-          trailer = videos.find(v => v.site === 'YouTube');
+          trailer = videos.find((v: { site: string }) => v.site === 'YouTube');
         }
 
         if (trailer) {
@@ -52,6 +61,4 @@ const useMediaTrailer = (mediaType, mediaId) => {
   }, [mediaId, mediaType]);
 
   return trailerKey;
-};
-
-export default useMediaTrailer;
+}

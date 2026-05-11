@@ -2,23 +2,22 @@
  * Vote count filter component.
  * Allows users to filter media by minimum number of votes.
  */
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { VOTE_COUNT_THRESHOLDS } from '../../../../shared/constants/config.js';
+
+interface VoteCountFilterProps {
+  minVoteCount: number;
+  setMinVoteCount: (val: number) => void;
+}
 
 /**
  * Component for filtering media by minimum vote count.
  * Provides preset ranges for common vote count thresholds.
- *
- * @param {Object} props - Component props
- * @param {number} props.minVoteCount - Minimum vote count value
- * @param {Function} props.setMinVoteCount - Function to update minimum vote count
- * @returns {JSX.Element} Vote count filter component
  */
-function VoteCountFilter({ minVoteCount, setMinVoteCount }) {
+function VoteCountFilter({ minVoteCount, setMinVoteCount }: VoteCountFilterProps) {
   const { t } = useTranslation();
 
-  const voteCountLabels = {
+  const voteCountLabels: Record<number, string> = {
     1000: '1,000+',
     10000: '10,000+',
     50000: '50,000+',

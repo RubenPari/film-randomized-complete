@@ -10,6 +10,14 @@ import { MAX_GENERATION_ATTEMPTS } from '../../../shared/constants/config.js';
 import { pickRandomValidMedia } from '../../../shared/utils/pickRandomValidMedia.js';
 import { logger } from '../../../shared/utils/logger.js';
 import { useMediaExclusionList } from './useMediaExclusionList.js';
+import type { MediaFilters, MediaType, TmdbMedia } from '../../../shared/types/index.js';
+
+export interface UseMediaFetcherReturn {
+  randomMedia: TmdbMedia | null;
+  isLoading: boolean;
+  error: string | null;
+  generateRandomMedia: (filters: MediaFilters, mediaType: boolean) => Promise<void>;
+}
 
 /**
  * Orchestration hook for the "generate random media" flow. The heavy lifting
@@ -20,16 +28,16 @@ import { useMediaExclusionList } from './useMediaExclusionList.js';
  * This hook only owns React state (`randomMedia`, `isLoading`, `error`) and
  * the "record discovered" side-effect on success.
  */
-export function useMediaFetcher() {
+export function useMediaFetcher(): UseMediaFetcherReturn {
   const { token } = useAuth();
   const loadExclusionList = useMediaExclusionList();
 
-  const [randomMedia, setRandomMedia] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [randomMedia, setRandomMedia] = useState<TmdbMedia | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const generateRandomMedia = useCallback(
-    async (filters, mediaType) => {
+    async (filters: MediaFilters, mediaType: boolean) => {
       setIsLoading(true);
       setError(null);
 
@@ -41,11 +49,11 @@ export function useMediaFetcher() {
         );
 
         const details = await pickRandomValidMedia({
-          fetchPage: (page) => fetchMediaPage(discoverUrl, page),
-          fetchDetails: fetchMediaDetails,
+          fetchPage: (page: number) => fetchMediaPage(discoverUrl, page),
+          fetchDetails: (mt: MediaType, id: number) => fetchMediaDetails(mt === 'movie', id),
           totalPages,
           mediaType,
-          excludedItems,
+          excludedItems: excludedItems as unknown as Record<string, unknown>[],
           maxAttempts: MAX_GENERATION_ATTEMPTS,
         });
 
@@ -53,19 +61,28 @@ export function useMediaFetcher() {
           try {
             await recordDiscovered(details, mediaType, token);
           } catch (recordErr) {
-            logger.error('useMediaFetcher.recordDiscovered', recordErr);
+            logger.error(
+              'useMediaFetcher.recordDiscovered',
+              recordErr instanceof Error ? recordErr.message : recordErr,
+            );
             setError(
-              recordErr.message ||
+              (recordErr instanceof Error ? recordErr.message : null) ||
                 'Could not save this title to your discovered list. Please try again.',
             );
             return;
           }
         }
 
-        setRandomMedia(details);
+        setRandomMedia(details as TmdbMedia);
       } catch (err) {
-        logger.error('useMediaFetcher.generate', err);
-        setError(err.message || 'An error occurred. Please try again later.');
+        logger.error(
+          'useMediaFetcher.generate',
+          err instanceof Error ? err.message : err,
+        );
+        setError(
+          (err instanceof Error ? err.message : null) ||
+            'An error occurred. Please try again later.',
+        );
       } finally {
         setIsLoading(false);
       }

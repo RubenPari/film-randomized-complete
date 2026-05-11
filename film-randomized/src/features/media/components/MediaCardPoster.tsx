@@ -1,16 +1,16 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { IMAGE_BASE_URL } from '../../../shared/constants/api.js';
+
+interface MediaCardPosterProps {
+  posterPath: string | null | undefined;
+  title: string;
+}
 
 /**
  * Large poster panel for the detailed media card. Renders a placeholder
  * SVG when TMDb has no poster for the row.
- *
- * @param {Object} props
- * @param {string|null|undefined} props.posterPath
- * @param {string} props.title
  */
-function MediaCardPoster({ posterPath, title }) {
+function MediaCardPoster({ posterPath, title }: MediaCardPosterProps) {
   const { t } = useTranslation();
 
   if (!posterPath) {

@@ -2,12 +2,14 @@
  * Provides media generator state to the home page tree without prop drilling.
  */
 /* eslint-disable react-refresh/only-export-components -- provider and paired hooks belong together */
-import React, { createContext, useContext } from 'react';
+import { createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
 import { useMediaGenerator } from '../hooks/useMediaGenerator.js';
+import type { UseMediaGeneratorReturn } from '../hooks/useMediaGenerator.js';
 
-const FilterContext = createContext(null);
+const FilterContext = createContext<UseMediaGeneratorReturn | null>(null);
 
-function useMediaGeneratorContext() {
+function useMediaGeneratorContext(): UseMediaGeneratorReturn {
   const ctx = useContext(FilterContext);
   if (!ctx) {
     throw new Error('Filter context must be used within FilterProvider');
@@ -16,7 +18,7 @@ function useMediaGeneratorContext() {
 }
 
 /** Wraps useMediaGenerator once for all descendants. */
-export function FilterProvider({ children }) {
+export function FilterProvider({ children }: { children: ReactNode }) {
   const value = useMediaGenerator();
   return <FilterContext.Provider value={value}>{children}</FilterContext.Provider>;
 }

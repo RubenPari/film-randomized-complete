@@ -1,14 +1,14 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+
+interface MediaCardTrailerProps {
+  trailerKey: string | null | undefined;
+}
 
 /**
  * Embedded YouTube trailer block. Returns `null` when there's no key so
  * the parent can render unconditionally.
- *
- * @param {Object} props
- * @param {string|null|undefined} props.trailerKey
  */
-function MediaCardTrailer({ trailerKey }) {
+function MediaCardTrailer({ trailerKey }: MediaCardTrailerProps) {
   const { t } = useTranslation();
 
   if (!trailerKey) return null;

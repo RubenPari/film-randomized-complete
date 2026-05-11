@@ -2,20 +2,20 @@
  * Genre filter component.
  * Allows users to select multiple genres to filter media.
  */
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+import type { Genre } from '../../../../shared/types/index.js';
+
+interface GenreFilterProps {
+  genres: Genre[];
+  selectedGenres: number[];
+  handleGenreToggle: (genreId: number) => void;
+}
 
 /**
  * Component for selecting genres to filter media.
  * Displays all available genres as checkboxes.
- * 
- * @param {Object} props - Component props
- * @param {Array<Object>} props.genres - List of all available genres
- * @param {Array<number>} props.selectedGenres - List of currently selected genre IDs
- * @param {Function} props.handleGenreToggle - Function to toggle genre selection
- * @returns {JSX.Element} Genre filter component
  */
-function GenreFilter({ genres, selectedGenres, handleGenreToggle }) {
+function GenreFilter({ genres, selectedGenres, handleGenreToggle }: GenreFilterProps) {
   const { t } = useTranslation();
 
   return (

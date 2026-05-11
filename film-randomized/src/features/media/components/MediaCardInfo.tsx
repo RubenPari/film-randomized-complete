@@ -1,21 +1,23 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { OVERVIEW_MAX_LENGTH } from '../../../shared/constants/config.js';
+
+interface MediaCardInfoProps {
+  title: string;
+  year: number | null;
+  voteAverage: number;
+  genres?: { id: number; name: string }[];
+  overview?: string;
+  children?: ReactNode;
+}
 
 /**
  * Info panel of the detailed media card: title + year, rating + genres,
  * and the expandable description block. Owns only the expand/collapse
  * state — everything else is derived from props.
- *
- * @param {Object} props
- * @param {string} props.title
- * @param {number|null} props.year
- * @param {number} props.voteAverage
- * @param {Array<{ id: number, name: string }>} [props.genres]
- * @param {string} [props.overview]
- * @param {React.ReactNode} [props.children] Action slot (save buttons etc.)
  */
-function MediaCardInfo({ title, year, voteAverage, genres, overview, children }) {
+function MediaCardInfo({ title, year, voteAverage, genres, overview, children }: MediaCardInfoProps) {
   const { t } = useTranslation();
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false);
 
