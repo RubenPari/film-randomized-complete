@@ -1,12 +1,13 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import CollectionContent from './CollectionContent.jsx';
+import { NormalizableItem } from '../utils/normalizeMediaItem.js';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key, opts) => (opts?.type ? `${key}:${opts.type}` : key),
+    t: (key: string, opts?: Record<string, string>) => (opts?.type ? `${key}:${opts.type}` : key),
   }),
 }));
 
@@ -24,7 +25,7 @@ const COPY = {
   ctaLabelKey: 'watchlist.discoverContent',
 };
 
-const SAMPLE_ITEMS = [
+const SAMPLE_ITEMS: NormalizableItem[] = [
   {
     id: 1,
     tmdb_id: 111,
@@ -47,19 +48,25 @@ const SAMPLE_ITEMS = [
   },
 ];
 
-/**
- * Build a promise pre-tagged with `status`/`value` so React 19's `use` hook
- * can unwrap it synchronously without a Suspense round-trip. This lets the
- * test run against the actual committed tree instead of the fallback.
- */
-function resolvedPromise(value) {
-  const p = Promise.resolve(value);
+interface ResolvedPromise<T> extends Promise<T> {
+  status: string;
+  value: T;
+}
+
+function resolvedPromise<T>(value: T): ResolvedPromise<T> {
+  const p = Promise.resolve(value) as ResolvedPromise<T>;
   p.status = 'fulfilled';
   p.value = value;
   return p;
 }
 
-function renderCollection(props) {
+interface RenderCollectionProps {
+  items?: NormalizableItem[];
+  filter?: 'all' | 'movies' | 'tv';
+  onRemove?: (item: NormalizableItem, token: string) => Promise<void>;
+}
+
+function renderCollection(props: RenderCollectionProps) {
   return render(
     <MemoryRouter>
       <Suspense fallback={<div>loading</div>}>
@@ -94,8 +101,7 @@ describe('CollectionContent', () => {
 
   it('removes an item optimistically and reverts on API error', async () => {
     const onRemove = vi.fn().mockRejectedValue(new Error('network down'));
-    // Silence the console.error emitted by the revert path — it is expected.
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     renderCollection({ onRemove });
 
@@ -106,7 +112,6 @@ describe('CollectionContent', () => {
 
     await waitFor(() => expect(onRemove).toHaveBeenCalledTimes(1));
 
-    // Item should reappear after the rejected promise reverts the optimistic update.
     await waitFor(() =>
       expect(screen.getByText('The Matrix')).toBeInTheDocument(),
     );

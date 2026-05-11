@@ -3,58 +3,37 @@
  * Catches JavaScript errors anywhere in the child component tree,
  * logs those errors, and displays a fallback UI.
  */
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-/**
- * Error Boundary class component.
- * Catches errors in child components and displays a fallback UI.
- * 
- * @class ErrorBoundary
- * @extends {React.Component}
- */
-export class ErrorBoundary extends React.Component {
-  /**
-   * Creates an instance of ErrorBoundary.
-   * 
-   * @param {Object} props - Component props
-   * @param {React.ReactNode} props.children - Child components to render
-   */
-  constructor(props) {
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+  errorInfo: React.ErrorInfo | null;
+}
+
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  /**
-   * Updates state so the next render will show the fallback UI.
-   * 
-   * @param {Error} error - The error that was thrown
-   * @returns {Object} State update object
-   */
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return { hasError: true, error };
   }
 
-  /**
-   * Logs error information when an error is caught.
-   * 
-   * @param {Error} error - The error that was thrown
-   * @param {Object} errorInfo - Component stack trace
-   */
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     console.error('Error caught by boundary:', error, errorInfo);
     this.setState({
-      error: error,
-      errorInfo: errorInfo
+      error,
+      errorInfo,
     });
   }
 
-  /**
-   * Renders the component.
-   * Shows fallback UI if an error occurred, otherwise renders children.
-   * 
-   * @returns {JSX.Element} Error UI or children
-   */
-  render() {
+  render(): ReactNode {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">

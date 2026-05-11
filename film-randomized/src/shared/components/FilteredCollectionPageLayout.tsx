@@ -1,23 +1,29 @@
 /**
  * Shared shell for watchlist and discovered pages: header, media-type filters, Suspense + ErrorBoundary.
  */
-import React, { Suspense } from 'react';
+import { ReactNode, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ErrorBoundary from './ErrorBoundary.jsx';
 
-/**
- * @param {Object} props
- * @param {string} props.title - Translated page title
- * @param {'all'|'movies'|'tv'} props.filter
- * @param {(next: 'all'|'movies'|'tv') => void} props.onFilterChange
- * @param {string} props.loadingLabel - Translated loading string for Suspense fallback
- * @param {React.ReactNode} props.children - Content inside Suspense (e.g. list with use(promise))
- */
-function FilteredCollectionPageLayout({ title, filter, onFilterChange, loadingLabel, children }) {
+interface FilteredCollectionPageLayoutProps {
+  title: string;
+  filter: 'all' | 'movies' | 'tv';
+  onFilterChange: (next: 'all' | 'movies' | 'tv') => void;
+  loadingLabel: string;
+  children: ReactNode;
+}
+
+function FilteredCollectionPageLayout({
+  title,
+  filter,
+  onFilterChange,
+  loadingLabel,
+  children,
+}: FilteredCollectionPageLayoutProps) {
   const { t } = useTranslation();
 
-  const filterButtonClass = (active) =>
+  const filterButtonClass = (active: boolean) =>
     `px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 transform ${
       active
         ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-105'

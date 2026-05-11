@@ -1,22 +1,16 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
 
-/**
- * Shared shell for auth pages (login, register, ...). Owns the outer
- * centering layout, the language switcher, the glass card, the icon
- * header, and the error banner. Page components only supply the form
- * body and footer link.
- *
- * @param {Object} props
- * @param {React.ReactNode} props.icon Badge icon rendered inside the
- *   gradient header chip.
- * @param {string} props.title
- * @param {string} props.subtitle
- * @param {string|null} [props.error]
- * @param {React.ReactNode} props.children Form body.
- * @param {React.ReactNode} [props.footer] Secondary nav row under the form.
- * @param {boolean} [props.showLanguageSwitcher=true]
- */
+interface AuthFormLayoutProps {
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
+  error?: string | null;
+  children: ReactNode;
+  footer?: ReactNode;
+  showLanguageSwitcher?: boolean;
+}
+
 function AuthFormLayout({
   icon,
   title,
@@ -25,7 +19,7 @@ function AuthFormLayout({
   children,
   footer,
   showLanguageSwitcher = true,
-}) {
+}: AuthFormLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4">
       {showLanguageSwitcher && (

@@ -2,21 +2,15 @@
  * Protected route component that requires authentication.
  * Redirects to login page if user is not authenticated.
  */
-import React from 'react';
+import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
-/**
- * Protected route wrapper component.
- * Shows loading state while checking authentication,
- * redirects to login if not authenticated,
- * renders children if authenticated.
- * 
- * @param {Object} props - Component props
- * @param {React.ReactNode} props.children - Child components to render if authenticated
- * @returns {JSX.Element} Loading spinner, redirect, or children
- */
-function ProtectedRoute({ children }) {
+interface ProtectedRouteProps {
+  children: ReactNode;
+}
+
+function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
@@ -34,7 +28,7 @@ function ProtectedRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return <>{children}</>;
 }
 
 export default ProtectedRoute;

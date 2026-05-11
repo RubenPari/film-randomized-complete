@@ -1,4 +1,4 @@
-import React, {
+import {
   use,
   useCallback,
   useEffect,
@@ -9,68 +9,66 @@ import React, {
 } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import {
   getMediaItemKey,
   normalizeMediaItem,
+  NormalizableItem,
 } from '../utils/normalizeMediaItem.js';
 import { matchesMediaListFilter } from '../utils/mediaUtils.js';
 import WatchlistItemCard from '../../features/watchlist/components/WatchlistItemCard.jsx';
+import { MediaItem, MediaType } from '../types/index.js';
 
-/**
- * @typedef {Object} CollectionCopy
- * @property {string} totalItemsKey
- * @property {string} inListKey
- * @property {string} emptyIconPath      - SVG path `d` attribute for the empty-state icon.
- * @property {{ all: string, movies: string, tv: string }} emptyTitleKeys
- * @property {string} emptyDescriptionAllKey
- * @property {string} emptyDescriptionFilterKey
- * @property {string} ctaLabelKey
- * @property {string} [ctaTo]            - Defaults to "/".
- */
+type CollectionFilter = 'all' | 'movies' | 'tv';
 
-/**
- * Shared grid for collection pages (watchlist / discovered).
- *
- * The parent owns data-fetching and supplies:
- *   - `itemsPromise`: Suspense-compatible promise (consumed via React `use`).
- *   - `onRemove(item, token)`: async — called AFTER the optimistic filter so that
- *     a thrown error can revert the UI to the pre-remove snapshot.
- *
- * Identity for optimistic removal uses `getMediaItemKey` so a (tmdbId, mediaType)
- * pair is always the unit of removal — a user may have the same tmdb id as both
- * a movie and a TV show.
- *
- * @param {Object} props
- * @param {Promise<Array<Object>>} props.itemsPromise
- * @param {'all'|'movies'|'tv'} props.filter
- * @param {string} props.token
- * @param {(item: Object, token: string) => Promise<void>} props.onRemove
- * @param {CollectionCopy} props.copy
- */
-function CollectionContent({ itemsPromise, filter, token, onRemove, copy }) {
+interface CollectionCopy {
+  totalItemsKey: string;
+  inListKey: string;
+  emptyIconPath: string;
+  emptyTitleKeys: {
+    all: string;
+    movies: string;
+    tv: string;
+  };
+  emptyDescriptionAllKey: string;
+  emptyDescriptionFilterKey: string;
+  ctaLabelKey: string;
+  ctaTo?: string;
+}
+
+interface CollectionContentProps {
+  itemsPromise: Promise<unknown>;
+  filter: 'all' | 'movies' | 'tv';
+  token: string | null;
+  onRemove: (item: NormalizableItem, token: string) => Promise<void>;
+  copy: CollectionCopy;
+}
+
+function normalizeItems(items: unknown): NormalizableItem[] {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map(normalizeMediaItem)
+    .filter((item): item is NormalizableItem => !!item);
+}
+
+function CollectionContent({ itemsPromise, filter, token, onRemove, copy }: CollectionContentProps) {
   const { t } = useTranslation();
-  const initialItems = use(itemsPromise);
+  const initialItems = use(itemsPromise) as NormalizableItem[];
 
-  const [items, setItems] = useState(() =>
-    Array.isArray(initialItems) ? initialItems.map(normalizeMediaItem) : [],
-  );
+  const [items, setItems] = useState<NormalizableItem[]>(() => normalizeItems(initialItems));
 
   useEffect(() => {
-    setItems(
-      Array.isArray(initialItems) ? initialItems.map(normalizeMediaItem) : [],
-    );
+    setItems(normalizeItems(initialItems));
   }, [initialItems]);
 
-  // Hold a live ref to the current items so the removal closure can snapshot
-  // without re-binding on every render (and without going stale between renders).
-  const itemsRef = useRef(items);
+  const itemsRef = useRef<NormalizableItem[]>(items);
   itemsRef.current = items;
 
   const handleRemove = useCallback(
-    async (tmdbId, mediaType) => {
+    async (tmdbId: number, mediaType: MediaType) => {
       if (!token) return;
 
-      const target = { tmdb_id: tmdbId, media_type: mediaType };
+      const target: NormalizableItem = { tmdb_id: tmdbId, media_type: mediaType };
       const targetKey = getMediaItemKey(target);
       const snapshot = itemsRef.current;
 
@@ -85,8 +83,7 @@ function CollectionContent({ itemsPromise, filter, token, onRemove, copy }) {
           (item) => getMediaItemKey(item) === targetKey,
         );
         await onRemove(original ?? target, token);
-      } catch (err) {
-        // Revert the optimistic removal so the user sees the item reappear.
+      } catch (err: unknown) {
         startTransition(() => {
           setItems(snapshot);
         });
@@ -137,7 +134,7 @@ function CollectionContent({ itemsPromise, filter, token, onRemove, copy }) {
         {filtered.map((item) => (
           <WatchlistItemCard
             key={getMediaItemKey(item)}
-            item={item}
+            item={item as MediaItem}
             onRemove={handleRemove}
           />
         ))}
@@ -146,7 +143,13 @@ function CollectionContent({ itemsPromise, filter, token, onRemove, copy }) {
   );
 }
 
-function CollectionEmptyState({ t, filter, copy }) {
+interface CollectionEmptyStateProps {
+  t: TFunction;
+  filter: CollectionFilter;
+  copy: CollectionCopy;
+}
+
+function CollectionEmptyState({ t, filter, copy }: CollectionEmptyStateProps) {
   const titleKey =
     filter === 'all'
       ? copy.emptyTitleKeys.all

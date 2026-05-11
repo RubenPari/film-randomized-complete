@@ -1,26 +1,21 @@
-import React from 'react';
+import { ReactNode } from 'react';
 
 const INPUT_CLASS =
   'w-full px-4 py-3.5 bg-slate-700/30 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 backdrop-blur-sm';
 
-/**
- * Styled text input used in every auth form. Exists purely so the long
- * Tailwind class list is defined once and every input pair (login,
- * register, reset, ...) stays visually identical.
- *
- * @param {Object} props
- * @param {string} props.id
- * @param {string} props.name
- * @param {string} [props.type='text']
- * @param {string} props.label
- * @param {string} [props.placeholder]
- * @param {boolean} [props.required=true]
- * @param {boolean} [props.disabled]
- * @param {number} [props.minLength]
- * @param {string} [props.autoComplete]
- * @param {React.ReactNode} [props.labelSuffix] Optional element rendered
- *   on the right side of the label row (e.g. a "forgot password" link).
- */
+interface AuthTextFieldProps {
+  id: string;
+  name: string;
+  type?: string;
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  minLength?: number;
+  autoComplete?: string;
+  labelSuffix?: ReactNode;
+}
+
 function AuthTextField({
   id,
   name,
@@ -32,7 +27,7 @@ function AuthTextField({
   minLength,
   autoComplete,
   labelSuffix,
-}) {
+}: AuthTextFieldProps) {
   return (
     <div>
       {labelSuffix ? (
