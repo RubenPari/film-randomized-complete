@@ -6,7 +6,7 @@
 /**
  * Minimum password length constant.
  */
-export const MIN_PASSWORD_LENGTH = 6;
+export const MIN_PASSWORD_LENGTH = 8;
 
 /**
  * Validates a password meets minimum requirements.
