@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/filter_provider.dart';
 import '../../providers/genres_provider.dart';
 import '../../theme/app_theme.dart';
-import '../../theme/brand_gradients.dart';
 
 class GenreFilter extends ConsumerWidget {
   const GenreFilter({super.key});
