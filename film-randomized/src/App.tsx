@@ -7,6 +7,7 @@ import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './shared/context/AuthContext.jsx';
 import ErrorBoundary from './shared/components/ErrorBoundary.jsx';
 import MainAppLayout from './shared/components/MainAppLayout.jsx';
+import { FilterProvider } from './features/media/context/FilterContext.jsx';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
@@ -33,7 +34,14 @@ function App(): JSX.Element {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route element={<MainAppLayout />}>
-            <Route path="/" element={<HomePage />} />
+            <Route
+              path="/"
+              element={
+                <FilterProvider>
+                  <HomePage />
+                </FilterProvider>
+              }
+            />
             <Route path="/watchlist" element={<WatchlistPage />} />
             <Route path="/discovered" element={<DiscoveredPage />} />
             <Route path="/profile" element={<ChangePasswordPage />} />
