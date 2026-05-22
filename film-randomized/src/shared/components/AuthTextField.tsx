@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 
 const INPUT_CLASS =
   'w-full px-4 py-3.5 bg-slate-700/30 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 backdrop-blur-sm';
@@ -14,6 +14,8 @@ interface AuthTextFieldProps {
   minLength?: number;
   autoComplete?: string;
   labelSuffix?: ReactNode;
+  value?: string;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 function AuthTextField({
@@ -27,6 +29,8 @@ function AuthTextField({
   minLength,
   autoComplete,
   labelSuffix,
+  value,
+  onChange,
 }: AuthTextFieldProps) {
   return (
     <div>
@@ -50,6 +54,8 @@ function AuthTextField({
         disabled={disabled}
         minLength={minLength}
         autoComplete={autoComplete}
+        value={value}
+        onChange={onChange}
         placeholder={placeholder}
         className={INPUT_CLASS}
       />

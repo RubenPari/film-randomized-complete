@@ -110,15 +110,40 @@
     "email": "Email",
     "emailPlaceholder": "your.email@example.com",
     "password": "Password",
-    "passwordPlaceholder": "Minimum 6 characters",
+    "passwordPlaceholder": "Minimum 8 characters",
     "confirmPassword": "Confirm Password",
     "confirmPasswordPlaceholder": "Repeat your password",
-    "passwordTooShort": "Password must be at least 6 characters",
+    "passwordTooShort": "Password must be at least 8 characters",
     "passwordsDoNotMatch": "Passwords do not match",
     "registrationError": "Error during registration",
     "creatingAccount": "Creating account...",
     "createAccount": "Create Account",
     "hasAccount": "Already have an account?",
     "signInInstead": "Sign in instead"
+  },
+  "resetPassword": {
+    "title": "Reset your password",
+    "description": "Choose a new password for your account.",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "submit": "Reset Password",
+    "resetting": "Resetting...",
+    "success": "Password has been reset successfully. Redirecting to login...",
+    "error": "An error occurred while resetting password.",
+    "missingToken": "No reset token found in URL.",
+    "invalidToken": "Invalid or missing reset token.",
+    "backToLogin": "Back to login"
+  },
+  "changePassword": {
+    "title": "Change Password",
+    "description": "Account: {{email}}",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "submit": "Update Password",
+    "updating": "Updating...",
+    "success": "Password has been changed successfully.",
+    "error": "An error occurred while changing password.",
+    "backToHome": "Back to Home"
   }
 }

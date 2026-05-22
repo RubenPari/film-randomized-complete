@@ -1,10 +1,15 @@
 /// <reference types="vite/client" />
 import { useState, useEffect, type FormEvent, type JSX } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import { validatePasswordForm } from '../shared/utils/passwordValidation.js';
+import { logger } from '../shared/utils/logger.js';
+import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
+import AuthTextField from '../shared/components/AuthTextField.jsx';
 
 function ResetPasswordPage(): JSX.Element {
+  const { t } = useTranslation();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,11 +26,11 @@ function ResetPasswordPage(): JSX.Element {
   useEffect(() => {
     if (!token) {
       if (import.meta.env.DEV) {
-        console.warn('No reset token found in URL query parameters');
+        logger.warn('ResetPasswordPage.missingToken', 'No reset token found in URL query parameters');
       }
-      setError('No reset token found in URL.');
+      setError(t('resetPassword.missingToken'));
     }
-  }, [token]);
+  }, [token, t]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,101 +47,76 @@ function ResetPasswordPage(): JSX.Element {
 
     try {
       if (!token) {
-        setError('Invalid or missing reset token.');
+        setError(t('resetPassword.invalidToken'));
         return;
       }
       await resetPassword(token, newPassword);
-      setSuccess('Password has been reset successfully. Redirecting to login...');
+      setSuccess(t('resetPassword.success'));
       setTimeout(() => {
         navigate('/login');
       }, 3000);
     } catch (err) {
       if (import.meta.env.DEV) {
-        console.error('Reset password component error:', err);
+        logger.error('ResetPasswordPage.submit', err);
       }
-      setError((err as Error).message || 'An error occurred while resetting password.');
+      setError((err as Error).message || t('resetPassword.error'));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-          Reset your password
-        </h2>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-900 border border-red-500 text-red-200 px-4 py-3 rounded relative">
-                <span className="block sm:inline">{error}</span>
-              </div>
-            )}
-            {success && (
-              <div className="bg-green-900 border border-green-500 text-green-200 px-4 py-3 rounded relative">
-                <span className="block sm:inline">{success}</span>
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-300">
-                New Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="newPassword"
-                  name="newPassword"
-                  type="password"
-                  required
-                  disabled={(!token || success) as boolean}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
-                Confirm New Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  disabled={(!token || success) as boolean}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={(isLoading || !token || success) as boolean}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:opacity-50"
-              >
-                {isLoading ? 'Resetting...' : 'Reset Password'}
-              </button>
-            </div>
-          </form>
-
-          <div className="mt-6 text-center">
-            <Link to="/login" className="font-medium text-cyan-400 hover:text-cyan-300">
-              Back to login
-            </Link>
+    <AuthFormLayout
+      icon={
+        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0-10a4 4 0 014 4v2m-8 0V9a4 4 0 118 0v4m-9 0h10a2 2 0 012 2v3a2 2 0 01-2 2H7a2 2 0 01-2-2v-3a2 2 0 012-2z" />
+        </svg>
+      }
+      title={t('resetPassword.title')}
+      subtitle={t('resetPassword.description')}
+      error={error}
+      footer={
+        <Link to="/login" className="font-medium text-cyan-400 hover:text-cyan-300">
+          {t('resetPassword.backToLogin')}
+        </Link>
+      }
+    >
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        {success && (
+          <div className="mb-4 p-4 bg-green-900/30 text-green-200 rounded-2xl border border-green-700/50 backdrop-blur-xl animate-fade-in flex items-center gap-3">
+            <span className="text-sm">{success}</span>
           </div>
-        </div>
-      </div>
-    </div>
+        )}
+
+        <AuthTextField
+          id="newPassword"
+          name="newPassword"
+          type="password"
+          label={t('resetPassword.newPassword')}
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          disabled={Boolean(!token || success || isLoading)}
+          autoComplete="new-password"
+        />
+        <AuthTextField
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          label={t('resetPassword.confirmNewPassword')}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          disabled={Boolean(!token || success || isLoading)}
+          autoComplete="new-password"
+        />
+        <button
+          type="submit"
+          disabled={Boolean(isLoading || !token || success)}
+          className="w-full btn-primary py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+        >
+          {isLoading ? t('resetPassword.resetting') : t('resetPassword.submit')}
+        </button>
+      </form>
+    </AuthFormLayout>
   );
 }
 

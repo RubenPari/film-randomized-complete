@@ -1,9 +1,13 @@
 import { useState, type FormEvent, type JSX } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import { validatePasswordForm } from '../shared/utils/passwordValidation.js';
+import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
+import AuthTextField from '../shared/components/AuthTextField.jsx';
 
 function ChangePasswordPage(): JSX.Element {
+  const { t } = useTranslation();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,115 +32,81 @@ function ChangePasswordPage(): JSX.Element {
 
     try {
       await changePassword(currentPassword, newPassword);
-      setSuccess('Password has been changed successfully.');
+      setSuccess(t('changePassword.success'));
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (err) {
-      setError((err as Error).message || 'An error occurred while changing password.');
+      setError((err as Error).message || t('changePassword.error'));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-extrabold text-white">Profile Settings</h1>
+    <AuthFormLayout
+      icon={
+        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c-1.657 0-3 1.567-3 3.5S10.343 18 12 18s3-1.567 3-3.5S13.657 11 12 11zm0-9a9 9 0 100 18 9 9 0 000-18z" />
+        </svg>
+      }
+      title={t('changePassword.title')}
+      subtitle={t('changePassword.description', { email: user?.email ?? '-' })}
+      error={error}
+      footer={
         <Link
           to="/"
-          className="bg-gray-800 text-gray-300 hover:text-white px-4 py-2 rounded-md text-sm font-medium border border-gray-700"
+          className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors"
         >
-          Back to Home
+          {t('changePassword.backToHome')}
         </Link>
-      </div>
-
-      <div className="max-w-md mx-auto">
-        <div className="bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <h2 className="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-2">
-            Change Password
-          </h2>
-          
-          <p className="text-sm text-gray-400 mb-6">
-            Account: <span className="text-cyan-400 font-medium">{user?.email}</span>
-          </p>
-
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-900 border border-red-500 text-red-200 px-4 py-3 rounded relative">
-                <span className="block sm:inline">{error}</span>
-              </div>
-            )}
-            {success && (
-              <div className="bg-green-900 border border-green-500 text-green-200 px-4 py-3 rounded relative">
-                <span className="block sm:inline">{success}</span>
-              </div>
-            )}
-
-            <div>
-              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-300">
-                Current Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="currentPassword"
-                  name="currentPassword"
-                  type="password"
-                  required
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-300">
-                New Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="newPassword"
-                  name="newPassword"
-                  type="password"
-                  required
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
-                Confirm New Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 bg-gray-700 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 sm:text-sm"
-                />
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:opacity-50"
-              >
-                {isLoading ? 'Updating...' : 'Update Password'}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+      }
+    >
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        {success && (
+          <div className="mb-4 p-4 bg-green-900/30 text-green-200 rounded-2xl border border-green-700/50 backdrop-blur-xl animate-fade-in flex items-center gap-3">
+            <span className="text-sm">{success}</span>
+          </div>
+        )}
+        <AuthTextField
+          id="currentPassword"
+          name="currentPassword"
+          type="password"
+          label={t('changePassword.currentPassword')}
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+          disabled={isLoading}
+          autoComplete="current-password"
+        />
+        <AuthTextField
+          id="newPassword"
+          name="newPassword"
+          type="password"
+          label={t('changePassword.newPassword')}
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          disabled={isLoading}
+          autoComplete="new-password"
+        />
+        <AuthTextField
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          label={t('changePassword.confirmNewPassword')}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          disabled={isLoading}
+          autoComplete="new-password"
+        />
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full btn-primary py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+        >
+          {isLoading ? t('changePassword.updating') : t('changePassword.submit')}
+        </button>
+      </form>
+    </AuthFormLayout>
   );
 }
 

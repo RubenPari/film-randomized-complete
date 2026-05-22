@@ -110,15 +110,40 @@
     "email": "Email",
     "emailPlaceholder": "tua.email@esempio.com",
     "password": "Password",
-    "passwordPlaceholder": "Minimo 6 caratteri",
+    "passwordPlaceholder": "Minimo 8 caratteri",
     "confirmPassword": "Conferma Password",
     "confirmPasswordPlaceholder": "Ripeti la tua password",
-    "passwordTooShort": "La password deve contenere almeno 6 caratteri",
+    "passwordTooShort": "La password deve contenere almeno 8 caratteri",
     "passwordsDoNotMatch": "Le password non corrispondono",
     "registrationError": "Errore durante la registrazione",
     "creatingAccount": "Creazione account...",
     "createAccount": "Crea Account",
     "hasAccount": "Hai già un account?",
     "signInInstead": "Accedi invece"
+  },
+  "resetPassword": {
+    "title": "Reimposta la password",
+    "description": "Scegli una nuova password per il tuo account.",
+    "newPassword": "Nuova Password",
+    "confirmNewPassword": "Conferma Nuova Password",
+    "submit": "Reimposta Password",
+    "resetting": "Reimpostazione in corso...",
+    "success": "Password reimpostata con successo. Reindirizzamento al login...",
+    "error": "Si è verificato un errore durante la reimpostazione della password.",
+    "missingToken": "Nessun token di ripristino trovato nell'URL.",
+    "invalidToken": "Token di ripristino non valido o mancante.",
+    "backToLogin": "Torna al login"
+  },
+  "changePassword": {
+    "title": "Cambia Password",
+    "description": "Account: {{email}}",
+    "currentPassword": "Password Attuale",
+    "newPassword": "Nuova Password",
+    "confirmNewPassword": "Conferma Nuova Password",
+    "submit": "Aggiorna Password",
+    "updating": "Aggiornamento in corso...",
+    "success": "Password cambiata con successo.",
+    "error": "Si è verificato un errore durante il cambio password.",
+    "backToHome": "Torna alla Home"
   }
 }
