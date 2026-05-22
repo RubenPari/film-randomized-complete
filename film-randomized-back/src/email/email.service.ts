@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
+/**
+ * Servizio per l'invio di email
+ */
 @Injectable()
 export class EmailService {
   private transporter: nodemailer.Transporter | null;
@@ -26,6 +29,11 @@ export class EmailService {
     }
   }
 
+  /**
+   * Invia un'email di reset password
+   * @param to Email dell'utente
+   * @param resetToken Token di reset
+   */
   async sendPasswordResetEmail(to: string, resetToken: string): Promise<void> {
     if (!this.transporter) {
       this.logger.warn(
@@ -44,6 +52,7 @@ export class EmailService {
         'noreply@filmrandomized.com',
       to,
       subject: 'Reset Your Password - Film Randomized',
+      // TODO: creare un template html più elaborato con migliore UX/UI coerente con il frontend
       html: `
         <h1>Password Reset Request</h1>
         <p>You requested a password reset for your Film Randomized account.</p>

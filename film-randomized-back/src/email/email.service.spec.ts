@@ -5,6 +5,9 @@ import { EmailService } from './email.service.js';
 
 jest.mock('nodemailer');
 
+/**
+ * Test del servizio di email
+ */
 describe('EmailService', () => {
   const getFirstMailOptions = (): SMTPTransport.Options => {
     const firstCall = sendMail.mock.calls[0] as [SMTPTransport.Options];
@@ -19,6 +22,9 @@ describe('EmailService', () => {
 
   let warnSpy: jest.SpyInstance;
 
+  /**
+   * Setup prima di ogni test
+   */
   beforeEach(() => {
     jest.clearAllMocks();
     for (const key of Object.keys(configValues)) delete configValues[key];
@@ -34,6 +40,9 @@ describe('EmailService', () => {
     warnSpy.mockRestore();
   });
 
+  /**
+   * Test che verifica che l'email non venga inviata quando il token non è configurato
+   */
   it('skips sending when MAILTRAP_TOKEN is not configured', async () => {
     const service = new EmailService(configService);
 
@@ -43,6 +52,9 @@ describe('EmailService', () => {
     expect(sendMail).not.toHaveBeenCalled();
   });
 
+  /**
+   * Test che verifica l'invio di un'email di reset con un link derivato dal FRONTEND_URL
+   */
   it('sends a reset email with a link derived from FRONTEND_URL', async () => {
     configValues.MAILTRAP_TOKEN = 'mt-token';
     configValues.FRONTEND_URL = 'https://app.example.com';
@@ -60,6 +72,9 @@ describe('EmailService', () => {
     );
   });
 
+  /**
+   * Test che verifica il fallback ai valori predefiniti quando i campi email opzionali non sono configurati
+   */
   it('falls back to defaults when optional email fields are missing', async () => {
     configValues.MAILTRAP_TOKEN = 'mt-token';
 
