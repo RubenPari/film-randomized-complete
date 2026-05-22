@@ -4,18 +4,19 @@
  */
 import { useState, useEffect } from 'react';
 import { fetchMediaVideos } from '../../../shared/services/tmdbApi.js';
+import { logger } from '../../../shared/utils/logger.js';
 import type { MediaType, TmdbVideosResponse } from '../../../shared/types/index.js';
 
 /**
  * Hook to fetch and select media trailer video.
  * Prioritizes YouTube trailers, then teasers, then any YouTube video.
  *
- * @param mediaType - True for movies, false for TV shows
+ * @param mediaType - Media type ('movie' | 'tv')
  * @param mediaId - TMDB ID of the media
  * @returns Trailer video key or null if no trailer found
  */
 export default function useMediaTrailer(
-  mediaType: boolean | MediaType,
+  mediaType: MediaType,
   mediaId: number,
 ): string | null {
   const [trailerKey, setTrailerKey] = useState<string | null>(null);
@@ -23,8 +24,7 @@ export default function useMediaTrailer(
   useEffect(() => {
     const loadTrailer = async () => {
       try {
-        const mt = typeof mediaType === 'string' ? mediaType === 'movie' : mediaType;
-        const videosData = (await fetchMediaVideos(mt, mediaId)) as TmdbVideosResponse;
+        const videosData = (await fetchMediaVideos(mediaType, mediaId)) as TmdbVideosResponse;
         const videos = videosData.results || [];
 
         // 1. Try to find a YouTube Trailer
@@ -50,7 +50,7 @@ export default function useMediaTrailer(
           setTrailerKey(null);
         }
       } catch (error) {
-        console.error('Error loading trailer:', error);
+        logger.error('useMediaTrailer.load', error);
         setTrailerKey(null);
       }
     };

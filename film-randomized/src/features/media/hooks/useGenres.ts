@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchGenres } from '../../../shared/services/tmdbApi.js';
+import { logger } from '../../../shared/utils/logger.js';
 import type { Genre } from '../../../shared/types/index.js';
 
 export interface UseGenresReturn {
@@ -26,7 +27,7 @@ export function useGenres(): UseGenresReturn {
       } catch (err) {
         if (isMounted) {
           setError('Failed to fetch genres. Please try again later.');
-          console.error(err);
+          logger.error('useGenres.load', err);
         }
       }
     };

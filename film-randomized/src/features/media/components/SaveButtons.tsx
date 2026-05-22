@@ -10,11 +10,12 @@ import {
   removeFromWatchlist,
   checkInWatchlist,
 } from '../../../shared/services/watchlistApi.js';
+import { logger } from '../../../shared/utils/logger.js';
 import type { TmdbMedia, MediaType } from '../../../shared/types/index.js';
 
 interface SaveButtonsProps {
   media: TmdbMedia;
-  mediaType: MediaType | boolean;
+  mediaType: MediaType;
 }
 
 /**
@@ -39,7 +40,7 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
           const inWatchlist = await checkInWatchlist(media.id as number, token);
           setIsInWatchlist(inWatchlist);
         } catch (err) {
-          console.error('Error checking watchlist status:', err);
+          logger.error('SaveButtons.checkWatchlist', err);
         }
       };
 
@@ -58,11 +59,11 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
     setError(null);
 
     try {
-      await addToWatchlist(media, mediaType as boolean, token);
+      await addToWatchlist(media, mediaType, token);
       setIsInWatchlist(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error adding to watchlist');
-      console.error('Error adding to watchlist:', err);
+      logger.error('SaveButtons.addToWatchlist', err);
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +83,7 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
       setIsInWatchlist(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error removing from watchlist');
-      console.error('Error removing from watchlist:', err);
+      logger.error('SaveButtons.removeFromWatchlist', err);
     } finally {
       setIsLoading(false);
     }

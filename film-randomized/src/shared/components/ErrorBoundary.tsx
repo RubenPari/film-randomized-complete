@@ -4,6 +4,7 @@
  * logs those errors, and displays a fallback UI.
  */
 import React, { ReactNode } from 'react';
+import { logger } from '../utils/logger.js';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -26,7 +27,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-    console.error('Error caught by boundary:', error, errorInfo);
+    logger.error('ErrorBoundary.componentDidCatch', error, errorInfo);
     this.setState({
       error,
       errorInfo,
