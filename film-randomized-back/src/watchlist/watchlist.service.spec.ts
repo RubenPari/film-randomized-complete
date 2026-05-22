@@ -1,13 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { WatchlistService } from './watchlist.service.js';
 import { WatchlistItem } from '../entities/watchlist-item.entity.js';
 import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 
 describe('WatchlistService', () => {
   let service: WatchlistService;
-  let repository: Repository<WatchlistItem>;
 
   const mockWatchlistRepository = {
     findOne: jest.fn(),
@@ -30,10 +28,6 @@ describe('WatchlistService', () => {
     }).compile();
 
     service = module.get<WatchlistService>(WatchlistService);
-    repository = module.get<Repository<WatchlistItem>>(
-      getRepositoryToken(WatchlistItem),
-    );
-
     jest.clearAllMocks();
   });
 

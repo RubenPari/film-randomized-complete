@@ -1,30 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
+process.env.FRONTEND_URL ??= 'http://localhost:5173';
+
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { App } from 'supertest/types';
-import helmet from 'helmet';
 import { AppModule } from './../src/app.module';
+import { createTestApp } from './create-test-app.js';
 
 describe('Health (e2e)', () => {
-  let app: INestApplication<App>;
+  let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.use(helmet());
-    app.setGlobalPrefix('api');
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    );
-    await app.init();
+    app = await createTestApp(moduleFixture);
   });
 
   it('GET /api/health returns status ok and timestamp', () => {

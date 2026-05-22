@@ -1,38 +1,46 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument */
+process.env.FRONTEND_URL ??= 'http://localhost:5173';
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../src/entities/user.entity.js';
 import { WatchlistItem } from '../src/entities/watchlist-item.entity.js';
 import { DiscoveredItem } from '../src/entities/discovered-item.entity.js';
+import { createTestApp } from './create-test-app.js';
 
 describe('Film Randomized API (e2e)', () => {
-  let app: INestApplication<App>;
+  let app: INestApplication;
   let userRepository: Repository<User>;
   let watchlistRepository: Repository<WatchlistItem>;
   let discoveredRepository: Repository<DiscoveredItem>;
   let authToken: string;
-  let userId: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
-    app.setGlobalPrefix('api');
-    await app.init();
+    app = await createTestApp(moduleFixture);
 
-    userRepository = moduleFixture.get<Repository<User>>(getRepositoryToken(User));
-    watchlistRepository = moduleFixture.get<Repository<WatchlistItem>>(getRepositoryToken(WatchlistItem));
-    discoveredRepository = moduleFixture.get<Repository<DiscoveredItem>>(getRepositoryToken(DiscoveredItem));
+    userRepository = moduleFixture.get<Repository<User>>(
+      getRepositoryToken(User),
+    );
+    watchlistRepository = moduleFixture.get<Repository<WatchlistItem>>(
+      getRepositoryToken(WatchlistItem),
+    );
+    discoveredRepository = moduleFixture.get<Repository<DiscoveredItem>>(
+      getRepositoryToken(DiscoveredItem),
+    );
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 
   beforeEach(async () => {
@@ -41,7 +49,6 @@ describe('Film Randomized API (e2e)', () => {
     await discoveredRepository.clear();
     await userRepository.clear();
     authToken = '';
-    userId = '';
   });
 
   // ==================== AUTH TESTS ====================
@@ -66,13 +73,11 @@ describe('Film Randomized API (e2e)', () => {
     });
 
     it('should reject duplicate username', async () => {
-      await request(app.getHttpServer())
-        .post('/api/auth/register')
-        .send({
-          username: 'duplicateuser',
-          email: 'dup1@example.com',
-          password: 'securePassword123',
-        });
+      await request(app.getHttpServer()).post('/api/auth/register').send({
+        username: 'duplicateuser',
+        email: 'dup1@example.com',
+        password: 'securePassword123',
+      });
 
       return request(app.getHttpServer())
         .post('/api/auth/register')
@@ -85,13 +90,11 @@ describe('Film Randomized API (e2e)', () => {
     });
 
     it('should reject duplicate email', async () => {
-      await request(app.getHttpServer())
-        .post('/api/auth/register')
-        .send({
-          username: 'user1',
-          email: 'same@example.com',
-          password: 'securePassword123',
-        });
+      await request(app.getHttpServer()).post('/api/auth/register').send({
+        username: 'user1',
+        email: 'same@example.com',
+        password: 'securePassword123',
+      });
 
       return request(app.getHttpServer())
         .post('/api/auth/register')
@@ -106,13 +109,11 @@ describe('Film Randomized API (e2e)', () => {
 
   describe('POST /api/auth/login', () => {
     beforeEach(async () => {
-      await request(app.getHttpServer())
-        .post('/api/auth/register')
-        .send({
-          username: 'loginuser',
-          email: 'login@example.com',
-          password: 'securePassword123',
-        });
+      await request(app.getHttpServer()).post('/api/auth/register').send({
+        username: 'loginuser',
+        email: 'login@example.com',
+        password: 'securePassword123',
+      });
     });
 
     it('should login with correct credentials', () => {
@@ -161,7 +162,6 @@ describe('Film Randomized API (e2e)', () => {
           password: 'securePassword123',
         });
       authToken = response.body.token;
-      userId = response.body.user.id;
     });
 
     it('should return current user with valid token', () => {
@@ -176,9 +176,7 @@ describe('Film Randomized API (e2e)', () => {
     });
 
     it('should reject request without token', () => {
-      return request(app.getHttpServer())
-        .get('/api/auth/me')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/auth/me').expect(401);
     });
 
     it('should reject request with invalid token', () => {
@@ -272,7 +270,6 @@ describe('Film Randomized API (e2e)', () => {
           password: 'securePassword123',
         });
       authToken = response.body.token;
-      userId = response.body.user.id;
     });
 
     describe('POST /api/watchlist', () => {
@@ -331,9 +328,7 @@ describe('Film Randomized API (e2e)', () => {
       });
 
       it('should reject request without token', () => {
-        return request(app.getHttpServer())
-          .get('/api/watchlist')
-          .expect(401);
+        return request(app.getHttpServer()).get('/api/watchlist').expect(401);
       });
     });
 
@@ -422,7 +417,6 @@ describe('Film Randomized API (e2e)', () => {
           password: 'securePassword123',
         });
       authToken = response.body.token;
-      userId = response.body.user.id;
     });
 
     describe('POST /api/discovered', () => {
@@ -456,7 +450,10 @@ describe('Film Randomized API (e2e)', () => {
       });
 
       it('should reject request without token', () => {
-        return request(app.getHttpServer()).post('/api/discovered').send(testMovie).expect(401);
+        return request(app.getHttpServer())
+          .post('/api/discovered')
+          .send(testMovie)
+          .expect(401);
       });
     });
 
@@ -530,13 +527,11 @@ describe('Film Randomized API (e2e)', () => {
     });
 
     it('should return success message for existing email', async () => {
-      await request(app.getHttpServer())
-        .post('/api/auth/register')
-        .send({
-          username: 'forgotuser',
-          email: 'forgot@example.com',
-          password: 'securePassword123',
-        });
+      await request(app.getHttpServer()).post('/api/auth/register').send({
+        username: 'forgotuser',
+        email: 'forgot@example.com',
+        password: 'securePassword123',
+      });
 
       return request(app.getHttpServer())
         .post('/api/auth/forgot-password')

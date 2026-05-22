@@ -12,7 +12,10 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   const frontendUrl = config.get<string>('FRONTEND_URL');
   const corsOrigins = frontendUrl
-    ? frontendUrl.split(',').map((u) => u.trim()).filter(Boolean)
+    ? frontendUrl
+        .split(',')
+        .map((u) => u.trim())
+        .filter(Boolean)
     : ['http://localhost:5173'];
 
   app.enableCors({
@@ -32,4 +35,4 @@ async function bootstrap() {
   app.enableShutdownHooks();
   await app.listen(port);
 }
-bootstrap();
+void bootstrap();

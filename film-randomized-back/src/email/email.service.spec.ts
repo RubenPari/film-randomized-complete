@@ -1,10 +1,16 @@
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { EmailService } from './email.service.js';
 
 jest.mock('nodemailer');
 
 describe('EmailService', () => {
+  const getFirstMailOptions = (): SMTPTransport.Options => {
+    const firstCall = sendMail.mock.calls[0] as [SMTPTransport.Options];
+    return firstCall[0];
+  };
+
   const sendMail = jest.fn().mockResolvedValue(undefined);
   const configValues: Record<string, string> = {};
   const configService = {
@@ -46,7 +52,7 @@ describe('EmailService', () => {
     await service.sendPasswordResetEmail('user@example.com', 'tok');
 
     expect(sendMail).toHaveBeenCalledTimes(1);
-    const call = sendMail.mock.calls[0][0];
+    const call = getFirstMailOptions();
     expect(call.to).toBe('user@example.com');
     expect(call.from).toBe('noreply@example.com');
     expect(call.html).toContain(
@@ -60,8 +66,10 @@ describe('EmailService', () => {
     const service = new EmailService(configService);
     await service.sendPasswordResetEmail('user@example.com', 'tok');
 
-    const call = sendMail.mock.calls[0][0];
+    const call = getFirstMailOptions();
     expect(call.from).toBe('noreply@filmrandomized.com');
-    expect(call.html).toContain('http://localhost:5173/reset-password?token=tok');
+    expect(call.html).toContain(
+      'http://localhost:5173/reset-password?token=tok',
+    );
   });
 });
