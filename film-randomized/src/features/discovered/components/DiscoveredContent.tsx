@@ -17,6 +17,8 @@ const DISCOVERED_COPY = {
   emptyDescriptionAllKey: 'discovered.emptyDescription',
   emptyDescriptionFilterKey: 'watchlist.emptyFilterDescription',
   ctaLabelKey: 'discovered.generateMore',
+  singleItemLabelKey: 'watchlist.item',
+  multipleItemsLabelKey: 'watchlist.items',
 };
 
 interface DiscoveredContentProps {

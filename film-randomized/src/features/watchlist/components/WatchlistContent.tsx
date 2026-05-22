@@ -17,6 +17,8 @@ const WATCHLIST_COPY = {
   emptyDescriptionAllKey: 'watchlist.emptyDescription',
   emptyDescriptionFilterKey: 'watchlist.emptyFilterDescription',
   ctaLabelKey: 'watchlist.discoverContent',
+  singleItemLabelKey: 'watchlist.item',
+  multipleItemsLabelKey: 'watchlist.items',
 };
 
 interface WatchlistContentProps {

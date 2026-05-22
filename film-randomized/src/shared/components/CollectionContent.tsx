@@ -16,8 +16,9 @@ import {
   NormalizableItem,
 } from '../utils/normalizeMediaItem.js';
 import { matchesMediaListFilter } from '../utils/mediaUtils.js';
-import WatchlistItemCard from '../../features/watchlist/components/WatchlistItemCard.jsx';
+import CollectionItemCard from './CollectionItemCard.jsx';
 import { MediaItem, MediaType } from '../types/index.js';
+import { logger } from '../utils/logger.js';
 
 type CollectionFilter = 'all' | 'movies' | 'tv';
 
@@ -34,6 +35,8 @@ interface CollectionCopy {
   emptyDescriptionFilterKey: string;
   ctaLabelKey: string;
   ctaTo?: string;
+  singleItemLabelKey: string;
+  multipleItemsLabelKey: string;
 }
 
 interface CollectionContentProps {
@@ -87,7 +90,7 @@ function CollectionContent({ itemsPromise, filter, token, onRemove, copy }: Coll
         startTransition(() => {
           setItems(snapshot);
         });
-        console.error('Error removing collection item:', err);
+        logger.error('CollectionContent.remove', err);
       }
     },
     [token, onRemove],
@@ -123,7 +126,9 @@ function CollectionContent({ itemsPromise, filter, token, onRemove, copy }: Coll
           <div className="hidden md:block text-slate-600">
             <p className="text-sm">
               {filtered.length}{' '}
-              {filtered.length === 1 ? t('watchlist.item') : t('watchlist.items')}{' '}
+              {filtered.length === 1
+                ? t(copy.singleItemLabelKey)
+                : t(copy.multipleItemsLabelKey)}{' '}
               {t(copy.inListKey)}
             </p>
           </div>
@@ -132,7 +137,7 @@ function CollectionContent({ itemsPromise, filter, token, onRemove, copy }: Coll
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 animate-fade-in">
         {filtered.map((item) => (
-          <WatchlistItemCard
+          <CollectionItemCard
             key={getMediaItemKey(item)}
             item={item as MediaItem}
             onRemove={handleRemove}
