@@ -17,9 +17,9 @@ interface ErrorResponseBody {
 }
 
 /**
- * Global exception filter that produces a consistent JSON shape for every error.
- * 5xx errors are logged and stripped of their internal details before being sent
- * to the client; 4xx errors are forwarded as-is so validation messages remain useful.
+ * Filtro globale delle eccezioni che produce una forma JSON coerente per ogni errore.
+ * Gli errori 5xx vengono registrati e privati dei loro dettagli interni prima di essere inviati
+ * al client; gli errori 4xx vengono inoltrati così come sono in modo che i messaggi di convalida rimangano utili.
  */
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {

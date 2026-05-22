@@ -8,27 +8,27 @@ import {
 } from '../mappers/tmdb-media.mapper.js';
 
 /**
- * Shared CRUD primitives for any per-user media-collection feature
- * (`watchlist`, `discovered`, future bookmarks…).
- *
- * Concrete services extend this class and only need to:
- *   - call `super(repository, EntityClass, notFoundMessage)`;
- *   - decide their own conflict semantics in `create()` (throw vs. idempotent),
- *     possibly using `findOneFor()` as a building block.
- *
- * Kept intentionally thin: only the operations that are *literally* identical
- * across watchlist and discovered live here. Anything subtler (e.g. the
- * "throw on duplicate" vs "return existing" decision) stays in the subclass.
+ * Servizio condiviso per qualsiasi operazione CRUD su una raccolta multimediale per utente
+ * (`watchlist`, `discovered`, `bookmarks`, ecc.).
+ * 
+ * I servizi concreti estendono questa classe e devono solo:
+ *   - chiamare `super(repository, EntityClass, notFoundMessage)`;
+ *   - decidere la propria semantica di conflitto in `create()` (lanciare eccezione o idempotente),
+ *     possibilmente utilizzando `findOneFor()` come blocco di costruzione.
+ * 
+ * Mantenuto intenzionalmente snello: solo le operazioni che sono *letteralmente* identiche
+ * tra watchlist e discovered vivono qui. Qualsiasi operazione più sottile (ad esempio la
+ * decisione "lancia eccezione su duplicato" vs "restituisci esistente") rimane nella sottoclasse.
  */
 export abstract class MediaCollectionService<T extends BaseMediaItem> {
   protected constructor(
     protected readonly repository: Repository<T>,
     protected readonly entityCtor: MediaItemConstructor<T>,
     protected readonly notFoundMessage: string,
-  ) {}
+  ) { }
 
   /**
-   * Returns every row owned by `userId`, newest first.
+   * Restituisce ogni riga posseduta da `userId`, dal più recente al meno recente.
    */
   async findAll(userId: string): Promise<T[]> {
     return this.repository.find({
@@ -38,8 +38,8 @@ export abstract class MediaCollectionService<T extends BaseMediaItem> {
   }
 
   /**
-   * Single-row lookup helper. Used by subclasses to implement their own
-   * conflict-detection / idempotency rules.
+   * Aiuto per la ricerca di una singola riga. Utilizzato dalle sottoclassi per implementare le proprie
+   * regole di rilevamento dei conflitti / idempotenza.
    */
   protected findOneFor(where: FindOptionsWhere<T>): Promise<T | null> {
     return this.repository.findOne({ where });
@@ -54,8 +54,8 @@ export abstract class MediaCollectionService<T extends BaseMediaItem> {
   }
 
   /**
-   * Maps the DTO to a fresh entity via {@link buildMediaItemFromTmdbPayload}
-   * and persists it. Centralised so the mapping has exactly one home.
+   * Esegue il mapping del DTO a una nuova entità tramite {@link buildMediaItemFromTmdbPayload}
+   * e la salva. Centralizzato in modo che il mapping abbia una sola origine.
    */
   protected saveFromDto(userId: string, dto: TmdbMediaPayloadDto): Promise<T> {
     const item = buildMediaItemFromTmdbPayload(this.entityCtor, userId, dto);
@@ -63,9 +63,9 @@ export abstract class MediaCollectionService<T extends BaseMediaItem> {
   }
 
   /**
-   * Deletes rows matching `where` in a single statement and throws
-   * `NotFoundException` if nothing was deleted. Replaces the historical
-   * `findOne + repository.remove()` pattern (2 round-trips → 1).
+   * Elimina le righe che corrispondono a `where` in un'unica istruzione e lancia
+   * `NotFoundException` se non è stato eliminato nulla. Sostituisce il modello storico
+   * `findOne + repository.remove()` (2 round-trip → 1).
    */
   protected async deleteWhere(where: FindOptionsWhere<T>): Promise<void> {
     const result = await this.repository.delete(where);
