@@ -2,6 +2,9 @@ import { Entity, Index, ManyToOne } from 'typeorm';
 import { BaseMediaItem } from './base-media-item.entity.js';
 import { User } from './user.entity.js';
 
+/**
+ * Entità che rappresenta un film scoperto dall'utente
+ */
 @Entity('discovered_items')
 @Index('IDX_discovered_user_tmdb_media', ['userId', 'tmdbId', 'mediaType'], {
   unique: true,
