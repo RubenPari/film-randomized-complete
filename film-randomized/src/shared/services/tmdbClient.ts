@@ -7,6 +7,10 @@ import i18n from 'i18next';
 import { TmdbError } from '../types/index.js';
 export { TmdbError };
 
+/**
+ * Ottiene la lingua corrente
+ * @returns {string} Lingua corrente
+ */
 const getLanguage = (): string => {
   const lang = i18n.language || 'it-IT';
   if (lang === 'it') return 'it-IT';
@@ -14,6 +18,11 @@ const getLanguage = (): string => {
   return lang.includes('-') ? lang : `${lang}-${lang.toUpperCase()}`;
 };
 
+/**
+ * Gestisce le risposte API
+ * @param {Response} response Risposta API
+ * @returns {Promise<T>} Risposta gestita
+ */
 async function handleApiResponse<T = unknown>(response: Response): Promise<T> {
   if (!response.ok) {
     let errorMessage = 'TMDB API error occurred';
@@ -28,7 +37,15 @@ async function handleApiResponse<T = unknown>(response: Response): Promise<T> {
   return (await response.json()) as T;
 }
 
+/**
+ * TMDB API client wrapper
+ */
 export const tmdbClient = {
+  /**
+   * Esegue una richiesta GET al TMDB API
+   * @param {string} endpoint Endpoint API
+   * @returns {Promise<T>} Dati della risposta
+   */
   async get<T = unknown>(endpoint: string): Promise<T> {
     const separator = endpoint.includes('?') ? '&' : '?';
     const url = `${endpoint}${separator}api_key=${API_KEY}&language=${getLanguage()}`;
@@ -36,6 +53,11 @@ export const tmdbClient = {
     return handleApiResponse<T>(response);
   },
 
+  /**
+   * Esegue una richiesta GET raw al TMDB API
+   * @param {string} url URL API
+   * @returns {Promise<T>} Dati della risposta
+   */
   async fetchRaw<T = unknown>(url: string): Promise<T> {
     const response = await fetch(url);
     return handleApiResponse<T>(response);

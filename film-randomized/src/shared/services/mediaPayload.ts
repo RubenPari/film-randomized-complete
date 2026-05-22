@@ -1,24 +1,72 @@
 import type { MediaType, TmdbMedia } from '../types/index.js';
 
+/**
+ * Payload per il backend
+ */
 export interface BackendMediaPayload {
+  /**
+   * ID del media
+   */
   tmdb_id: number;
+  /**
+   * Tipo di media
+   */
   media_type: MediaType;
+  /**
+   * Titolo del media
+   */
   title: string;
+  /**
+   * Titolo originale del media
+   */
   original_title: string | undefined;
+  /**
+   * Descrizione del media
+   */
   overview: string | undefined;
+  /**
+   * Path del poster
+   */
   poster_path: string | null | undefined;
+  /**
+   * Path del backdrop
+   */
   backdrop_path: string | null | undefined;
+  /**
+   * Voto medio
+   */
   vote_average: number | undefined;
+  /**
+   * Numero di voti
+   */
   vote_count: number | undefined;
+  /**
+   * Data di rilascio
+   */
   release_date: string | undefined;
+  /**
+   * Generi
+   */
   genres: string;
+  /**
+   * Durata del media
+   */
   runtime: number | null;
+  /**
+   * Numero di stagioni
+   */
   number_of_seasons: number | null;
+  /**
+   * Numero di episodi
+   */
   number_of_episodes: number | null;
 }
 
 /**
- * Shared mapper used by watchlist/discovered POST calls.
+ * Costruisce il payload per il backend
+ * @param media Media da cui costruire il payload
+ * @param mediaType Tipo di media
+ * @returns Payload per il backend
  */
 export function buildBackendMediaPayload(
   media: TmdbMedia,

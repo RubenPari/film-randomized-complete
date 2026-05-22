@@ -1,7 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { apiClient, ApiError } from './apiClient.js';
 
+/**
+ * Test del client API
+ */
 describe('ApiError', () => {
+  /**
+   * Test di ApiError
+   */
   it('exposes message and status', () => {
     const err = new ApiError('nope', 403);
     expect(err.name).toBe('ApiError');
@@ -10,7 +16,13 @@ describe('ApiError', () => {
   });
 });
 
+/**
+ * Test del client API
+ */
 describe('apiClient', () => {
+  /**
+   * Setup del client API
+   */
   beforeEach(() => {
     vi.stubGlobal(
       'fetch',
@@ -24,10 +36,16 @@ describe('apiClient', () => {
     );
   });
 
+  /**
+   * Cleanup del client API
+   */
   afterEach(() => {
     vi.unstubAllGlobals();
   });
 
+  /**
+   * Test GET
+   */
   it('get requests JSON and returns parsed body', async () => {
     const fetchMock = vi.mocked(globalThis.fetch);
     fetchMock.mockResolvedValueOnce({
@@ -48,6 +66,9 @@ describe('apiClient', () => {
     );
   });
 
+  /**
+   * Test GET
+   */
   it('get sends Authorization when token is provided', async () => {
     const fetchMock = vi.mocked(globalThis.fetch);
     fetchMock.mockResolvedValueOnce({
@@ -69,6 +90,9 @@ describe('apiClient', () => {
     );
   });
 
+  /**
+   * Test POST
+   */
   it('throws ApiError with backend message on error JSON body', async () => {
     vi.mocked(globalThis.fetch).mockResolvedValueOnce({
       ok: false,
@@ -84,6 +108,9 @@ describe('apiClient', () => {
     });
   });
 
+  /**
+   * Test PUT
+   */
   it('throws ApiError with detail when error field missing', async () => {
     vi.mocked(globalThis.fetch).mockResolvedValueOnce({
       ok: false,
@@ -98,6 +125,9 @@ describe('apiClient', () => {
     });
   });
 
+  /**
+   * Test PUT
+   */
   it('throws ApiError with HTTP text when JSON body invalid', async () => {
     vi.mocked(globalThis.fetch).mockResolvedValueOnce({
       ok: false,
@@ -112,6 +142,9 @@ describe('apiClient', () => {
     });
   });
 
+  /**
+   * Test DELETE
+   */
   it('delete returns undefined for 204 No Content', async () => {
     vi.mocked(globalThis.fetch).mockResolvedValueOnce({
       status: 204,
