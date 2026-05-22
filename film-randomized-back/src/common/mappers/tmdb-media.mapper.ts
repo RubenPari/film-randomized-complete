@@ -1,6 +1,5 @@
 import { TmdbMediaPayloadDto } from '../dto/tmdb-media-payload.dto.js';
 import { BaseMediaItem } from '../../entities/base-media-item.entity.js';
-import { MediaType } from '../enums/media-type.enum.js';
 
 export type MediaItemConstructor<T extends BaseMediaItem> = new () => T;
 
@@ -23,7 +22,7 @@ export function buildMediaItemFromTmdbPayload<T extends BaseMediaItem>(
 ): T {
   const item = new ctor();
   item.tmdbId = dto.tmdb_id;
-  item.mediaType = dto.media_type as MediaType;
+  item.mediaType = dto.media_type;
   item.title = dto.title;
   item.originalTitle = dto.original_title ?? null;
   item.overview = dto.overview ?? null;

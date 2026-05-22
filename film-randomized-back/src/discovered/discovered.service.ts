@@ -26,7 +26,7 @@ export class DiscoveredService extends MediaCollectionService<DiscoveredItem> {
     const existing = await this.findOneFor({
       userId,
       tmdbId: dto.tmdb_id,
-      mediaType: dto.media_type as MediaType,
+      mediaType: dto.media_type,
     } as FindOptionsWhere<DiscoveredItem>);
 
     if (existing) {

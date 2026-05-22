@@ -1,5 +1,5 @@
 import {
-  IsIn,
+  IsEnum,
   IsInt,
   IsNumber,
   IsOptional,
@@ -8,6 +8,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
+import { MediaType } from '../enums/media-type.enum.js';
 
 /**
  * Shared TMDb-shaped payload for creating watchlist items or recording discovered titles.
@@ -20,9 +21,8 @@ export class TmdbMediaPayloadDto {
   @Min(1)
   tmdb_id!: number;
 
-  @IsString()
-  @IsIn(['movie', 'tv'])
-  media_type!: string;
+  @IsEnum(MediaType)
+  media_type!: MediaType;
 
   @IsString()
   @MaxLength(500)
