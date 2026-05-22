@@ -1,6 +1,9 @@
 import { MediaType } from '../types/index.js';
 import { toMediaType } from '../constants/mediaType.js';
 
+/**
+ * Interfaccia per i media da filtrare
+ */
 interface MediaRow extends Record<string, unknown> {
   tmdb_id?: number;
   tmdbId?: number | string;
@@ -8,6 +11,11 @@ interface MediaRow extends Record<string, unknown> {
   mediaType?: boolean | MediaType | string;
 }
 
+/**
+ * Ottiene il tipo di media
+ * @param item Item del media
+ * @returns Tipo di media
+ */
 export function getMediaType(item: MediaRow): MediaType | null {
   const mt = item.media_type ?? item.mediaType;
   if (mt === true) return 'movie';
@@ -16,6 +24,12 @@ export function getMediaType(item: MediaRow): MediaType | null {
   return null;
 }
 
+/**
+ * Controlla se il media corrisponde al filtro
+ * @param item Item del media
+ * @param filter Filtro da applicare
+ * @returns True se il media corrisponde al filtro, false altrimenti
+ */
 export function matchesMediaListFilter(item: MediaRow, filter: 'all' | 'movies' | 'tv'): boolean {
   if (filter === 'all') return true;
   const mt = getMediaType(item);
@@ -25,6 +39,13 @@ export function matchesMediaListFilter(item: MediaRow, filter: 'all' | 'movies' 
   return true;
 }
 
+/**
+ * Controlla se il media è escluso per il tipo corrente
+ * @param tmdbId ID del media
+ * @param currentMediaType Tipo di media corrente
+ * @param excludedItems Lista di media esclusi
+ * @returns True se il media è escluso, false altrimenti
+ */
 export function isExcludedForCurrentType(
   tmdbId: number,
   currentMediaType: MediaType,
@@ -38,6 +59,13 @@ export function isExcludedForCurrentType(
   });
 }
 
+/**
+ * Filtra i media validi
+ * @param results Lista di media da filtrare
+ * @param excludedItems Lista di media esclusi
+ * @param currentMediaType Tipo di media corrente
+ * @returns Lista di media validi
+ */
 export function filterValidMedia(
   results: { id: number; overview?: string }[],
   excludedItems: MediaRow[] = [],
@@ -56,6 +84,11 @@ export function filterValidMedia(
   });
 }
 
+/**
+ * Controlla se il media ha una descrizione valida
+ * @param media Media da controllare
+ * @returns True se il media ha una descrizione valida, false altrimenti
+ */
 export function hasValidDescription(media: { overview?: string }): boolean {
   return (
     !!media.overview &&
@@ -64,10 +97,20 @@ export function hasValidDescription(media: { overview?: string }): boolean {
   );
 }
 
+/**
+ * Ottiene un numero di pagina casuale
+ * @param totalPages Numero totale di pagine
+ * @returns Numero di pagina casuale
+ */
 export function getRandomPage(totalPages: number): number {
   return Math.floor(Math.random() * totalPages) + 1;
 }
 
+/**
+ * Ottiene un media casuale da un array
+ * @param mediaArray Array di media
+ * @returns Media casuale
+ */
 export function getRandomMedia<T>(mediaArray: T[]): T {
   const randomIndex = Math.floor(Math.random() * mediaArray.length);
   return mediaArray[randomIndex];

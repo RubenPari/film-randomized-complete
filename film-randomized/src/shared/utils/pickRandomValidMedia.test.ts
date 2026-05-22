@@ -3,21 +3,39 @@ import { pickRandomValidMedia } from './pickRandomValidMedia.js';
 
 const ITALIAN_EMPTY = 'Nessuna descrizione disponibile in italiano.';
 
+/**
+ * Helper function to create a mock movie object
+ * @param id ID del film
+ * @param overview Descrizione del film
+ * @returns Oggetto film mock
+ */
 function makeMovie(id: number, overview = `A valid overview for ${id}.`) {
   return { id, title: `Movie ${id}`, overview };
 }
 
+/**
+ * Test suite for pickRandomValidMedia function
+ */
 describe('pickRandomValidMedia', () => {
+  /**
+   * Setup for each test
+   */
   beforeEach(() => {
     // Pin Math.random so retries are deterministic. 0.0 → getRandomPage
     // returns 1 and getRandomMedia returns the first element.
     vi.spyOn(Math, 'random').mockReturnValue(0);
   });
 
+  /**
+   * Cleanup after each test
+   */
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
+  /**
+   * Test case for a valid movie
+   */
   it('returns details for the first valid candidate it encounters', async () => {
     const fetchPage = vi
       .fn()
@@ -36,6 +54,9 @@ describe('pickRandomValidMedia', () => {
     expect(fetchDetails).toHaveBeenCalledWith('movie', 1);
   });
 
+  /**
+   * Test case for retries when every candidate on the page is excluded
+   */
   it('retries when every candidate on the page is excluded', async () => {
     const fetchPage = vi
       .fn()
@@ -59,6 +80,9 @@ describe('pickRandomValidMedia', () => {
     expect(fetchPage).toHaveBeenCalledTimes(2);
   });
 
+  /**
+   * Test case for retries when every candidate on the page is excluded
+   */
   it('retries when the fetched details turn out to have no description', async () => {
     const fetchPage = vi
       .fn()
@@ -81,6 +105,9 @@ describe('pickRandomValidMedia', () => {
     expect(fetchDetails).toHaveBeenCalledTimes(2);
   });
 
+  /**
+   * Test case for retries when every candidate on the page is excluded
+   */
   it('throws after exhausting the retry budget', async () => {
     const fetchPage = vi.fn().mockResolvedValue({ results: [] });
     const fetchDetails = vi.fn();
@@ -99,6 +126,9 @@ describe('pickRandomValidMedia', () => {
     expect(fetchDetails).not.toHaveBeenCalled();
   });
 
+  /**
+   * Test case for retries when every candidate on the page is excluded
+   */
   it('passes mediaType through to the details call', async () => {
     const fetchPage = vi.fn().mockResolvedValue({ results: [makeMovie(1)] });
     const fetchDetails = vi.fn().mockResolvedValue(makeMovie(1));
