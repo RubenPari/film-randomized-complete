@@ -45,6 +45,14 @@ export abstract class MediaCollectionService<T extends BaseMediaItem> {
     return this.repository.findOne({ where });
   }
 
+  protected async findOneOrThrow(where: FindOptionsWhere<T>): Promise<T> {
+    const item = await this.findOneFor(where);
+    if (!item) {
+      throw new NotFoundException(this.notFoundMessage);
+    }
+    return item;
+  }
+
   /**
    * Maps the DTO to a fresh entity via {@link buildMediaItemFromTmdbPayload}
    * and persists it. Centralised so the mapping has exactly one home.

@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { WatchlistItem } from '../entities/watchlist-item.entity.js';
@@ -44,16 +40,10 @@ export class WatchlistService extends MediaCollectionService<WatchlistItem> {
     tmdbId: number,
     userId: string,
   ): Promise<WatchlistItem> {
-    const item = await this.findOneFor({
+    return this.findOneOrThrow({
       tmdbId,
       userId,
     } as FindOptionsWhere<WatchlistItem>);
-
-    if (!item) {
-      throw new NotFoundException(NOT_FOUND_MESSAGE);
-    }
-
-    return item;
   }
 
   async remove(tmdbId: number, userId: string): Promise<void> {
