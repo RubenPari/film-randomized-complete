@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -13,20 +12,17 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import { MessageResponseDto } from '../auth/dto/responses/message.response.dto.js';
 import type { AuthenticatedUser } from '../auth/types/authenticated-user.js';
 import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
+import { MediaItemResponseDto } from '../common/dto/responses/media-item.response.dto.js';
+import { MediaType } from '../common/enums/media-type.enum.js';
 import {
-  MEDIA_TYPE_VALUES,
-  MediaType,
-} from '../common/enums/media-type.enum.js';
+  toMediaItemResponse,
+  toMediaItemResponseList,
+} from '../common/mappers/media-item-response.mapper.js';
+import { MediaTypeParamPipe } from '../common/pipes/media-type-param.pipe.js';
 import { DiscoveredService } from './discovered.service.js';
-
-function parseMediaType(value: string): MediaType {
-  if (!MEDIA_TYPE_VALUES.includes(value as MediaType)) {
-    throw new BadRequestException('mediaType must be movie or tv');
-  }
-  return value as MediaType;
-}
 
 @Controller('discovered')
 @UseGuards(AuthGuard('jwt'))
@@ -38,27 +34,27 @@ export class DiscoveredController {
   async record(
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: TmdbMediaPayloadDto,
-  ) {
-    return this.discoveredService.record(user.id, dto);
+  ): Promise<MediaItemResponseDto> {
+    const item = await this.discoveredService.record(user.id, dto);
+    return toMediaItemResponse(item);
   }
 
   @Get()
-  async findAll(@CurrentUser() user: AuthenticatedUser) {
-    return this.discoveredService.findAll(user.id);
+  async findAll(
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<MediaItemResponseDto[]> {
+    const items = await this.discoveredService.findAll(user.id);
+    return toMediaItemResponseList(items);
   }
 
   @Delete(':mediaType/:tmdbId')
   @HttpCode(HttpStatus.OK)
   async remove(
-    @Param('mediaType') mediaType: string,
+    @Param('mediaType', MediaTypeParamPipe) mediaType: MediaType,
     @Param('tmdbId', ParseIntPipe) tmdbId: number,
     @CurrentUser() user: AuthenticatedUser,
-  ) {
-    await this.discoveredService.remove(
-      parseMediaType(mediaType),
-      tmdbId,
-      user.id,
-    );
+  ): Promise<MessageResponseDto> {
+    await this.discoveredService.remove(mediaType, tmdbId, user.id);
     return { message: 'Item removed from discovered list' };
   }
 }
