@@ -7,6 +7,8 @@ import { AuthService } from './auth.service.js';
 import { JwtStrategy } from './jwt.strategy.js';
 import { PasswordService } from './services/password.service.js';
 import { RegistrationService } from './services/registration.service.js';
+import { TokenService } from './services/token.service.js';
+import { ACCESS_TOKEN_TTL } from './constants/auth.constants.js';
 import { UsersModule } from '../users/users.module.js';
 import { EmailModule } from '../email/email.module.js';
 
@@ -25,13 +27,19 @@ import { EmailModule } from '../email/email.module.js';
         }
         return {
           secret,
-          signOptions: { expiresIn: '7d' },
+          signOptions: { expiresIn: ACCESS_TOKEN_TTL },
         };
       },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, RegistrationService, PasswordService],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    RegistrationService,
+    PasswordService,
+    TokenService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

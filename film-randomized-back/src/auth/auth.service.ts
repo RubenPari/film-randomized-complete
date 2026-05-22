@@ -3,12 +3,14 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
 import { UsersService } from '../users/users.service.js';
 import { PasswordService } from './services/password.service.js';
 import { RegistrationService } from './services/registration.service.js';
-import { toLoginResponse, toUserResponse } from './mappers/auth-response.mapper.js';
+import { TokenService } from './services/token.service.js';
+import {
+  toLoginResponse,
+  toUserResponse,
+} from './mappers/auth-response.mapper.js';
 import { LoginResponseDto } from './dto/responses/login.response.dto.js';
 import { UserResponseDto } from './dto/responses/user.response.dto.js';
 
@@ -16,7 +18,7 @@ import { UserResponseDto } from './dto/responses/user.response.dto.js';
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService,
+    private readonly tokenService: TokenService,
     private readonly registrationService: RegistrationService,
     private readonly passwordService: PasswordService,
   ) {}
@@ -35,15 +37,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await this.tokenService.comparePassword(
+      password,
+      user.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const token = this.jwtService.sign(
-      { sub: user.id, username: user.username },
-      { expiresIn: '7d' },
-    );
+    const token = this.tokenService.issueAccessToken(user);
 
     return toLoginResponse(token, user);
   }
@@ -65,6 +67,10 @@ export class AuthService {
   }
 
   changePassword(userId: string, currentPassword: string, newPassword: string) {
-    return this.passwordService.changePassword(userId, currentPassword, newPassword);
+    return this.passwordService.changePassword(
+      userId,
+      currentPassword,
+      newPassword,
+    );
   }
 }

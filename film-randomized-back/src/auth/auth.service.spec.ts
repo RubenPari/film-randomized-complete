@@ -1,13 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service.js';
 import { PasswordService } from './services/password.service.js';
 import { RegistrationService } from './services/registration.service.js';
+import { TokenService } from './services/token.service.js';
 import { UsersService } from '../users/users.service.js';
 import { User } from '../entities/user.entity.js';
-
-jest.mock('bcryptjs');
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -22,18 +19,18 @@ describe('AuthService', () => {
   };
 
   const mockUsersService = {
-    create: jest.fn(),
+    registerUser: jest.fn(),
     findByUsername: jest.fn(),
     findByEmail: jest.fn(),
     findById: jest.fn(),
     updateResetToken: jest.fn(),
     updatePassword: jest.fn(),
-    updatePasswordAndClearResetToken: jest.fn(),
+    consumeResetTokenAndUpdatePassword: jest.fn(),
   };
 
-  const mockJwtService = {
-    sign: jest.fn().mockReturnValue('mock-jwt-token'),
-    verify: jest.fn(),
+  const mockTokenService = {
+    comparePassword: jest.fn(),
+    issueAccessToken: jest.fn().mockReturnValue('mock-jwt-token'),
   };
 
   const mockRegistrationService = {
@@ -51,7 +48,7 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         { provide: UsersService, useValue: mockUsersService },
-        { provide: JwtService, useValue: mockJwtService },
+        { provide: TokenService, useValue: mockTokenService },
         { provide: RegistrationService, useValue: mockRegistrationService },
         { provide: PasswordService, useValue: mockPasswordService },
       ],
@@ -65,10 +62,18 @@ describe('AuthService', () => {
     it('delegates to RegistrationService', async () => {
       mockRegistrationService.register.mockResolvedValue({
         token: 'mock-jwt-token',
-        user: { id: 'test-user-id', username: 'testuser', email: 'test@example.com' },
+        user: {
+          id: 'test-user-id',
+          username: 'testuser',
+          email: 'test@example.com',
+        },
       });
 
-      const result = await service.register('testuser', 'test@example.com', 'password123');
+      const result = await service.register(
+        'testuser',
+        'test@example.com',
+        'password123',
+      );
 
       expect(mockRegistrationService.register).toHaveBeenCalledWith(
         'testuser',
@@ -82,7 +87,7 @@ describe('AuthService', () => {
   describe('login', () => {
     it('should login with correct credentials', async () => {
       mockUsersService.findByUsername.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      mockTokenService.comparePassword.mockResolvedValue(true);
 
       const result = await service.login('testuser', 'password123');
 
@@ -100,7 +105,7 @@ describe('AuthService', () => {
 
     it('should throw UnauthorizedException if password is wrong', async () => {
       mockUsersService.findByUsername.mockResolvedValue(mockUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+      mockTokenService.comparePassword.mockResolvedValue(false);
 
       await expect(service.login('testuser', 'wrongpassword')).rejects.toThrow(
         'Invalid credentials',
@@ -122,7 +127,9 @@ describe('AuthService', () => {
     it('throws NotFoundException if user not found', async () => {
       mockUsersService.findById.mockResolvedValue(null);
 
-      await expect(service.getMe('invalid-id')).rejects.toThrow('User not found');
+      await expect(service.getMe('invalid-id')).rejects.toThrow(
+        'User not found',
+      );
     });
 
     it('never exposes the password field on the serialized response', async () => {
@@ -140,7 +147,9 @@ describe('AuthService', () => {
     it('forgotPassword delegates to PasswordService', async () => {
       mockPasswordService.forgotPassword.mockResolvedValue({ message: 'sent' });
       await service.forgotPassword('a@b.com');
-      expect(mockPasswordService.forgotPassword).toHaveBeenCalledWith('a@b.com');
+      expect(mockPasswordService.forgotPassword).toHaveBeenCalledWith(
+        'a@b.com',
+      );
     });
 
     it('resetPassword delegates to PasswordService', async () => {

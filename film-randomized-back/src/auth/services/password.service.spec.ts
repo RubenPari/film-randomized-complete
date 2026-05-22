@@ -1,38 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
-import { getDataSourceToken } from '@nestjs/typeorm';
 import { BadRequestException } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
 import { PasswordService } from './password.service.js';
+import { TokenService } from './token.service.js';
 import { UsersService } from '../../users/users.service.js';
 import { EmailService } from '../../email/email.service.js';
 import { User } from '../../entities/user.entity.js';
-
-jest.mock('bcryptjs');
-
-/**
- * Minimal fake DataSource whose `transaction` callback runs against a mock
- * repository. This lets the reset-password path exercise the find-then-update
- * flow without spinning up a database.
- */
-function buildDataSource(user: User | null) {
-  const qb = {
-    setLock: jest.fn().mockReturnThis(),
-    where: jest.fn().mockReturnThis(),
-    getOne: jest.fn().mockResolvedValue(user),
-  };
-  const update = jest.fn().mockResolvedValue({ affected: 1 });
-  const repo = {
-    createQueryBuilder: jest.fn().mockReturnValue(qb),
-    update,
-  };
-  const ds = {
-    transaction: jest.fn(async (cb: (m: { getRepository: jest.Mock }) => unknown) =>
-      cb({ getRepository: jest.fn().mockReturnValue(repo) }),
-    ),
-  };
-  return { ds, update, qb };
-}
 
 describe('PasswordService', () => {
   const now = new Date('2026-04-10T10:00:00Z');
@@ -56,25 +28,27 @@ describe('PasswordService', () => {
     findById: jest.fn(),
     updateResetToken: jest.fn(),
     updatePassword: jest.fn(),
+    consumeResetTokenAndUpdatePassword: jest.fn(),
   };
 
-  const jwtService = {
-    sign: jest.fn().mockReturnValue('signed.token'),
-    verify: jest.fn(),
+  const tokenService = {
+    issueResetToken: jest.fn().mockReturnValue('signed.token'),
+    verifyResetToken: jest.fn(),
+    hashPassword: jest.fn().mockResolvedValue('newhash'),
+    comparePassword: jest.fn().mockResolvedValue(true),
   };
 
   const emailService = {
     sendPasswordResetEmail: jest.fn(),
   };
 
-  async function createService(datasource: unknown): Promise<PasswordService> {
+  async function createService(): Promise<PasswordService> {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PasswordService,
         { provide: UsersService, useValue: usersService },
-        { provide: JwtService, useValue: jwtService },
+        { provide: TokenService, useValue: tokenService },
         { provide: EmailService, useValue: emailService },
-        { provide: getDataSourceToken(), useValue: datasource },
       ],
     }).compile();
     return module.get(PasswordService);
@@ -83,8 +57,9 @@ describe('PasswordService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers({ now: now.getTime() });
-    (bcrypt.hash as jest.Mock).mockResolvedValue('newhash');
-    (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+    tokenService.issueResetToken.mockReturnValue('signed.token');
+    tokenService.hashPassword.mockResolvedValue('newhash');
+    tokenService.comparePassword.mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -93,8 +68,7 @@ describe('PasswordService', () => {
 
   describe('forgotPassword', () => {
     it('returns the generic response for unknown emails (no enumeration)', async () => {
-      const { ds } = buildDataSource(null);
-      const service = await createService(ds);
+      const service = await createService();
       usersService.findByEmail.mockResolvedValue(null);
 
       const result = await service.forgotPassword('unknown@example.com');
@@ -104,8 +78,7 @@ describe('PasswordService', () => {
     });
 
     it('issues a reset token and sends an email for known users', async () => {
-      const { ds } = buildDataSource(null);
-      const service = await createService(ds);
+      const service = await createService();
       usersService.findByEmail.mockResolvedValue(baseUser);
 
       await service.forgotPassword('alice@example.com');
@@ -124,9 +97,8 @@ describe('PasswordService', () => {
 
   describe('resetPassword', () => {
     it('rejects tokens that fail JWT verification', async () => {
-      const { ds } = buildDataSource(null);
-      const service = await createService(ds);
-      jwtService.verify.mockImplementation(() => {
+      const service = await createService();
+      tokenService.verifyResetToken.mockImplementation(() => {
         throw new Error('bad signature');
       });
 
@@ -136,10 +108,9 @@ describe('PasswordService', () => {
     });
 
     it('rejects tokens whose stored expiry has passed', async () => {
-      const expired = { ...baseUser, resetTokenExpiry: new Date(now.getTime() - 1) };
-      const { ds } = buildDataSource(expired);
-      const service = await createService(ds);
-      jwtService.verify.mockReturnValue({ sub: 'user-id' });
+      const service = await createService();
+      tokenService.verifyResetToken.mockReturnValue({ sub: 'user-id' });
+      usersService.consumeResetTokenAndUpdatePassword.mockResolvedValue(false);
 
       await expect(service.resetPassword('tok', 'newpw12345')).rejects.toThrow(
         'Invalid or expired reset token',
@@ -147,25 +118,22 @@ describe('PasswordService', () => {
     });
 
     it('updates the password and clears the reset token on success', async () => {
-      const { ds, update } = buildDataSource(baseUser);
-      const service = await createService(ds);
-      jwtService.verify.mockReturnValue({ sub: 'user-id' });
+      const service = await createService();
+      tokenService.verifyResetToken.mockReturnValue({ sub: 'user-id' });
+      usersService.consumeResetTokenAndUpdatePassword.mockResolvedValue(true);
 
       const result = await service.resetPassword('tok', 'newpw12345');
 
-      expect(update).toHaveBeenCalledWith('user-id', {
-        password: 'newhash',
-        resetToken: null,
-        resetTokenExpiry: null,
-      });
+      expect(
+        usersService.consumeResetTokenAndUpdatePassword,
+      ).toHaveBeenCalledWith('user-id', 'tok', 'newhash');
       expect(result.message).toContain('reset');
     });
 
     it('rejects when the stored token does not match', async () => {
-      const mismatched = { ...baseUser, resetToken: 'different' };
-      const { ds } = buildDataSource(mismatched);
-      const service = await createService(ds);
-      jwtService.verify.mockReturnValue({ sub: 'user-id' });
+      const service = await createService();
+      tokenService.verifyResetToken.mockReturnValue({ sub: 'user-id' });
+      usersService.consumeResetTokenAndUpdatePassword.mockResolvedValue(false);
 
       await expect(service.resetPassword('tok', 'newpw12345')).rejects.toThrow(
         'Invalid or expired reset token',
@@ -175,10 +143,9 @@ describe('PasswordService', () => {
 
   describe('changePassword', () => {
     it('rejects when the current password is wrong', async () => {
-      const { ds } = buildDataSource(null);
-      const service = await createService(ds);
+      const service = await createService();
       usersService.findById.mockResolvedValue(baseUser);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+      tokenService.comparePassword.mockResolvedValue(false);
 
       await expect(
         service.changePassword('user-id', 'wrong', 'newpw12345'),
@@ -186,8 +153,7 @@ describe('PasswordService', () => {
     });
 
     it('hashes and persists the new password', async () => {
-      const { ds } = buildDataSource(null);
-      const service = await createService(ds);
+      const service = await createService();
       usersService.findById.mockResolvedValue(baseUser);
 
       const result = await service.changePassword(
@@ -196,7 +162,7 @@ describe('PasswordService', () => {
         'newpw12345',
       );
 
-      expect(bcrypt.hash).toHaveBeenCalledWith('newpw12345', 10);
+      expect(tokenService.hashPassword).toHaveBeenCalledWith('newpw12345');
       expect(usersService.updatePassword).toHaveBeenCalledWith(
         'user-id',
         'newhash',
