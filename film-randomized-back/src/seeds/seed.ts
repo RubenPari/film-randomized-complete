@@ -20,7 +20,9 @@ const DEMO_USER = {
   password: 'demopassword',
 };
 
-const DEMO_WATCHLIST: Array<Omit<WatchlistItem, 'id' | 'createdAt' | 'user' | 'userId'>> = [
+const DEMO_WATCHLIST: Array<
+  Omit<WatchlistItem, 'id' | 'createdAt' | 'user' | 'userId'>
+> = [
   {
     tmdbId: 603,
     mediaType: MediaType.MOVIE,
@@ -60,7 +62,9 @@ const DEMO_WATCHLIST: Array<Omit<WatchlistItem, 'id' | 'createdAt' | 'user' | 'u
   },
 ];
 
-const DEMO_DISCOVERED: Array<Omit<DiscoveredItem, 'id' | 'createdAt' | 'user' | 'userId'>> = [
+const DEMO_DISCOVERED: Array<
+  Omit<DiscoveredItem, 'id' | 'createdAt' | 'user' | 'userId'>
+> = [
   {
     tmdbId: 155,
     mediaType: MediaType.MOVIE,
@@ -90,10 +94,13 @@ async function seed(): Promise<void> {
     const watchlistRepo = ds.getRepository(WatchlistItem);
     const discoveredRepo = ds.getRepository(DiscoveredItem);
 
-    let user = await userRepo.findOne({ where: { username: DEMO_USER.username } });
+    let user = await userRepo.findOne({
+      where: { username: DEMO_USER.username },
+    });
     if (user) {
-      // eslint-disable-next-line no-console
-      console.log(`[seed] user "${DEMO_USER.username}" already exists — skipping.`);
+      console.log(
+        `[seed] user "${DEMO_USER.username}" already exists — skipping.`,
+      );
       return;
     }
 
@@ -105,21 +112,24 @@ async function seed(): Promise<void> {
         password,
       }),
     );
-    // eslint-disable-next-line no-console
+
     console.log(`[seed] created user ${user.username} (${user.email})`);
 
     for (const row of DEMO_WATCHLIST) {
-      await watchlistRepo.save(watchlistRepo.create({ ...row, userId: user.id }));
+      await watchlistRepo.save(
+        watchlistRepo.create({ ...row, userId: user.id }),
+      );
     }
     for (const row of DEMO_DISCOVERED) {
-      await discoveredRepo.save(discoveredRepo.create({ ...row, userId: user.id }));
+      await discoveredRepo.save(
+        discoveredRepo.create({ ...row, userId: user.id }),
+      );
     }
 
-    // eslint-disable-next-line no-console
     console.log(
       `[seed] inserted ${DEMO_WATCHLIST.length} watchlist + ${DEMO_DISCOVERED.length} discovered rows.`,
     );
-    // eslint-disable-next-line no-console
+
     console.log(
       `[seed] demo credentials — username: ${DEMO_USER.username}  password: ${DEMO_USER.password}`,
     );
@@ -129,7 +139,6 @@ async function seed(): Promise<void> {
 }
 
 seed().catch((err) => {
-  // eslint-disable-next-line no-console
   console.error('[seed] failed:', err);
   process.exit(1);
 });

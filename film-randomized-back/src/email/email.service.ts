@@ -20,21 +20,28 @@ export class EmailService {
       });
     } else {
       this.transporter = null;
-      this.logger.warn('MAILTRAP_TOKEN not configured. Email sending disabled.');
+      this.logger.warn(
+        'MAILTRAP_TOKEN not configured. Email sending disabled.',
+      );
     }
   }
 
   async sendPasswordResetEmail(to: string, resetToken: string): Promise<void> {
     if (!this.transporter) {
-      this.logger.warn(`Email sending skipped for ${to}: Mailtrap not configured.`);
+      this.logger.warn(
+        `Email sending skipped for ${to}: Mailtrap not configured.`,
+      );
       return;
     }
 
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
+    const frontendUrl =
+      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     await this.transporter.sendMail({
-      from: this.configService.get<string>('MAILTRAP_SENDER_EMAIL') || 'noreply@filmrandomized.com',
+      from:
+        this.configService.get<string>('MAILTRAP_SENDER_EMAIL') ||
+        'noreply@filmrandomized.com',
       to,
       subject: 'Reset Your Password - Film Randomized',
       html: `

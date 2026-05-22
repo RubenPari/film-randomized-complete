@@ -22,9 +22,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
  * Every step uses `IF NOT EXISTS` / `USING` clauses so the migration is safe
  * to re-run and cleanly reversible.
  */
-export class DataIntegrityConstraints1775692900000
-  implements MigrationInterface
-{
+export class DataIntegrityConstraints1775692900000 implements MigrationInterface {
   name = 'DataIntegrityConstraints1775692900000';
 
   async up(queryRunner: QueryRunner): Promise<void> {
