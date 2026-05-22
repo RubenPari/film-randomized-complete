@@ -16,8 +16,10 @@ export class DiscoveredService extends MediaCollectionService<DiscoveredItem> {
   }
 
   /**
-   * Records a discovered title. Idempotent: returns the existing row when the
-   * exact (userId, tmdbId, mediaType) tuple already exists.
+   * Registra un film scoperto
+   * @param userId ID dell'utente
+   * @param dto Dati del film
+   * @returns Film registrato
    */
   async record(
     userId: string,
@@ -36,6 +38,12 @@ export class DiscoveredService extends MediaCollectionService<DiscoveredItem> {
     return this.saveFromDto(userId, dto);
   }
 
+  /**
+   * Rimuove un film scoperto
+   * @param mediaType Tipo di media
+   * @param tmdbId ID del film
+   * @param userId ID dell'utente
+   */
   async remove(
     mediaType: MediaType,
     tmdbId: number,

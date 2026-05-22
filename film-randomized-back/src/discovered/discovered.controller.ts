@@ -27,8 +27,14 @@ import { DiscoveredService } from './discovered.service.js';
 @Controller('discovered')
 @UseGuards(AuthGuard('jwt'))
 export class DiscoveredController {
-  constructor(private readonly discoveredService: DiscoveredService) {}
+  constructor(private readonly discoveredService: DiscoveredService) { }
 
+  /**
+   * Registra un film scoperto
+   * @param user Utente autenticato
+   * @param dto Dati del film
+   * @returns Film registrato
+   */
   @Post()
   @HttpCode(HttpStatus.OK)
   async record(
@@ -39,6 +45,11 @@ export class DiscoveredController {
     return toMediaItemResponse(item);
   }
 
+  /**
+   * Restituisce la lista dei film scoperti
+   * @param user Utente autenticato
+   * @returns Lista dei film scoperti
+   */
   @Get()
   async findAll(
     @CurrentUser() user: AuthenticatedUser,
@@ -47,6 +58,13 @@ export class DiscoveredController {
     return toMediaItemResponseList(items);
   }
 
+  /**
+   * Rimuove un film scoperto
+   * @param mediaType Tipo di media
+   * @param tmdbId ID del film
+   * @param user Utente autenticato
+   * @returns Messaggio di conferma
+   */
   @Delete(':mediaType/:tmdbId')
   @HttpCode(HttpStatus.OK)
   async remove(

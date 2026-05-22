@@ -5,6 +5,9 @@ import { DiscoveredItem } from '../entities/discovered-item.entity.js';
 import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 import { MediaType } from '../common/enums/media-type.enum.js';
 
+/**
+ * Test del servizio di scoperta
+ */
 describe('DiscoveredService', () => {
   let service: DiscoveredService;
 
@@ -32,6 +35,9 @@ describe('DiscoveredService', () => {
     runtime: 120,
   };
 
+  /**
+   * Setup prima di ogni test
+   */
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -48,7 +54,13 @@ describe('DiscoveredService', () => {
     jest.clearAllMocks();
   });
 
+  /**
+   * Test che verifica l'interazione con il repository
+   */
   describe('record', () => {
+    /**
+     * Test che verifica che l'item venga salvato correttamente
+     */
     it('should save a new discovered item via the shared mapper', async () => {
       mockDiscoveredRepository.findOne.mockResolvedValue(null);
       mockDiscoveredRepository.save.mockImplementation((entity) =>
@@ -72,6 +84,9 @@ describe('DiscoveredService', () => {
       );
     });
 
+    /**
+     * Test che verifica che l'item venga restituito correttamente quando esiste già
+     */
     it('should return existing item without saving again (idempotent)', async () => {
       const existing = {
         id: 'existing-id',
@@ -89,7 +104,13 @@ describe('DiscoveredService', () => {
     });
   });
 
+  /**
+   * Test che verifica che l'item venga restituito correttamente quando esiste già
+   */
   describe('findAll', () => {
+    /**
+     * Test che verifica che vengano restituiti tutti i film scoperti
+     */
     it('should return all discovered items for a user', async () => {
       const mockItems = [
         { id: '1', tmdbId: 12345, title: 'Movie 1', userId: mockUserId },
@@ -107,7 +128,13 @@ describe('DiscoveredService', () => {
     });
   });
 
+  /**
+   * Test che verifica che l'item venga rimosso correttamente
+   */
   describe('remove', () => {
+    /**
+     * Test che verifica che l'item venga rimosso correttamente in una singola query
+     */
     it('should delete in a single query keyed by (mediaType, tmdbId, userId)', async () => {
       mockDiscoveredRepository.delete.mockResolvedValue({
         affected: 1,
@@ -124,6 +151,9 @@ describe('DiscoveredService', () => {
       expect(mockDiscoveredRepository.findOne).not.toHaveBeenCalled();
     });
 
+    /**
+     * Test che verifica che venga lanciata un'eccezione quando l'item non viene trovato
+     */
     it('should throw NotFoundException when delete affects 0 rows', async () => {
       mockDiscoveredRepository.delete.mockResolvedValue({
         affected: 0,
