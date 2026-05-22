@@ -4,11 +4,17 @@ import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { UsersService } from './users.service.js';
 import { User } from '../entities/user.entity.js';
 
+/**
+ * Test per il servizio di utenti
+ */
 describe('UsersService', () => {
   let service: UsersService;
   let repo: jest.Mocked<Pick<Repository<User>, 'findOne' | 'save' | 'update'>>;
   let dataSource: { transaction: jest.Mock };
 
+  /**
+   * Setup del test
+   */
   beforeEach(async () => {
     repo = {
       findOne: jest.fn(),
@@ -31,6 +37,9 @@ describe('UsersService', () => {
     service = module.get(UsersService);
   });
 
+  /**
+   * Test per il metodo registerUser
+   */
   it('registerUser persists a user entity with the given credentials', async () => {
     const txRepo = {
       create: jest.fn().mockReturnValue({
@@ -56,6 +65,9 @@ describe('UsersService', () => {
     expect(result.username).toBe('alice');
   });
 
+  /**
+   * Test per il metodo findByUsername
+   */
   it('findByUsername queries by username', async () => {
     repo.findOne.mockResolvedValue({ id: 'uid' } as User);
 
@@ -64,6 +76,9 @@ describe('UsersService', () => {
     expect(repo.findOne).toHaveBeenCalledWith({ where: { username: 'alice' } });
   });
 
+  /**
+   * Test per il metodo findByEmail
+   */
   it('findByEmail queries by email', async () => {
     repo.findOne.mockResolvedValue(null);
 
@@ -72,6 +87,9 @@ describe('UsersService', () => {
     expect(repo.findOne).toHaveBeenCalledWith({ where: { email: 'a@b.com' } });
   });
 
+  /**
+   * Test per il metodo registerUser
+   */
   it('registerUser maps unique constraint errors to conflict exceptions', async () => {
     const txRepo = {
       create: jest.fn(),
@@ -92,6 +110,9 @@ describe('UsersService', () => {
     ).rejects.toThrow('Username already exists');
   });
 
+  /**
+   * Test per il metodo consumeResetTokenAndUpdatePassword
+   */
   it('consumeResetTokenAndUpdatePassword returns false when token mismatch', async () => {
     const txRepo = {
       createQueryBuilder: jest.fn().mockReturnValue({

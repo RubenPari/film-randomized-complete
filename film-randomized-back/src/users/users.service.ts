@@ -6,7 +6,12 @@ import { User } from '../entities/user.entity.js';
 
 const UNIQUE_VIOLATION_CODE = '23505';
 
-function mapUniqueViolation(err: QueryFailedError<unknown>): ConflictException {
+/**
+ * Mappa l'errore di violazione del vincolo unico a un'eccezione di conflitto
+ * @param err Errore di violazione del vincolo unico
+ * @returns Eccezione di conflitto
+ */
+function mapUniqueViolation(err: QueryFailedError): ConflictException {
   const constraint = (err.driverError as { constraint?: string } | undefined)
     ?.constraint;
 
@@ -26,7 +31,7 @@ export class UsersService {
     private readonly dataSource: DataSource,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   /**
    * Transactional user creation with DB-constraint-based conflict handling.
@@ -45,7 +50,7 @@ export class UsersService {
         if (
           err instanceof QueryFailedError &&
           (err.driverError as { code?: string } | undefined)?.code ===
-            UNIQUE_VIOLATION_CODE
+          UNIQUE_VIOLATION_CODE
         ) {
           throw mapUniqueViolation(err);
         }
@@ -54,18 +59,39 @@ export class UsersService {
     });
   }
 
+  /**
+   * Trova un utente per username
+   * @param username Username dell'utente
+   * @returns Utente trovato
+   */
   async findByUsername(username: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { username } });
   }
 
+  /**
+   * Trova un utente per email
+   * @param email Email dell'utente
+   * @returns Utente trovato
+   */
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { email } });
   }
 
+  /**
+   * Trova un utente per ID
+   * @param id ID dell'utente
+   * @returns Utente trovato
+   */
   async findById(id: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { id } });
   }
 
+  /**
+   * Aggiorna il token di reset
+   * @param userId ID dell'utente
+   * @param resetToken Token di reset
+   * @param resetTokenExpiry Scadenza del token di reset
+   */
   async updateResetToken(
     userId: string,
     resetToken: string | null,
@@ -74,6 +100,11 @@ export class UsersService {
     await this.userRepository.update(userId, { resetToken, resetTokenExpiry });
   }
 
+  /**
+   * Aggiorna la password
+   * @param userId ID dell'utente
+   * @param newPassword Nuova password
+   */
   async updatePassword(userId: string, newPassword: string): Promise<void> {
     await this.userRepository.update(userId, { password: newPassword });
   }
