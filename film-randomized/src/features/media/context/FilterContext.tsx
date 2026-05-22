@@ -56,6 +56,8 @@ export function useMediaResults() {
     mediaType: v.mediaType,
     randomMedia: v.randomMedia,
     isLoading: v.isLoading,
+    isGenerating: v.isGenerating,
+    isFilterPending: v.isFilterPending,
     error: v.error,
     generateRandomMedia: v.generateRandomMedia,
   };

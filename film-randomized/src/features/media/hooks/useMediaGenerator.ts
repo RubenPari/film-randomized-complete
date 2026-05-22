@@ -2,11 +2,11 @@ import { useTransition } from 'react';
 import { useMediaFilters } from './useMediaFilters.js';
 import { useGenres } from './useGenres.js';
 import { useMediaFetcher } from './useMediaFetcher.js';
-import type { Genre, TmdbMedia, MediaFilters } from '../../../shared/types/index.js';
+import type { Genre, TmdbMedia, MediaFilters, MediaType } from '../../../shared/types/index.js';
 
 export interface UseMediaGeneratorReturn {
-  mediaType: boolean;
-  setMediaType: (val: boolean) => void;
+  mediaType: MediaType;
+  setMediaType: (val: MediaType) => void;
   minRating: number;
   setMinRating: (val: number) => void;
   maxRating: number;
@@ -22,6 +22,8 @@ export interface UseMediaGeneratorReturn {
   genres: Genre[];
   randomMedia: TmdbMedia | null;
   isLoading: boolean;
+  isGenerating: boolean;
+  isFilterPending: boolean;
   error: string | null;
   generateRandomMedia: () => void;
 }
@@ -62,7 +64,7 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
   const [isPendingFilter, startTransition] = useTransition();
 
   // Wrappers to apply filters inside a transition, avoiding blocking the main thread
-  const handleMediaTypeChange = (val: boolean) => startTransition(() => setMediaType(val));
+  const handleMediaTypeChange = (val: MediaType) => startTransition(() => setMediaType(val));
   const handleMinRatingChange = (val: number) => startTransition(() => setMinRating(val));
   const handleMaxRatingChange = (val: number) => startTransition(() => setMaxRating(val));
   const handleReleaseYearFromChange = (val: number) => startTransition(() => setReleaseYearFrom(val));
@@ -100,6 +102,8 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     genres,
     randomMedia,
     isLoading: isFetching || isPendingFilter,
+    isGenerating: isFetching,
+    isFilterPending: isPendingFilter,
     error: fetchError || genresError,
     generateRandomMedia: handleGenerateRandomMedia,
   };

@@ -20,7 +20,7 @@ function HomePage(): JSX.Element {
   const {
     mediaType,
     randomMedia,
-    isLoading,
+    isGenerating,
     error,
     generateRandomMedia,
   } = useMediaResults();
@@ -38,7 +38,7 @@ function HomePage(): JSX.Element {
 
             <GenerateButton
               variant="desktop"
-              isLoading={isLoading}
+              isLoading={isGenerating}
               onGenerate={generateRandomMedia}
             />
 
@@ -64,7 +64,7 @@ function HomePage(): JSX.Element {
               </div>
             )}
 
-            {randomMedia && !isLoading && <MediaCard media={randomMedia} mediaType={mediaType} />}
+            {randomMedia && !isGenerating && <MediaCard media={randomMedia} mediaType={mediaType} />}
           </div>
 
           <div
@@ -82,10 +82,10 @@ function HomePage(): JSX.Element {
       <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 border-t border-brand-accent/30 px-4 py-3 flex items-center justify-between lg:hidden backdrop-blur-md">
         <span className="text-sm text-gray-300">
           {t('home.generateMobile', {
-            type: mediaType ? t('home.movieMobile') : t('home.tvMobile'),
+            type: mediaType === 'movie' ? t('home.movieMobile') : t('home.tvMobile'),
           })}
         </span>
-        <GenerateButton variant="mobile" isLoading={isLoading} onGenerate={generateRandomMedia} />
+        <GenerateButton variant="mobile" isLoading={isGenerating} onGenerate={generateRandomMedia} />
       </div>
     </div>
   );
