@@ -25,8 +25,14 @@ import { WatchlistService } from './watchlist.service.js';
 @Controller('watchlist')
 @UseGuards(AuthGuard('jwt'))
 export class WatchlistController {
-  constructor(private readonly watchlistService: WatchlistService) {}
+  constructor(private readonly watchlistService: WatchlistService) { }
 
+  /**
+   * Aggiunge un film alla lista di film da vedere (watchlist) dell'utente
+   * @param user Utente autenticato
+   * @param dto Dati del film da aggiungere
+   * @returns Film aggiunto alla watchlist
+   */
   @Post()
   @HttpCode(HttpStatus.OK)
   async create(
@@ -37,6 +43,11 @@ export class WatchlistController {
     return toMediaItemResponse(item);
   }
 
+  /**
+   * Restituisce la lista di film da vedere (watchlist) dell'utente
+   * @param user Utente autenticato
+   * @returns Lista di film da vedere
+   */
   @Get()
   async findAll(
     @CurrentUser() user: AuthenticatedUser,
@@ -45,6 +56,12 @@ export class WatchlistController {
     return toMediaItemResponseList(items);
   }
 
+  /**
+   * Restituisce un film dalla lista di film da vedere (watchlist) dell'utente dato il suo tmdbId
+   * @param tmdbId ID del film da cercare
+   * @param user Utente autenticato
+   * @returns Film trovato nella watchlist
+   */
   @Get(':tmdbId')
   async findOne(
     @Param('tmdbId', ParseIntPipe) tmdbId: number,
@@ -54,6 +71,12 @@ export class WatchlistController {
     return toMediaItemResponse(item);
   }
 
+  /**
+   * Rimuove un film dalla lista di film da vedere (watchlist) dell'utente dato il suo tmdbId
+   * @param tmdbId ID del film da rimuovere
+   * @param user Utente autenticato
+   * @returns Messaggio di conferma
+   */
   @Delete(':tmdbId')
   @HttpCode(HttpStatus.OK)
   async remove(

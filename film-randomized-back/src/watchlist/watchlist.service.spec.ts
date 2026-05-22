@@ -4,6 +4,9 @@ import { WatchlistService } from './watchlist.service.js';
 import { WatchlistItem } from '../entities/watchlist-item.entity.js';
 import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 
+/**
+ * Test per il servizio di watchlist
+ */
 describe('WatchlistService', () => {
   let service: WatchlistService;
 
@@ -16,6 +19,9 @@ describe('WatchlistService', () => {
 
   const mockUserId = 'user-123';
 
+  /**
+   * Setup del test
+   */
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -31,6 +37,9 @@ describe('WatchlistService', () => {
     jest.clearAllMocks();
   });
 
+  /**
+   * Test per il metodo create
+   */
   describe('create', () => {
     const createDto: TmdbMediaPayloadDto = {
       tmdb_id: 12345,
@@ -47,6 +56,9 @@ describe('WatchlistService', () => {
       runtime: 120,
     };
 
+    /**
+     * Test per il metodo create
+     */
     it('should create a watchlist item using the shared mapper', async () => {
       mockWatchlistRepository.findOne.mockResolvedValue(null);
       mockWatchlistRepository.save.mockImplementation((entity) =>
@@ -73,6 +85,9 @@ describe('WatchlistService', () => {
       );
     });
 
+    /**
+     * Test per il metodo create
+     */
     it('should throw ConflictException if item already exists', async () => {
       mockWatchlistRepository.findOne.mockResolvedValue({ id: 'existing-id' });
 
@@ -83,7 +98,13 @@ describe('WatchlistService', () => {
     });
   });
 
+  /**
+   * Test per il metodo findAll
+   */
   describe('findAll', () => {
+    /**
+     * Test per il metodo findAll
+     */
     it('should return all watchlist items for a user', async () => {
       const mockItems = [
         { id: '1', tmdbId: 12345, title: 'Movie 1', userId: mockUserId },
@@ -101,6 +122,9 @@ describe('WatchlistService', () => {
     });
   });
 
+  /**
+   * Test per il metodo findOneByTmdbId
+   */
   describe('findOneByTmdbId', () => {
     it('should return a watchlist item by tmdbId', async () => {
       const mockItem = {
@@ -116,6 +140,9 @@ describe('WatchlistService', () => {
       expect(result.tmdbId).toBe(12345);
     });
 
+    /**
+     * Test per il metodo findOneByTmdbId
+     */
     it('should throw NotFoundException if item not found', async () => {
       mockWatchlistRepository.findOne.mockResolvedValue(null);
 
@@ -125,7 +152,13 @@ describe('WatchlistService', () => {
     });
   });
 
+  /**
+   * Test per il metodo remove
+   */
   describe('remove', () => {
+    /**
+     * Test per il metodo remove
+     */
     it('should delete in a single query and not call findOne first', async () => {
       mockWatchlistRepository.delete.mockResolvedValue({
         affected: 1,
@@ -141,6 +174,9 @@ describe('WatchlistService', () => {
       expect(mockWatchlistRepository.findOne).not.toHaveBeenCalled();
     });
 
+    /**
+     * Test per il metodo remove
+     */
     it('should throw NotFoundException when delete affects 0 rows', async () => {
       mockWatchlistRepository.delete.mockResolvedValue({
         affected: 0,

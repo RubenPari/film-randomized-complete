@@ -16,6 +16,12 @@ export class WatchlistService extends MediaCollectionService<WatchlistItem> {
     super(repository, WatchlistItem, NOT_FOUND_MESSAGE);
   }
 
+  /**
+   * Crea un item nella watchlist
+   * @param userId ID dell'utente
+   * @param dto Dati dell'item
+   * @returns Item creato
+   */
   async create(
     userId: string,
     dto: TmdbMediaPayloadDto,
@@ -36,6 +42,12 @@ export class WatchlistService extends MediaCollectionService<WatchlistItem> {
     return this.saveFromDto(userId, dto);
   }
 
+  /**
+   * Trova un item nella watchlist by tmdbId
+   * @param tmdbId ID del film
+   * @param userId ID dell'utente
+   * @returns Item trovato
+   */
   async findOneByTmdbId(
     tmdbId: number,
     userId: string,
@@ -46,6 +58,11 @@ export class WatchlistService extends MediaCollectionService<WatchlistItem> {
     } as FindOptionsWhere<WatchlistItem>);
   }
 
+  /**
+   * Rimuove un item dalla watchlist
+   * @param tmdbId ID del film
+   * @param userId ID dell'utente
+   */
   async remove(tmdbId: number, userId: string): Promise<void> {
     await this.deleteWhere({
       tmdbId,
