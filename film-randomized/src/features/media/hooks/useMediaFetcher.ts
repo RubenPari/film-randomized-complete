@@ -16,7 +16,7 @@ export interface UseMediaFetcherReturn {
   randomMedia: TmdbMedia | null;
   isLoading: boolean;
   error: string | null;
-  generateRandomMedia: (filters: MediaFilters, mediaType: boolean) => Promise<void>;
+  generateRandomMedia: (filters: MediaFilters, mediaType: MediaType) => Promise<void>;
 }
 
 /**
@@ -37,7 +37,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
   const [error, setError] = useState<string | null>(null);
 
   const generateRandomMedia = useCallback(
-    async (filters: MediaFilters, mediaType: boolean) => {
+    async (filters: MediaFilters, mediaType: MediaType) => {
       setIsLoading(true);
       setError(null);
 
@@ -50,7 +50,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
 
         const details = await pickRandomValidMedia({
           fetchPage: (page: number) => fetchMediaPage(discoverUrl, page),
-          fetchDetails: (mt: MediaType, id: number) => fetchMediaDetails(mt === 'movie', id),
+          fetchDetails: (mt: MediaType, id: number) => fetchMediaDetails(mt, id),
           totalPages,
           mediaType,
           excludedItems: excludedItems as unknown as Record<string, unknown>[],
@@ -65,11 +65,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
               'useMediaFetcher.recordDiscovered',
               recordErr instanceof Error ? recordErr.message : recordErr,
             );
-            setError(
-              (recordErr instanceof Error ? recordErr.message : null) ||
-                'Could not save this title to your discovered list. Please try again.',
-            );
-            return;
+            // Do not block the main "generate" flow if discovered persistence fails.
           }
         }
 

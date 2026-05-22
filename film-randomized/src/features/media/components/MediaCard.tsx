@@ -7,7 +7,7 @@ import type { MediaType, TmdbMedia } from '../../../shared/types/index.js';
 
 interface MediaCardProps {
   media: TmdbMedia;
-  mediaType: MediaType | boolean;
+  mediaType: MediaType;
 }
 
 /**

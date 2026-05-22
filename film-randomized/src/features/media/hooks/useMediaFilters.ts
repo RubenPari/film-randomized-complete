@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { MIN_RELEASE_YEAR } from '../../../shared/constants/config.js';
+import type { MediaType } from '../../../shared/types/index.js';
 
 export interface UseMediaFiltersReturn {
-  mediaType: boolean;
-  setMediaType: (val: boolean) => void;
+  mediaType: MediaType;
+  setMediaType: (val: MediaType) => void;
   minRating: number;
   setMinRating: (val: number) => void;
   maxRating: number;
@@ -22,7 +23,7 @@ export interface UseMediaFiltersReturn {
  * Custom hook for managing filter states.
  */
 export function useMediaFilters(): UseMediaFiltersReturn {
-  const [mediaType, setMediaType] = useState<boolean>(true); // true = movie, false = TV show
+  const [mediaType, setMediaType] = useState<MediaType>('movie');
   const [minRating, setMinRating] = useState<number>(0);
   const [maxRating, setMaxRating] = useState<number>(10);
   const [releaseYearFrom, setReleaseYearFrom] = useState<number>(MIN_RELEASE_YEAR);

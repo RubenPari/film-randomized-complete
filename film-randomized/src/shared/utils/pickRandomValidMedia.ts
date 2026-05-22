@@ -4,7 +4,6 @@ import {
   getRandomPage,
   hasValidDescription,
   isExcludedForCurrentType,
-  resolveMediaTypeString,
 } from './mediaUtils.js';
 import { MediaType, TmdbMedia, TmdbPageResponse } from '../types/index.js';
 
@@ -12,7 +11,7 @@ interface PickRandomValidMediaOptions {
   fetchPage: (page: number) => Promise<TmdbPageResponse>;
   fetchDetails: (mediaType: MediaType, id: number) => Promise<TmdbMedia>;
   totalPages: number;
-  mediaType: boolean | MediaType;
+  mediaType: MediaType;
   excludedItems?: Record<string, unknown>[];
   maxAttempts?: number;
 }
@@ -25,7 +24,7 @@ export async function pickRandomValidMedia({
   excludedItems = [],
   maxAttempts = 5,
 }: PickRandomValidMediaOptions): Promise<TmdbMedia> {
-  const mt = resolveMediaTypeString(mediaType);
+  const mt = mediaType;
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const page = getRandomPage(totalPages);

@@ -99,7 +99,7 @@ describe('pickRandomValidMedia', () => {
     expect(fetchDetails).not.toHaveBeenCalled();
   });
 
-  it('accepts legacy boolean mediaType for the details call', async () => {
+  it('passes mediaType through to the details call', async () => {
     const fetchPage = vi.fn().mockResolvedValue({ results: [makeMovie(1)] });
     const fetchDetails = vi.fn().mockResolvedValue(makeMovie(1));
 
@@ -107,7 +107,7 @@ describe('pickRandomValidMedia', () => {
       fetchPage,
       fetchDetails,
       totalPages: 1,
-      mediaType: false, // legacy: false = tv
+      mediaType: 'tv',
     });
 
     expect(fetchDetails).toHaveBeenCalledWith('tv', 1);

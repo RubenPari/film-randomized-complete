@@ -17,11 +17,10 @@ import {
 } from '../types/index.js';
 
 export const discoverMedia = async (
-  mediaType: boolean,
+  mediaType: MediaType,
   filters: MediaFilters,
 ): Promise<TmdbDiscoverResult> => {
-  const mediaTypeParam: MediaType = mediaType ? 'movie' : 'tv';
-  const endpoint = API_ENDPOINTS.discover(mediaTypeParam);
+  const endpoint = API_ENDPOINTS.discover(mediaType);
   const urlParams = new URLSearchParams();
 
   urlParams.append('vote_average.gte', String(filters.minRating));
@@ -33,14 +32,14 @@ export const discoverMedia = async (
 
   if (filters.releaseYearFrom) {
     urlParams.append(
-      mediaType ? 'primary_release_date.gte' : 'first_air_date.gte',
+      mediaType === 'movie' ? 'primary_release_date.gte' : 'first_air_date.gte',
       `${filters.releaseYearFrom}-01-01`,
     );
   }
 
   if (filters.releaseYearTo) {
     urlParams.append(
-      mediaType ? 'primary_release_date.lte' : 'first_air_date.lte',
+      mediaType === 'movie' ? 'primary_release_date.lte' : 'first_air_date.lte',
       `${filters.releaseYearTo}-12-31`,
     );
   }
@@ -69,20 +68,18 @@ export const fetchMediaPage = async (
 };
 
 export const fetchMediaDetails = async (
-  mediaType: boolean,
+  mediaType: MediaType,
   mediaId: number,
 ): Promise<TmdbMedia> => {
-  const mediaTypeParam: MediaType = mediaType ? 'movie' : 'tv';
-  const endpoint = API_ENDPOINTS.details(mediaTypeParam, mediaId);
+  const endpoint = API_ENDPOINTS.details(mediaType, mediaId);
   return tmdbClient.get<TmdbMedia>(endpoint);
 };
 
 export const fetchMediaVideos = async (
-  mediaType: boolean,
+  mediaType: MediaType,
   mediaId: number,
 ): Promise<TmdbVideosResponse> => {
-  const mediaTypeParam: MediaType = mediaType ? 'movie' : 'tv';
-  const endpoint = API_ENDPOINTS.videos(mediaTypeParam, mediaId);
+  const endpoint = API_ENDPOINTS.videos(mediaType, mediaId);
   const data = await tmdbClient.get<TmdbVideosResponse>(endpoint);
 
   if (!data.results || data.results.length === 0) {

@@ -7,7 +7,7 @@ describe('useMediaFilters', () => {
   it('should initialize with default values', () => {
     const { result } = renderHook(() => useMediaFilters());
 
-    expect(result.current.mediaType).toBe(true);
+    expect(result.current.mediaType).toBe('movie');
     expect(result.current.minRating).toBe(0);
     expect(result.current.maxRating).toBe(10);
     expect(result.current.selectedGenres).toEqual([]);
@@ -18,10 +18,10 @@ describe('useMediaFilters', () => {
     const { result } = renderHook(() => useMediaFilters());
 
     act(() => {
-      result.current.setMediaType(false);
+      result.current.setMediaType('tv');
     });
 
-    expect(result.current.mediaType).toBe(false);
+    expect(result.current.mediaType).toBe('tv');
   });
 
   it('should toggle genres correctly', () => {

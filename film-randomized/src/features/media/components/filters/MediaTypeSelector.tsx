@@ -3,10 +3,11 @@
  * Allows users to switch between movies and TV shows.
  */
 import { useTranslation } from 'react-i18next';
+import type { MediaType } from '../../../../shared/types/index.js';
 
 interface MediaTypeSelectorProps {
-  mediaType: boolean;
-  setMediaType: (val: boolean) => void;
+  mediaType: MediaType;
+  setMediaType: (val: MediaType) => void;
 }
 
 /**
@@ -20,9 +21,9 @@ function MediaTypeSelector({ mediaType, setMediaType }: MediaTypeSelectorProps) 
       <h2 className="filter-title">{t('filters.mediaType')}</h2>
       <div className="flex space-x-3">
         <button
-          onClick={function() { setMediaType(true); }}
+          onClick={function() { setMediaType('movie'); }}
           className={`btn-secondary flex-1 flex items-center justify-center gap-2 font-semibold transition-all duration-200 ${
-            mediaType
+            mediaType === 'movie'
               ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-105'
               : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
           }`}
@@ -33,9 +34,9 @@ function MediaTypeSelector({ mediaType, setMediaType }: MediaTypeSelectorProps) 
           {t('common.movies')}
         </button>
         <button
-          onClick={function() { setMediaType(false); }}
+          onClick={function() { setMediaType('tv'); }}
           className={`btn-secondary flex-1 flex items-center justify-center gap-2 font-semibold transition-all duration-200 ${
-            !mediaType
+            mediaType === 'tv'
               ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/30 scale-105'
               : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
           }`}

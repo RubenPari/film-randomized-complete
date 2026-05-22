@@ -1,4 +1,5 @@
 import { MediaType } from '../types/index.js';
+import { toMediaType } from '../constants/mediaType.js';
 
 interface MediaRow extends Record<string, unknown> {
   tmdb_id?: number;
@@ -24,10 +25,6 @@ export function matchesMediaListFilter(item: MediaRow, filter: 'all' | 'movies' 
   return true;
 }
 
-export function resolveMediaTypeString(mediaType: boolean | MediaType): MediaType {
-  return mediaType === true || mediaType === 'movie' ? 'movie' : 'tv';
-}
-
 export function isExcludedForCurrentType(
   tmdbId: number,
   currentMediaType: MediaType,
@@ -44,9 +41,9 @@ export function isExcludedForCurrentType(
 export function filterValidMedia(
   results: { id: number; overview?: string }[],
   excludedItems: MediaRow[] = [],
-  currentMediaType: boolean | MediaType,
+  currentMediaType: MediaType,
 ): { id: number; overview?: string }[] {
-  const mt = resolveMediaTypeString(currentMediaType);
+  const mt = toMediaType(currentMediaType);
   return results.filter(function (media) {
     const excluded = isExcludedForCurrentType(media.id, mt, excludedItems);
 
