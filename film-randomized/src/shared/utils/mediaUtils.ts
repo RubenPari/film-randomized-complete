@@ -67,10 +67,24 @@ export function isExcludedForCurrentType(
  * @returns Lista di media validi
  */
 export function filterValidMedia(
-  results: { id: number; overview?: string }[],
+  results: {
+    id: number;
+    overview?: string;
+    vote_average?: number;
+    genre_ids?: number[];
+    release_date?: string;
+    first_air_date?: string;
+  }[],
   excludedItems: MediaRow[] = [],
   currentMediaType: MediaType,
-): { id: number; overview?: string }[] {
+): {
+  id: number;
+  overview?: string;
+  vote_average?: number;
+  genre_ids?: number[];
+  release_date?: string;
+  first_air_date?: string;
+}[] {
   const mt = toMediaType(currentMediaType);
   return results.filter(function (media) {
     const excluded = isExcludedForCurrentType(media.id, mt, excludedItems);

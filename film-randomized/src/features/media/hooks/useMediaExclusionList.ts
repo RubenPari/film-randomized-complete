@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import { getWatchlist } from '../../../shared/services/watchlistApi.js';
 import { getDiscovered } from '../../../shared/services/discoveredApi.js';
+import {
+  buildSmartExclusionRows,
+  loadRecommendationFeedback,
+} from '../../../shared/services/recommendationFeedbackStore.js';
 import { logger } from '../../../shared/utils/logger.js';
 import type { MediaItem } from '../../../shared/types/index.js';
 
@@ -13,8 +17,14 @@ import type { MediaItem } from '../../../shared/types/index.js';
  */
 export function useMediaExclusionList() {
   return useCallback(
-    async function loadExclusionList(token: string | null): Promise<MediaItem[]> {
-      if (!token) return [];
+    async function loadExclusionList(
+      token: string | null,
+      userId: number | null | undefined,
+    ): Promise<MediaItem[]> {
+      if (!token) {
+        const feedbackHistory = loadRecommendationFeedback(userId);
+        return buildSmartExclusionRows(feedbackHistory) as MediaItem[];
+      }
 
       const [watchlist, discovered] = await Promise.all([
         getWatchlist(token).catch((err: unknown) => {
@@ -32,8 +42,9 @@ export function useMediaExclusionList() {
           return [];
         }),
       ]);
-
-      return [...watchlist, ...discovered];
+      const feedbackHistory = loadRecommendationFeedback(userId);
+      const smartExclusionRows = buildSmartExclusionRows(feedbackHistory) as MediaItem[];
+      return [...watchlist, ...discovered, ...smartExclusionRows];
     },
     [],
   );

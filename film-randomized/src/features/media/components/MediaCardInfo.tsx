@@ -2,6 +2,8 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { OVERVIEW_MAX_LENGTH } from '../../../shared/constants/config.js';
+import type { MediaFeedbackReason, MediaFeedbackValue } from '../../../shared/types/index.js';
+import RecommendationFeedbackButtons from './RecommendationFeedbackButtons.jsx';
 
 interface MediaCardInfoProps {
   title: string;
@@ -9,6 +11,9 @@ interface MediaCardInfoProps {
   voteAverage: number;
   genres?: { id: number; name: string }[];
   overview?: string;
+  recommendationExplanationKeys?: string[];
+  currentFeedbackValue?: MediaFeedbackValue | null;
+  onFeedback?: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
   children?: ReactNode;
 }
 
@@ -17,7 +22,17 @@ interface MediaCardInfoProps {
  * and the expandable description block. Owns only the expand/collapse
  * state — everything else is derived from props.
  */
-function MediaCardInfo({ title, year, voteAverage, genres, overview, children }: MediaCardInfoProps) {
+function MediaCardInfo({
+  title,
+  year,
+  voteAverage,
+  genres,
+  overview,
+  recommendationExplanationKeys = [],
+  currentFeedbackValue = null,
+  onFeedback,
+  children,
+}: MediaCardInfoProps) {
   const { t } = useTranslation();
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(false);
 
@@ -72,6 +87,26 @@ function MediaCardInfo({ title, year, voteAverage, genres, overview, children }:
             </button>
           )}
         </div>
+      )}
+
+      {recommendationExplanationKeys.length > 0 && (
+        <div className="mb-4 p-4 bg-cyan-900/20 rounded-lg border border-cyan-700/40">
+          <p className="text-xs uppercase tracking-wide text-cyan-300 font-semibold mb-2">
+            {t('recommendation.whyTitle')}
+          </p>
+          <ul className="space-y-1 text-sm text-cyan-100/90">
+            {recommendationExplanationKeys.map((key) => (
+              <li key={key}>• {t(key)}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {onFeedback && (
+        <RecommendationFeedbackButtons
+          currentValue={currentFeedbackValue}
+          onFeedback={onFeedback}
+        />
       )}
 
       {children}

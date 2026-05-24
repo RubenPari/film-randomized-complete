@@ -2,6 +2,13 @@
 
 // Media types
 export type MediaType = 'movie' | 'tv';
+export type MediaFeedbackValue = 'like' | 'dislike';
+export type MediaFeedbackReason =
+  | 'not_in_mood'
+  | 'wrong_genre'
+  | 'already_seen'
+  | 'too_long'
+  | 'too_slow';
 
 /**
  * Raw TMDb media item (camelCase, as returned by the TMDb API).
@@ -182,6 +189,22 @@ export interface MediaFilters {
    * Numero di voti minimo del media
    */
   minVoteCount: number;
+}
+export interface RecommendationProfile {
+  likedGenreIds: number[];
+  dislikedGenreIds: number[];
+  dislikedMediaKeys: string[];
+  likedCount: number;
+}
+export interface RecommendationFeedback {
+  tmdb_id: number;
+  media_type: MediaType;
+  genre_ids: number[];
+  vote_average?: number;
+  release_year?: number;
+  value: MediaFeedbackValue;
+  reason?: MediaFeedbackReason;
+  created_at: string;
 }
 
 /**

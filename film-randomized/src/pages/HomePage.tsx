@@ -20,9 +20,12 @@ function HomePage(): JSX.Element {
   const {
     mediaType,
     randomMedia,
+    recommendationExplanationKeys,
+    currentMediaFeedbackValue,
     isGenerating,
     error,
     generateRandomMedia,
+    submitMediaFeedback,
   } = useMediaResults();
 
   return (
@@ -64,7 +67,15 @@ function HomePage(): JSX.Element {
               </div>
             )}
 
-            {randomMedia && !isGenerating && <MediaCard media={randomMedia} mediaType={mediaType} />}
+            {randomMedia && !isGenerating && (
+              <MediaCard
+                media={randomMedia}
+                mediaType={mediaType}
+                recommendationExplanationKeys={recommendationExplanationKeys}
+                currentMediaFeedbackValue={currentMediaFeedbackValue}
+                onFeedback={submitMediaFeedback}
+              />
+            )}
           </div>
 
           <div

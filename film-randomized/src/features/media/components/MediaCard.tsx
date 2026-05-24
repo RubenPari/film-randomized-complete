@@ -3,11 +3,19 @@ import MediaCardPoster from './MediaCardPoster.jsx';
 import MediaCardInfo from './MediaCardInfo.jsx';
 import MediaCardTrailer from './MediaCardTrailer.jsx';
 import SaveButtons from './SaveButtons.jsx';
-import type { MediaType, TmdbMedia } from '../../../shared/types/index.js';
+import type {
+  MediaFeedbackReason,
+  MediaFeedbackValue,
+  MediaType,
+  TmdbMedia,
+} from '../../../shared/types/index.js';
 
 interface MediaCardProps {
   media: TmdbMedia;
   mediaType: MediaType;
+  recommendationExplanationKeys: string[];
+  currentMediaFeedbackValue: MediaFeedbackValue | null;
+  onFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
 }
 
 /**
@@ -15,7 +23,13 @@ interface MediaCardProps {
  * actions, and trailer sub-components and owns nothing beyond the
  * trailer fetch.
  */
-function MediaCard({ media, mediaType }: MediaCardProps) {
+function MediaCard({
+  media,
+  mediaType,
+  recommendationExplanationKeys,
+  currentMediaFeedbackValue,
+  onFeedback,
+}: MediaCardProps) {
   const title = media.title || media.name || '';
   const releaseDate = media.release_date || media.first_air_date;
   const year = releaseDate ? new Date(releaseDate).getFullYear() : null;
@@ -31,6 +45,9 @@ function MediaCard({ media, mediaType }: MediaCardProps) {
           voteAverage={media.vote_average ?? 0}
           genres={media.genres}
           overview={media.overview}
+          recommendationExplanationKeys={recommendationExplanationKeys}
+          currentFeedbackValue={currentMediaFeedbackValue}
+          onFeedback={onFeedback}
         >
           <SaveButtons media={media} mediaType={mediaType} />
         </MediaCardInfo>

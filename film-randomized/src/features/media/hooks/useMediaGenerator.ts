@@ -2,7 +2,14 @@ import { useTransition } from 'react';
 import { useMediaFilters } from './useMediaFilters.js';
 import { useGenres } from './useGenres.js';
 import { useMediaFetcher } from './useMediaFetcher.js';
-import type { Genre, TmdbMedia, MediaFilters, MediaType } from '../../../shared/types/index.js';
+import type {
+  Genre,
+  MediaFeedbackReason,
+  MediaFeedbackValue,
+  TmdbMedia,
+  MediaFilters,
+  MediaType,
+} from '../../../shared/types/index.js';
 
 export interface UseMediaGeneratorReturn {
   mediaType: MediaType;
@@ -21,11 +28,14 @@ export interface UseMediaGeneratorReturn {
   handleGenreToggle: (genreId: number) => void;
   genres: Genre[];
   randomMedia: TmdbMedia | null;
+  recommendationExplanationKeys: string[];
+  currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
   isGenerating: boolean;
   isFilterPending: boolean;
   error: string | null;
   generateRandomMedia: () => void;
+  submitMediaFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
 }
 
 /**
@@ -55,9 +65,12 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
 
   const {
     randomMedia,
+    recommendationExplanationKeys,
+    currentMediaFeedbackValue,
     isLoading: isFetching,
     error: fetchError,
     generateRandomMedia,
+    submitMediaFeedback,
   } = useMediaFetcher();
 
   // useTransition for fluid UI updates when modifying non-critical states (like filters)
@@ -101,10 +114,13 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     handleGenreToggle: handleGenreToggleTransition,
     genres,
     randomMedia,
+    recommendationExplanationKeys,
+    currentMediaFeedbackValue,
     isLoading: isFetching || isPendingFilter,
     isGenerating: isFetching,
     isFilterPending: isPendingFilter,
     error: fetchError || genresError,
     generateRandomMedia: handleGenerateRandomMedia,
+    submitMediaFeedback,
   };
 }

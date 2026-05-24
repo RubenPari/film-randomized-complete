@@ -78,6 +78,22 @@
     "remove": "Rimuovi dalla watchlist",
     "onTmdb": "Vedi {{title}} su TMDB"
   },
+  "recommendation": {
+    "whyTitle": "Perché questo suggerimento",
+    "highRating": "Valutazione media molto alta",
+    "matchesPreferredGenres": "In linea con i generi che preferisci",
+    "personalizedFromFeedback": "Personalizzato in base ai tuoi feedback",
+    "freshPick": "Titolo fresco, non scartato ripetutamente",
+    "feedbackPrompt": "Migliora i prossimi suggerimenti",
+    "like": "Continua su questa linea",
+    "reason": {
+      "not_in_mood": "Non sono nel mood",
+      "wrong_genre": "Genere sbagliato",
+      "already_seen": "Già visto",
+      "too_long": "Troppo lungo",
+      "too_slow": "Troppo lento"
+    }
+  },
   "auth": {
     "welcome": "Bentornato",
     "signInToContinue": "Accedi per continuare il tuo viaggio",

@@ -49,7 +49,7 @@ describe('pickRandomValidMedia', () => {
       mediaType: 'movie',
     });
 
-    expect(result.id).toBe(1);
+    expect(result.media.id).toBe(1);
     expect(fetchPage).toHaveBeenCalledTimes(1);
     expect(fetchDetails).toHaveBeenCalledWith('movie', 1);
   });
@@ -76,7 +76,7 @@ describe('pickRandomValidMedia', () => {
       maxAttempts: 3,
     });
 
-    expect(result.id).toBe(20);
+    expect(result.media.id).toBe(20);
     expect(fetchPage).toHaveBeenCalledTimes(2);
   });
 
@@ -101,7 +101,7 @@ describe('pickRandomValidMedia', () => {
       maxAttempts: 3,
     });
 
-    expect(result.id).toBe(2);
+    expect(result.media.id).toBe(2);
     expect(fetchDetails).toHaveBeenCalledTimes(2);
   });
 

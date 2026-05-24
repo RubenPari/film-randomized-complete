@@ -10,13 +10,32 @@ import { MAX_GENERATION_ATTEMPTS } from '../../../shared/constants/config.js';
 import { pickRandomValidMedia } from '../../../shared/utils/pickRandomValidMedia.js';
 import { logger } from '../../../shared/utils/logger.js';
 import { useMediaExclusionList } from './useMediaExclusionList.js';
-import type { MediaFilters, MediaType, TmdbMedia } from '../../../shared/types/index.js';
+import {
+  buildFeedbackRecord,
+  buildRecommendationProfile,
+  getMediaFeedbackValue,
+  loadRecommendationFeedback,
+  saveRecommendationFeedback,
+} from '../../../shared/services/recommendationFeedbackStore.js';
+import type {
+  MediaFeedbackReason,
+  MediaFeedbackValue,
+  MediaFilters,
+  MediaType,
+  TmdbMedia,
+} from '../../../shared/types/index.js';
 
 export interface UseMediaFetcherReturn {
   randomMedia: TmdbMedia | null;
+  recommendationExplanationKeys: string[];
+  currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
   error: string | null;
   generateRandomMedia: (filters: MediaFilters, mediaType: MediaType) => Promise<void>;
+  submitMediaFeedback: (
+    value: MediaFeedbackValue,
+    reason?: MediaFeedbackReason,
+  ) => void;
 }
 
 /**
@@ -29,12 +48,24 @@ export interface UseMediaFetcherReturn {
  * the "record discovered" side-effect on success.
  */
 export function useMediaFetcher(): UseMediaFetcherReturn {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const loadExclusionList = useMediaExclusionList();
 
   const [randomMedia, setRandomMedia] = useState<TmdbMedia | null>(null);
+  const [currentMediaType, setCurrentMediaType] = useState<MediaType>('movie');
+  const [recommendationExplanationKeys, setRecommendationExplanationKeys] = useState<string[]>([]);
+  const [currentMediaFeedbackValue, setCurrentMediaFeedbackValue] = useState<MediaFeedbackValue | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const submitMediaFeedback = useCallback(
+    (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => {
+      if (!randomMedia) return;
+      const record = buildFeedbackRecord(randomMedia, currentMediaType, value, reason);
+      const history = saveRecommendationFeedback(user?.id, record);
+      setCurrentMediaFeedbackValue(getMediaFeedbackValue(history, randomMedia.id, record.media_type));
+    },
+    [currentMediaType, randomMedia, user?.id],
+  );
 
   const generateRandomMedia = useCallback(
     async (filters: MediaFilters, mediaType: MediaType) => {
@@ -42,24 +73,26 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
       setError(null);
 
       try {
-        const excludedItems = await loadExclusionList(token);
+        const feedbackHistory = loadRecommendationFeedback(user?.id);
+        const recommendationProfile = buildRecommendationProfile(feedbackHistory);
+        const excludedItems = await loadExclusionList(token, user?.id);
         const { discoverUrl, totalPages } = await discoverMedia(
           mediaType,
           filters,
         );
-
-        const details = await pickRandomValidMedia({
+        const result = await pickRandomValidMedia({
           fetchPage: (page: number) => fetchMediaPage(discoverUrl, page),
           fetchDetails: (mt: MediaType, id: number) => fetchMediaDetails(mt, id),
           totalPages,
           mediaType,
           excludedItems,
+          recommendationProfile,
           maxAttempts: MAX_GENERATION_ATTEMPTS,
         });
 
         if (token) {
           try {
-            await recordDiscovered(details, mediaType, token);
+            await recordDiscovered(result.media, mediaType, token);
           } catch (recordErr) {
             logger.error(
               'useMediaFetcher.recordDiscovered',
@@ -69,7 +102,10 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           }
         }
 
-        setRandomMedia(details);
+        setRandomMedia(result.media);
+        setCurrentMediaType(mediaType);
+        setRecommendationExplanationKeys(result.explanationKeys);
+        setCurrentMediaFeedbackValue(getMediaFeedbackValue(feedbackHistory, result.media.id, mediaType));
       } catch (err) {
         logger.error(
           'useMediaFetcher.generate',
@@ -83,13 +119,16 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
         setIsLoading(false);
       }
     },
-    [token, loadExclusionList],
+    [token, loadExclusionList, user?.id],
   );
 
   return {
     randomMedia,
+    recommendationExplanationKeys,
+    currentMediaFeedbackValue,
     isLoading,
     error,
     generateRandomMedia,
+    submitMediaFeedback,
   };
 }

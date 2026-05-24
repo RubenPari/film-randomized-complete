@@ -55,10 +55,13 @@ export function useMediaResults() {
   return {
     mediaType: v.mediaType,
     randomMedia: v.randomMedia,
+    recommendationExplanationKeys: v.recommendationExplanationKeys,
+    currentMediaFeedbackValue: v.currentMediaFeedbackValue,
     isLoading: v.isLoading,
     isGenerating: v.isGenerating,
     isFilterPending: v.isFilterPending,
     error: v.error,
     generateRandomMedia: v.generateRandomMedia,
+    submitMediaFeedback: v.submitMediaFeedback,
   };
 }
