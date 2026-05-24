@@ -2,12 +2,15 @@
  * Register page component.
  * Handles new user registration with username, email, and password.
  */
-import { useActionState, type JSX } from 'react';
+import { type JSX } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
 import AuthTextField from '../shared/components/AuthTextField.jsx';
+import AuthSubmitButton from '../shared/components/AuthSubmitButton.jsx';
+import { useAuthFormAction } from '../shared/hooks/useAuthFormAction.js';
+import { getErrorMessage } from '../shared/utils/errorMessage.js';
 import { validatePasswordForm, MIN_PASSWORD_LENGTH } from '../shared/utils/passwordValidation.js';
 
 /**
@@ -21,9 +24,8 @@ function RegisterPage(): JSX.Element {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  // React 19 action state for forms
-  const [error, submitAction, isPending] = useActionState(
-    async (_previousState: string | null, formData: FormData): Promise<string | null> => {
+  const [error, submitAction, isPending] = useAuthFormAction({
+    onSubmit: async (formData: FormData) => {
       const username = formData.get('username') as string;
       const email = formData.get('email') as string;
       const password = formData.get('password') as string;
@@ -31,19 +33,15 @@ function RegisterPage(): JSX.Element {
 
       const validationError = validatePasswordForm(password, confirmPassword);
       if (validationError) {
-        return validationError;
+        throw new Error(validationError);
       }
 
-      try {
-        await register(username, email, password);
-        navigate('/');
-        return null;
-      } catch (err) {
-        return (err as Error).message || t('register.registrationError');
-      }
+      await register(username, email, password);
+      navigate('/');
     },
-    null
-  );
+    getErrorMessage: (err: unknown) =>
+      getErrorMessage(err, t('register.registrationError')),
+  });
 
   return (
     <AuthFormLayout
@@ -101,25 +99,13 @@ function RegisterPage(): JSX.Element {
           autoComplete="new-password"
           disabled={isPending}
         />
-        <button
-          type="submit"
-          disabled={isPending}
+        <AuthSubmitButton
+          isPending={isPending}
+          idleLabel={t('register.createAccount')}
+          pendingLabel={t('register.creatingAccount')}
           className="w-full btn-primary py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed mt-6 group"
-        >
-          {isPending ? (
-            <div className="flex items-center justify-center gap-3">
-              <div className="loading-spinner w-5 h-5"></div>
-              <span>{t('register.creatingAccount')}</span>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-3">
-              <span>{t('register.createAccount')}</span>
-              <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </div>
-          )}
-        </button>
+          showArrowIcon
+        />
       </form>
     </AuthFormLayout>
   );

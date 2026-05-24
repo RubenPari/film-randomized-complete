@@ -3,24 +3,33 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import { validatePasswordForm } from '../shared/utils/passwordValidation.js';
+import { getErrorMessage } from '../shared/utils/errorMessage.js';
 import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
 import AuthTextField from '../shared/components/AuthTextField.jsx';
+import AuthSuccessAlert from '../shared/components/AuthSuccessAlert.jsx';
+import AuthSubmitButton from '../shared/components/AuthSubmitButton.jsx';
+import { useAuthFormFeedback } from '../shared/hooks/useAuthFormFeedback.js';
 
 function ChangePasswordPage(): JSX.Element {
   const { t } = useTranslation();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    error,
+    success,
+    isLoading,
+    setError,
+    setSuccess,
+    clearMessages,
+    runWithLoading,
+  } = useAuthFormFeedback();
 
   const { changePassword, user } = useAuth();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    clearMessages();
 
     const validationError = validatePasswordForm(newPassword, confirmPassword);
     if (validationError) {
@@ -28,19 +37,17 @@ function ChangePasswordPage(): JSX.Element {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      await changePassword(currentPassword, newPassword);
-      setSuccess(t('changePassword.success'));
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    } catch (err) {
-      setError((err as Error).message || t('changePassword.error'));
-    } finally {
-      setIsLoading(false);
-    }
+    await runWithLoading(async () => {
+      try {
+        await changePassword(currentPassword, newPassword);
+        setSuccess(t('changePassword.success'));
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } catch (err) {
+        setError(getErrorMessage(err, t('changePassword.error')));
+      }
+    });
   };
 
   return (
@@ -63,11 +70,7 @@ function ChangePasswordPage(): JSX.Element {
       }
     >
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {success && (
-          <div className="mb-4 p-4 bg-green-900/30 text-green-200 rounded-2xl border border-green-700/50 backdrop-blur-xl animate-fade-in flex items-center gap-3">
-            <span className="text-sm">{success}</span>
-          </div>
-        )}
+        {success && <AuthSuccessAlert message={success} />}
         <AuthTextField
           id="currentPassword"
           name="currentPassword"
@@ -98,13 +101,11 @@ function ChangePasswordPage(): JSX.Element {
           disabled={isLoading}
           autoComplete="new-password"
         />
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full btn-primary py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-        >
-          {isLoading ? t('changePassword.updating') : t('changePassword.submit')}
-        </button>
+        <AuthSubmitButton
+          isPending={isLoading}
+          idleLabel={t('changePassword.submit')}
+          pendingLabel={t('changePassword.updating')}
+        />
       </form>
     </AuthFormLayout>
   );

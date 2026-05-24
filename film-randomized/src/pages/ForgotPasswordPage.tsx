@@ -8,8 +8,12 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import { logger } from '../shared/utils/logger.js';
+import { getErrorMessage } from '../shared/utils/errorMessage.js';
 import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
 import AuthTextField from '../shared/components/AuthTextField.jsx';
+import AuthSuccessAlert from '../shared/components/AuthSuccessAlert.jsx';
+import AuthSubmitButton from '../shared/components/AuthSubmitButton.jsx';
+import { useAuthFormFeedback } from '../shared/hooks/useAuthFormFeedback.js';
 
 /**
  * Forgot password page component.
@@ -20,28 +24,32 @@ import AuthTextField from '../shared/components/AuthTextField.jsx';
 function ForgotPasswordPage(): JSX.Element {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const { forgotPassword } = useAuth();
+  const {
+    error,
+    success,
+    isLoading,
+    setError,
+    setSuccess,
+    clearMessages,
+    runWithLoading,
+  } = useAuthFormFeedback();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-    setIsLoading(true);
+    clearMessages();
 
-    try {
-      await forgotPassword(email);
-      setSuccess(t('forgotPassword.successMessage'));
-    } catch (err) {
-      if (import.meta.env.DEV) {
-        logger.error('ForgotPasswordPage.submit', err);
+    await runWithLoading(async () => {
+      try {
+        await forgotPassword(email);
+        setSuccess(t('forgotPassword.successMessage'));
+      } catch (err) {
+        if (import.meta.env.DEV) {
+          logger.error('ForgotPasswordPage.submit', err);
+        }
+        setError(getErrorMessage(err, t('forgotPassword.errorMessage')));
       }
-      setError((err as Error).message || t('forgotPassword.errorMessage'));
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   return (
@@ -61,11 +69,7 @@ function ForgotPasswordPage(): JSX.Element {
       }
     >
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {success && (
-          <div className="mb-4 p-4 bg-green-900/30 text-green-200 rounded-2xl border border-green-700/50 backdrop-blur-xl animate-fade-in flex items-center gap-3">
-            <span className="text-sm">{success}</span>
-          </div>
-        )}
+        {success && <AuthSuccessAlert message={success} />}
 
         <AuthTextField
           id="email"
@@ -77,14 +81,11 @@ function ForgotPasswordPage(): JSX.Element {
           onChange={(e) => setEmail(e.target.value)}
           disabled={isLoading}
         />
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full btn-primary py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-        >
-          {isLoading ? t('forgotPassword.sending') : t('forgotPassword.sendResetLink')}
-        </button>
+        <AuthSubmitButton
+          isPending={isLoading}
+          idleLabel={t('forgotPassword.sendResetLink')}
+          pendingLabel={t('forgotPassword.sending')}
+        />
       </form>
     </AuthFormLayout>
   );

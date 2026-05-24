@@ -5,16 +5,26 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import { validatePasswordForm } from '../shared/utils/passwordValidation.js';
 import { logger } from '../shared/utils/logger.js';
+import { getErrorMessage } from '../shared/utils/errorMessage.js';
 import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
 import AuthTextField from '../shared/components/AuthTextField.jsx';
+import AuthSuccessAlert from '../shared/components/AuthSuccessAlert.jsx';
+import AuthSubmitButton from '../shared/components/AuthSubmitButton.jsx';
+import { useAuthFormFeedback } from '../shared/hooks/useAuthFormFeedback.js';
 
 function ResetPasswordPage(): JSX.Element {
   const { t } = useTranslation();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    error,
+    success,
+    isLoading,
+    setError,
+    setSuccess,
+    clearMessages,
+    runWithLoading,
+  } = useAuthFormFeedback();
 
   const { resetPassword } = useAuth();
   const location = useLocation();
@@ -30,39 +40,35 @@ function ResetPasswordPage(): JSX.Element {
       }
       setError(t('resetPassword.missingToken'));
     }
-  }, [token, t]);
+  }, [token, t, setError]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    clearMessages();
 
     const validationError = validatePasswordForm(newPassword, confirmPassword);
     if (validationError) {
       setError(validationError);
       return;
     }
-
-    setIsLoading(true);
-
-    try {
-      if (!token) {
-        setError(t('resetPassword.invalidToken'));
-        return;
+    await runWithLoading(async () => {
+      try {
+        if (!token) {
+          setError(t('resetPassword.invalidToken'));
+          return;
+        }
+        await resetPassword(token, newPassword);
+        setSuccess(t('resetPassword.success'));
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+      } catch (err) {
+        if (import.meta.env.DEV) {
+          logger.error('ResetPasswordPage.submit', err);
+        }
+        setError(getErrorMessage(err, t('resetPassword.error')));
       }
-      await resetPassword(token, newPassword);
-      setSuccess(t('resetPassword.success'));
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    } catch (err) {
-      if (import.meta.env.DEV) {
-        logger.error('ResetPasswordPage.submit', err);
-      }
-      setError((err as Error).message || t('resetPassword.error'));
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   return (
@@ -82,11 +88,7 @@ function ResetPasswordPage(): JSX.Element {
       }
     >
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {success && (
-          <div className="mb-4 p-4 bg-green-900/30 text-green-200 rounded-2xl border border-green-700/50 backdrop-blur-xl animate-fade-in flex items-center gap-3">
-            <span className="text-sm">{success}</span>
-          </div>
-        )}
+        {success && <AuthSuccessAlert message={success} />}
 
         <AuthTextField
           id="newPassword"
@@ -108,13 +110,12 @@ function ResetPasswordPage(): JSX.Element {
           disabled={Boolean(!token || success || isLoading)}
           autoComplete="new-password"
         />
-        <button
-          type="submit"
+        <AuthSubmitButton
+          isPending={isLoading}
           disabled={Boolean(isLoading || !token || success)}
-          className="w-full btn-primary py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-        >
-          {isLoading ? t('resetPassword.resetting') : t('resetPassword.submit')}
-        </button>
+          idleLabel={t('resetPassword.submit')}
+          pendingLabel={t('resetPassword.resetting')}
+        />
       </form>
     </AuthFormLayout>
   );
