@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient.js';
-import { AuthResponse, User } from '../types/index.js';
+import { AuthResponse, MessageResponse, User } from '../types/index.js';
 
 /**
  * API per l'autenticazione
@@ -40,8 +40,8 @@ export const authApi = {
    * @param email Email
    * @returns Risposta di autenticazione
    */
-  async forgotPassword(email: string): Promise<unknown> {
-    return apiClient.post<unknown>('/auth/forgot-password', { email });
+  async forgotPassword(email: string): Promise<MessageResponse> {
+    return apiClient.post<MessageResponse>('/auth/forgot-password', { email });
   },
 
   /**
@@ -50,8 +50,8 @@ export const authApi = {
    * @param newPassword Nuova password
    * @returns Risposta di autenticazione
    */
-  async resetPassword(token: string, newPassword: string): Promise<unknown> {
-    return apiClient.post<unknown>('/auth/reset-password', { token, newPassword });
+  async resetPassword(token: string, newPassword: string): Promise<MessageResponse> {
+    return apiClient.post<MessageResponse>('/auth/reset-password', { token, newPassword });
   },
 
   /**
@@ -65,8 +65,8 @@ export const authApi = {
     currentPassword: string,
     newPassword: string,
     token: string | null,
-  ): Promise<unknown> {
-    return apiClient.post<unknown>(
+  ): Promise<MessageResponse> {
+    return apiClient.post<MessageResponse>(
       '/auth/change-password',
       { currentPassword, newPassword },
       token,

@@ -53,7 +53,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           fetchDetails: (mt: MediaType, id: number) => fetchMediaDetails(mt, id),
           totalPages,
           mediaType,
-          excludedItems: excludedItems as unknown as Record<string, unknown>[],
+          excludedItems,
           maxAttempts: MAX_GENERATION_ATTEMPTS,
         });
 
@@ -69,7 +69,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           }
         }
 
-        setRandomMedia(details as TmdbMedia);
+        setRandomMedia(details);
       } catch (err) {
         logger.error(
           'useMediaFetcher.generate',

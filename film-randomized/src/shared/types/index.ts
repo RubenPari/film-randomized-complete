@@ -215,6 +215,15 @@ export interface AuthResponse {
    */
   user: User;
 }
+/**
+ * Interfaccia per risposte API composte da solo messaggio.
+ */
+export interface MessageResponse {
+  /**
+   * Messaggio restituito dall'API
+   */
+  message: string;
+}
 
 /**
  * Interfaccia per l'errore API

@@ -4,6 +4,7 @@ import {
   getRandomPage,
   hasValidDescription,
   isExcludedForCurrentType,
+  type MediaRow,
 } from './mediaUtils.js';
 import { MediaType, TmdbMedia, TmdbPageResponse } from '../types/index.js';
 
@@ -15,7 +16,7 @@ interface PickRandomValidMediaOptions {
   fetchDetails: (mediaType: MediaType, id: number) => Promise<TmdbMedia>;
   totalPages: number;
   mediaType: MediaType;
-  excludedItems?: Record<string, unknown>[];
+  excludedItems?: MediaRow[];
   maxAttempts?: number;
 }
 

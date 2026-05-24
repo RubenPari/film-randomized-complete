@@ -4,7 +4,7 @@ import { toMediaType } from '../constants/mediaType.js';
 /**
  * Interfaccia per i media da filtrare
  */
-interface MediaRow extends Record<string, unknown> {
+export interface MediaRow {
   tmdb_id?: number;
   tmdbId?: number | string;
   media_type?: MediaType | string | boolean;

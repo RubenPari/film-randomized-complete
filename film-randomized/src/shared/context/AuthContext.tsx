@@ -2,9 +2,10 @@
  * Authentication context and provider.
  * Manages user authentication state, token storage, and authentication methods.
  */
+/* eslint-disable react-refresh/only-export-components -- provider and paired hooks belong together */
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authApi } from '../services/authApi.js';
-import { AuthResponse, User } from '../types/index.js';
+import { AuthResponse, MessageResponse, User } from '../types/index.js';
 
 interface AuthContextValue {
   user: User | null;
@@ -12,9 +13,9 @@ interface AuthContextValue {
   login: (username: string, password: string) => Promise<AuthResponse>;
   register: (username: string, email: string, password: string) => Promise<AuthResponse>;
   logout: () => void;
-  forgotPassword: (email: string) => Promise<unknown>;
-  resetPassword: (token: string, newPassword: string) => Promise<unknown>;
-  changePassword: (currentPassword: string, newPassword: string) => Promise<unknown>;
+  forgotPassword: (email: string) => Promise<MessageResponse>;
+  resetPassword: (token: string, newPassword: string) => Promise<MessageResponse>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<MessageResponse>;
   isAuthenticated: boolean;
   loading: boolean;
 }
@@ -71,15 +72,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     localStorage.removeItem('token');
   };
 
-  const forgotPassword = async (email: string): Promise<unknown> => {
+  const forgotPassword = async (email: string): Promise<MessageResponse> => {
     return await authApi.forgotPassword(email);
   };
 
-  const resetPassword = async (tokenParam: string, newPassword: string): Promise<unknown> => {
+  const resetPassword = async (
+    tokenParam: string,
+    newPassword: string,
+  ): Promise<MessageResponse> => {
     return await authApi.resetPassword(tokenParam, newPassword);
   };
 
-  const changePassword = async (currentPassword: string, newPassword: string): Promise<unknown> => {
+  const changePassword = async (
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<MessageResponse> => {
     return await authApi.changePassword(currentPassword, newPassword, token);
   };
 

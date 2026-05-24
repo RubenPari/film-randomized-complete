@@ -33,7 +33,7 @@ export function useMediaExclusionList() {
         }),
       ]);
 
-      return [...watchlist, ...discovered] as MediaItem[];
+      return [...watchlist, ...discovered];
     },
     [],
   );
