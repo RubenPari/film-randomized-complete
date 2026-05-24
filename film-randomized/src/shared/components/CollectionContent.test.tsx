@@ -23,6 +23,8 @@ const COPY = {
   emptyDescriptionAllKey: 'watchlist.emptyDescription',
   emptyDescriptionFilterKey: 'watchlist.emptyFilterDescription',
   ctaLabelKey: 'watchlist.discoverContent',
+  singleItemLabelKey: 'watchlist.singleItem',
+  multipleItemsLabelKey: 'watchlist.multipleItems',
 };
 
 const SAMPLE_ITEMS: NormalizableItem[] = [
