@@ -6,7 +6,7 @@
 import { ApiError } from '../types/index.js';
 export { ApiError };
 
-const API_BASE_URL: string = import.meta.env.PROD ? '/api' : 'http://localhost:8000/api';
+const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? '/api';
 
 /**
  * Gestisce le risposte API
