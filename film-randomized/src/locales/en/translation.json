@@ -16,6 +16,17 @@
     "movies": "Movies",
     "tvShows": "TV Shows"
   },
+  "nav": {
+    "brand": "Reel Roulette",
+    "tagline": "Random picks, perfectly framed",
+    "generate": "Generate",
+    "watchlist": "Watchlist",
+    "discovered": "Discovered",
+    "profile": "Profile",
+    "account": "Account",
+    "menu": "Menu",
+    "language": "Language"
+  },
   "home": {
     "title": "Random {{type}} Generator",
     "movie": "Movie",
@@ -26,7 +37,10 @@
     "generate": "Generate Random Content",
     "generateMobile": "Generate a new {{type}}",
     "movieMobile": "movie",
-    "tvMobile": "TV content"
+    "tvMobile": "TV content",
+    "eyebrow": "Tonight's pick",
+    "emptyTitle": "Ready when you are",
+    "emptyHint": "Set your filters, then hit generate to reveal a random {{type}}."
   },
   "notFound": {
     "title": "Page not found",

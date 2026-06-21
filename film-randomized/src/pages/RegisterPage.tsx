@@ -58,7 +58,7 @@ function RegisterPage(): JSX.Element {
       footer={
         <p className="text-slate-400">
           {t('register.hasAccount')}{' '}
-          <Link to="/login" className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors">
+          <Link to="/login" className="text-gold hover:text-gold-soft font-bold transition-colors">
             {t('register.signInInstead')}
           </Link>
         </p>

@@ -55,14 +55,14 @@ function ForgotPasswordPage(): JSX.Element {
       subtitle={t('forgotPassword.description')}
       error={error}
       footer={
-        <Link to="/login" className="font-medium text-cyan-400 hover:text-cyan-300">
+        <Link to="/login" className="font-medium text-gold hover:text-gold-soft">
           {t('forgotPassword.backToLogin')}
         </Link>
       }
     >
       <form className="space-y-6" onSubmit={handleSubmit}>
         {success && (
-          <div className="mb-4 p-4 bg-green-900/30 text-green-200 rounded-2xl border border-green-700/50 backdrop-blur-xl animate-fade-in flex items-center gap-3">
+          <div className="mb-4 flex items-center gap-3 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-emerald-200 animate-fade-in">
             <span className="text-sm">{success}</span>
           </div>
         )}

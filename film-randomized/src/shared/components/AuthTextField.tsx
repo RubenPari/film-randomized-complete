@@ -1,7 +1,7 @@
 import type { ChangeEvent, ReactNode } from 'react';
 
 const INPUT_CLASS =
-  'w-full px-4 py-3.5 bg-slate-700/30 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 backdrop-blur-sm';
+  'w-full px-4 py-3.5 bg-ink-800/60 border border-ink-700 rounded-xl text-cream placeholder-muted/70 focus:outline-none focus:ring-2 focus:ring-gold/60 focus:border-gold/40 transition-all duration-200 backdrop-blur-sm disabled:opacity-50';
 
 interface AuthTextFieldProps {
   id: string;
@@ -36,13 +36,13 @@ function AuthTextField({
     <div>
       {labelSuffix ? (
         <div className="flex justify-between items-center mb-2">
-          <label htmlFor={id} className="block text-sm font-bold text-slate-300">
+          <label htmlFor={id} className="block text-sm font-semibold text-cream/90">
             {label}
           </label>
           {labelSuffix}
         </div>
       ) : (
-        <label htmlFor={id} className="block text-sm font-bold text-slate-300 mb-2">
+        <label htmlFor={id} className="block text-sm font-semibold text-cream/90 mb-2">
           {label}
         </label>
       )}

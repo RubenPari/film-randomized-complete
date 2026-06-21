@@ -16,6 +16,17 @@
     "movies": "Film",
     "tvShows": "Serie TV"
   },
+  "nav": {
+    "brand": "Reel Roulette",
+    "tagline": "Scelte casuali, inquadrate alla perfezione",
+    "generate": "Genera",
+    "watchlist": "Watchlist",
+    "discovered": "Scoperti",
+    "profile": "Profilo",
+    "account": "Account",
+    "menu": "Menu",
+    "language": "Lingua"
+  },
   "home": {
     "title": "Generatore di {{type}} Casuali",
     "movie": "Film",
@@ -26,7 +37,10 @@
     "generate": "Genera Contenuto Casuale",
     "generateMobile": "Genera un nuovo {{type}}",
     "movieMobile": "film",
-    "tvMobile": "contenuto TV"
+    "tvMobile": "contenuto TV",
+    "eyebrow": "La scelta di stasera",
+    "emptyTitle": "Pronto quando vuoi",
+    "emptyHint": "Imposta i filtri, poi premi genera per scoprire un {{type}} casuale."
   },
   "notFound": {
     "title": "Pagina non trovata",

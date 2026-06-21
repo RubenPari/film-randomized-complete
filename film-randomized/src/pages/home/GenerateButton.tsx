@@ -1,5 +1,6 @@
 /**
- * Primary "Generate" action — shared layout for desktop and mobile sticky bar.
+ * Primary "Generate" action. Full-width gold button used at the top of the
+ * results column on every screen size.
  */
 import { type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,59 +8,26 @@ import { useTranslation } from 'react-i18next';
 interface Props {
   isLoading: boolean;
   onGenerate: () => void;
-  variant: 'desktop' | 'mobile';
 }
 
-function GenerateButton({ isLoading, onGenerate, variant }: Props): JSX.Element {
+function GenerateButton({ isLoading, onGenerate }: Props): JSX.Element {
   const { t } = useTranslation();
-
-  if (variant === 'desktop') {
-    return (
-      <div className="text-center mb-8 hidden lg:block">
-        <button
-          type="button"
-          onClick={onGenerate}
-          disabled={isLoading}
-          className="btn-primary flex items-center mx-auto gap-2 px-8 py-4 text-lg font-bold hover:scale-105 transition-all duration-300 shadow-lg shadow-brand-accent/30"
-        >
-          {isLoading ? (
-            <>
-              <div className="loading-spinner mr-2"></div>
-              {t('common.loading')}
-            </>
-          ) : (
-            <>
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-              {t('home.generate')}
-            </>
-          )}
-        </button>
-      </div>
-    );
-  }
 
   return (
     <button
       type="button"
       onClick={onGenerate}
       disabled={isLoading}
-      className="btn-primary flex items-center px-4 py-2 text-sm gap-2 shadow-lg shadow-brand-accent/30"
+      className="btn-primary w-full py-4 text-base"
     >
       {isLoading ? (
         <>
-          <div className="loading-spinner mr-2"></div>
+          <span className="loading-spinner h-5 w-5 border-ink-950/30 border-t-ink-950" />
           {t('common.loading')}
         </>
       ) : (
         <>
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
