@@ -42,6 +42,11 @@ services:
       timeout_seconds: 5
       success_threshold: 1
       failure_threshold: 3
+    alerts:
+      - rule: CPU_UTILIZATION
+        operator: GREATER_THAN
+        value: 80
+        window: FIVE_MINUTES
     envs:
       - key: NODE_ENV
         value: production
@@ -95,10 +100,6 @@ databases:
 
 alerts:
   - rule: DEPLOYMENT_FAILED
-  - rule: CPU_UTILIZATION
-    operator: GREATER_THAN
-    value: 80
-    window: FIVE_MINUTES
 
 ingress:
   rules:
