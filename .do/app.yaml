@@ -55,7 +55,7 @@ services:
         scope: RUN_TIME
         type: GENERAL
       - key: DATABASE_URL
-        value: ${film-db.DATABASE_PRIVATE_URL}
+        value: ${film-db.DATABASE_URL}
         scope: RUN_TIME
         type: GENERAL
       - key: DB_SSL

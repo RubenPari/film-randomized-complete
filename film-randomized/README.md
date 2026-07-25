@@ -120,8 +120,8 @@ Prima del primo deploy:
    [deploy-digitalocean.yml](../.github/workflows/deploy-digitalocean.yml) verifica entrambi
    i package e aggiorna App Platform a ogni push su `main`.
 
-App Platform associa al backend la connessione privata e il certificato CA del database. Il
-backend applica le migrazioni prima di avviarsi e fallisce il rilascio se non riescono.
+App Platform associa al backend la connessione TLS e il certificato CA del database. Il backend
+applica le migrazioni prima di avviarsi e fallisce il rilascio se non riescono.
 
 Quando il dominio sarà disponibile, aggiungilo alle Domains dell'app come **Primary** e crea i
 record DNS indicati da DigitalOcean. `FRONTEND_URL` usa `${APP_URL}`, quindi i link di reset
