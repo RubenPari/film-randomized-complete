@@ -110,9 +110,9 @@ solo sulla rete interna. PostgreSQL è un Managed Database separato in FRA1.
 
 Prima del primo deploy:
 
-1. Crea in DigitalOcean il cluster PostgreSQL 16 `film-randomized-db` in FRA1, il database
-   `film_randomized` e l'utente `film_app`; associa poi il cluster all'App Platform come
-   trusted source.
+1. Crea in DigitalOcean il cluster PostgreSQL 16 `film-randomized-db` in FRA1 e il database
+   `film_randomized`; associa poi il cluster all'App Platform come trusted source. Il manifest
+   usa inizialmente l'utente gestito `doadmin` per applicare le migrazioni.
 2. In GitHub configura i secrets `DIGITALOCEAN_ACCESS_TOKEN`, `JWT_SECRET` (almeno 32
    caratteri) e `VITE_TMDB_API_KEY`. `MAILTRAP_TOKEN` e `MAILTRAP_SENDER_EMAIL` sono
    facoltativi, ma necessari per le email di recupero password.

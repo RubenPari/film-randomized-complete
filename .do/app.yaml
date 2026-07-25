@@ -91,7 +91,7 @@ databases:
     production: true
     cluster_name: film-randomized-db
     db_name: film_randomized
-    db_user: film_app
+    db_user: doadmin
 
 alerts:
   - rule: DEPLOYMENT_FAILED
