@@ -3,10 +3,9 @@ region: fra
 
 services:
   - name: web
-    github:
-      repo: RubenPari/film-randomized-complete
+    git:
+      repo_clone_url: https://github.com/RubenPari/film-randomized-complete.git
       branch: main
-      deploy_on_push: false
     source_dir: film-randomized
     dockerfile_path: film-randomized/Dockerfile
     http_port: 80
@@ -25,10 +24,9 @@ services:
         type: SECRET
 
   - name: api
-    github:
-      repo: RubenPari/film-randomized-complete
+    git:
+      repo_clone_url: https://github.com/RubenPari/film-randomized-complete.git
       branch: main
-      deploy_on_push: false
     source_dir: film-randomized-back
     dockerfile_path: film-randomized-back/Dockerfile
     internal_ports: [8000]
