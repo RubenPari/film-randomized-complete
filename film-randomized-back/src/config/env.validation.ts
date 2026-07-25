@@ -42,6 +42,7 @@ export const envValidationSchema = Joi.object({
   DB_SYNCHRONIZE: Joi.boolean().default(false),
   DB_SSL: Joi.boolean().default(false),
   DB_SSL_REJECT_UNAUTHORIZED: Joi.boolean().default(true),
+  DB_SSL_CA: Joi.string().optional().allow(''),
 
   // Auth — JWT_SECRET must be at least 32 characters (256-bit hex or strong string).
   JWT_SECRET: Joi.string().min(32).required(),

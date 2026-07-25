@@ -2,12 +2,10 @@
 set -e
 
 # Run database migrations before starting the application.
-# TypeORM migration:run is transactional (all-or-nothing), so concurrent
-# starts are safe — only one will succeed and the others will be no-ops.
+# A failed migration must stop the release: starting the API against an
+# outdated schema can corrupt data or surface runtime errors.
 echo "Running database migrations..."
-node ./node_modules/typeorm/cli.js migration:run -d ./dist/data-source.js || {
-  echo "Migration failed or already applied. Continuing startup..."
-}
+node ./node_modules/typeorm/cli.js migration:run -d ./dist/data-source.js
 
 echo "Starting API..."
 exec node dist/main.js

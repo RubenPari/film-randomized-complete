@@ -1,0 +1,109 @@
+name: film-randomized
+region: fra
+
+services:
+  - name: web
+    github:
+      repo: RubenPari/film-randomized-complete
+      branch: main
+      deploy_on_push: false
+    source_dir: film-randomized
+    dockerfile_path: film-randomized/Dockerfile
+    http_port: 80
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: BACKEND_UPSTREAM
+        value: api:8000
+        scope: RUN_TIME
+        type: GENERAL
+      # Vite embeds this value in the browser bundle. It is encrypted in the
+      # platform configuration, but must be treated as a public client key.
+      - key: VITE_TMDB_API_KEY
+        value: ${VITE_TMDB_API_KEY}
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+
+  - name: api
+    github:
+      repo: RubenPari/film-randomized-complete
+      branch: main
+      deploy_on_push: false
+    source_dir: film-randomized-back
+    dockerfile_path: film-randomized-back/Dockerfile
+    internal_ports: [8000]
+    instance_count: 1
+    instance_size_slug: basic-xs
+    health_check:
+      http_path: /api/health
+      port: 8000
+      initial_delay_seconds: 30
+      period_seconds: 30
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 3
+    envs:
+      - key: NODE_ENV
+        value: production
+        scope: RUN_TIME
+        type: GENERAL
+      - key: PORT
+        value: '8000'
+        scope: RUN_TIME
+        type: GENERAL
+      - key: DATABASE_URL
+        value: ${film-db.DATABASE_PRIVATE_URL}
+        scope: RUN_TIME
+        type: GENERAL
+      - key: DB_SSL
+        value: 'true'
+        scope: RUN_TIME
+        type: GENERAL
+      - key: DB_SSL_REJECT_UNAUTHORIZED
+        value: 'true'
+        scope: RUN_TIME
+        type: GENERAL
+      - key: DB_SSL_CA
+        value: ${film-db.CA_CERT}
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_SECRET
+        value: ${JWT_SECRET}
+        scope: RUN_TIME
+        type: SECRET
+      - key: FRONTEND_URL
+        value: ${APP_URL}
+        scope: RUN_TIME
+        type: GENERAL
+      - key: MAILTRAP_TOKEN
+        value: ${MAILTRAP_TOKEN}
+        scope: RUN_TIME
+        type: SECRET
+      - key: MAILTRAP_SENDER_EMAIL
+        value: ${MAILTRAP_SENDER_EMAIL}
+        scope: RUN_TIME
+        type: GENERAL
+
+databases:
+  - name: film-db
+    engine: PG
+    version: '16'
+    production: true
+    cluster_name: film-randomized-db
+    db_name: film_randomized
+    db_user: film_app
+
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: CPU_UTILIZATION
+    operator: GREATER_THAN
+    value: 80
+    window: FIVE_MINUTES
+
+ingress:
+  rules:
+    - component:
+        name: web
+      match:
+        path:
+          prefix: /

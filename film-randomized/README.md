@@ -102,6 +102,31 @@ Per fermare tutto:
 docker compose down
 ```
 
+## ☁️ Deploy su DigitalOcean
+
+Il deploy di produzione è definito in [`../.do/app.yaml`](../.do/app.yaml): App Platform
+esegue il frontend Nginx come unico endpoint pubblico, mentre l'API NestJS rimane accessibile
+solo sulla rete interna. PostgreSQL è un Managed Database separato in FRA1.
+
+Prima del primo deploy:
+
+1. Crea in DigitalOcean il cluster PostgreSQL 16 `film-randomized-db` in FRA1, il database
+   `film_randomized` e l'utente `film_app`; associa poi il cluster all'App Platform come
+   trusted source.
+2. In GitHub configura i secrets `DIGITALOCEAN_ACCESS_TOKEN`, `JWT_SECRET` (almeno 32
+   caratteri) e `VITE_TMDB_API_KEY`. `MAILTRAP_TOKEN` e `MAILTRAP_SENDER_EMAIL` sono
+   facoltativi, ma necessari per le email di recupero password.
+3. Collega DigitalOcean al repository GitHub. Il workflow
+   [deploy-digitalocean.yml](../.github/workflows/deploy-digitalocean.yml) verifica entrambi
+   i package e aggiorna App Platform a ogni push su `main`.
+
+App Platform associa al backend la connessione privata e il certificato CA del database. Il
+backend applica le migrazioni prima di avviarsi e fallisce il rilascio se non riescono.
+
+Quando il dominio sarà disponibile, aggiungilo alle Domains dell'app come **Primary** e crea i
+record DNS indicati da DigitalOcean. `FRONTEND_URL` usa `${APP_URL}`, quindi i link di reset
+password si aggiorneranno al dominio primario senza modifiche al codice.
+
 ## 📋 Comandi Disponibili
 
 ### Sviluppo

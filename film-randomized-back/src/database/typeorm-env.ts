@@ -11,8 +11,9 @@ export function getTypeOrmConnectionOptions(
 ): { type: 'postgres' } & PostgresConnectionCredentialsOptions {
   const sslEnabled = env.DB_SSL === 'true';
   const rejectUnauthorized = env.DB_SSL_REJECT_UNAUTHORIZED !== 'false';
+  const ca = env.DB_SSL_CA?.replace(/\\n/g, '\n');
   const ssl: PostgresConnectionCredentialsOptions['ssl'] = sslEnabled
-    ? { rejectUnauthorized }
+    ? { rejectUnauthorized, ...(ca ? { ca } : {}) }
     : false;
 
   const databaseUrl = env.DATABASE_URL?.trim();
