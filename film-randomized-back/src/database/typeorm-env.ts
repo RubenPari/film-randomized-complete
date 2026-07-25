@@ -18,9 +18,17 @@ export function getTypeOrmConnectionOptions(
 
   const databaseUrl = env.DATABASE_URL?.trim();
   if (databaseUrl) {
+    const parsedDatabaseUrl = new URL(databaseUrl);
+    // Managed PostgreSQL URLs often include sslmode=require. The pg connection
+    // parser gives that URL option precedence over our explicit CA, so remove
+    // URL-level SSL settings and use the verified `ssl` configuration above.
+    parsedDatabaseUrl.searchParams.delete('sslmode');
+    parsedDatabaseUrl.searchParams.delete('ssl');
+    parsedDatabaseUrl.searchParams.delete('uselibpqcompat');
+
     return {
       type: 'postgres',
-      url: databaseUrl,
+      url: parsedDatabaseUrl.toString(),
       ssl,
     };
   }
