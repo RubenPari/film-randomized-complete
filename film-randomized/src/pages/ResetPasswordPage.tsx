@@ -1,30 +1,24 @@
 /// <reference types="vite/client" />
-import { useState, useEffect, type FormEvent, type JSX } from 'react';
+import { useState, type FormEvent, type JSX } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
-import { validatePasswordForm } from '../shared/utils/passwordValidation.js';
+import { MIN_PASSWORD_LENGTH, validatePasswordForm } from '../shared/utils/passwordValidation.js';
 import { logger } from '../shared/utils/logger.js';
 import { getErrorMessage } from '../shared/utils/errorMessage.js';
 import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
 import AuthTextField from '../shared/components/AuthTextField.jsx';
 import AuthSuccessAlert from '../shared/components/AuthSuccessAlert.jsx';
 import AuthSubmitButton from '../shared/components/AuthSubmitButton.jsx';
+import AppIcon from '../shared/components/AppIcon.jsx';
 import { useAuthFormFeedback } from '../shared/hooks/useAuthFormFeedback.js';
 
 function ResetPasswordPage(): JSX.Element {
   const { t } = useTranslation();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const {
-    error,
-    success,
-    isLoading,
-    setError,
-    setSuccess,
-    clearMessages,
-    runWithLoading,
-  } = useAuthFormFeedback();
+  const { error, success, isLoading, setError, setSuccess, clearMessages, runWithLoading } =
+    useAuthFormFeedback();
 
   const { resetPassword } = useAuth();
   const location = useLocation();
@@ -33,22 +27,19 @@ function ResetPasswordPage(): JSX.Element {
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get('token');
 
-  useEffect(() => {
-    if (!token) {
-      if (import.meta.env.DEV) {
-        logger.warn('ResetPasswordPage.missingToken', 'No reset token found in URL query parameters');
-      }
-      setError(t('resetPassword.missingToken'));
-    }
-  }, [token, t, setError]);
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     clearMessages();
 
     const validationError = validatePasswordForm(newPassword, confirmPassword);
     if (validationError) {
-      setError(validationError);
+      setError(
+        t(
+          validationError === 'tooShort'
+            ? 'resetPassword.passwordTooShort'
+            : 'resetPassword.passwordsDoNotMatch'
+        )
+      );
       return;
     }
     await runWithLoading(async () => {
@@ -71,18 +62,32 @@ function ResetPasswordPage(): JSX.Element {
     });
   };
 
+  if (!token) {
+    return (
+      <AuthFormLayout
+        icon={<AppIcon name="alert" size={28} />}
+        title={t('resetPassword.title')}
+        subtitle={t('resetPassword.description')}
+        error={t('resetPassword.invalidToken')}
+        footer={
+          <Link to="/login" className="font-bold text-film-blue underline underline-offset-4">
+            {t('resetPassword.backToLogin')}
+          </Link>
+        }
+      >
+        <span />
+      </AuthFormLayout>
+    );
+  }
+
   return (
     <AuthFormLayout
-      icon={
-        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0-10a4 4 0 014 4v2m-8 0V9a4 4 0 118 0v4m-9 0h10a2 2 0 012 2v3a2 2 0 01-2 2H7a2 2 0 01-2-2v-3a2 2 0 012-2z" />
-        </svg>
-      }
+      icon={<AppIcon name="alert" size={28} />}
       title={t('resetPassword.title')}
       subtitle={t('resetPassword.description')}
       error={error}
       footer={
-        <Link to="/login" className="font-medium text-cyan-400 hover:text-cyan-300">
+        <Link to="/login" className="font-bold text-film-blue underline underline-offset-4">
           {t('resetPassword.backToLogin')}
         </Link>
       }
@@ -97,7 +102,9 @@ function ResetPasswordPage(): JSX.Element {
           label={t('resetPassword.newPassword')}
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          disabled={Boolean(!token || success || isLoading)}
+          minLength={MIN_PASSWORD_LENGTH}
+          hint={t('resetPassword.passwordRequirement')}
+          disabled={Boolean(success || isLoading)}
           autoComplete="new-password"
         />
         <AuthTextField
@@ -107,12 +114,12 @@ function ResetPasswordPage(): JSX.Element {
           label={t('resetPassword.confirmNewPassword')}
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          disabled={Boolean(!token || success || isLoading)}
+          disabled={Boolean(success || isLoading)}
           autoComplete="new-password"
         />
         <AuthSubmitButton
           isPending={isLoading}
-          disabled={Boolean(isLoading || !token || success)}
+          disabled={Boolean(isLoading || success)}
           idleLabel={t('resetPassword.submit')}
           pendingLabel={t('resetPassword.resetting')}
         />

@@ -4,21 +4,32 @@
 import { type JSX } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import AppIcon from '../shared/components/AppIcon.jsx';
+import LanguageSwitcher from '../shared/components/LanguageSwitcher.jsx';
 
 function NotFoundPage(): JSX.Element {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gray-900 text-gray-100">
-      <h1 className="text-3xl font-bold mb-3">{t('notFound.title')}</h1>
-      <p className="text-gray-400 mb-8 text-center max-w-md">{t('notFound.description')}</p>
-      <Link
-        to="/"
-        className="px-6 py-3 rounded-lg bg-gradient-to-r from-brand-accent to-brand-deep hover:opacity-95 text-white font-medium transition-opacity shadow-lg shadow-brand-accent/25"
-      >
-        {t('notFound.goHome')}
-      </Link>
-    </div>
+    <main className="relative flex min-h-screen items-center justify-center bg-film-screen p-5">
+      <div className="absolute right-5 top-5">
+        <LanguageSwitcher />
+      </div>
+      <section className="ui-panel w-full max-w-xl p-8 text-center sm:p-12">
+        <AppIcon name="brand" size={80} className="mx-auto" />
+        <p className="mt-6 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-film-blue">
+          404
+        </p>
+        <h1 className="mt-2 font-display text-5xl font-bold uppercase">{t('notFound.title')}</h1>
+        <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-film-ink/65">
+          {t('notFound.description')}
+        </p>
+        <Link to="/" className="ui-button ui-button--primary mt-7">
+          <AppIcon name="arrowLeft" />
+          {t('notFound.goHome')}
+        </Link>
+      </section>
+    </main>
   );
 }
 

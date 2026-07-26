@@ -1,4 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import AppIcon from './AppIcon.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
 
 interface AuthFormLayoutProps {
@@ -20,53 +22,73 @@ function AuthFormLayout({
   footer,
   showLanguageSwitcher = true,
 }: AuthFormLayoutProps) {
+  const { t } = useTranslation();
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+    <main className="relative min-h-screen bg-film-screen p-3 sm:p-5">
       {showLanguageSwitcher && (
-        <div className="mb-6">
+        <div className="absolute right-5 top-5 z-10">
           <LanguageSwitcher />
         </div>
       )}
-      <div className="max-w-md w-full animate-fade-in">
-        <div className="glass-effect rounded-3xl p-8 shadow-2xl">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 mb-4 shadow-xl shadow-cyan-500/20">
-              {icon}
-            </div>
-            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-cyan-300 via-blue-400 to-cyan-300 bg-clip-text text-transparent mb-2">
-              {title}
-            </h1>
-            <p className="text-slate-400 text-lg">{subtitle}</p>
+      <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] max-w-6xl overflow-hidden border-2 border-film-ink bg-white shadow-[8px_8px_0_#15133C] sm:min-h-[calc(100vh-2.5rem)] lg:grid-cols-5">
+        <aside className="hidden flex-col justify-between bg-film-ink p-10 text-film-screen lg:col-span-2 lg:flex">
+          <div className="flex items-center gap-3">
+            <AppIcon name="brand" size={46} />
+            <span className="font-display text-2xl font-bold uppercase leading-none">
+              Film/
+              <br />
+              Randomized
+            </span>
           </div>
+          <div>
+            <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-film-yellow">
+              {t('auth.brandEyebrow')}
+            </p>
+            <p className="mt-4 font-display text-6xl font-bold uppercase leading-[0.85]">
+              {t('auth.brandTitle')}
+            </p>
+            <p className="mt-6 max-w-xs text-sm leading-7 text-film-screen/70">
+              {t('auth.brandDescription')}
+            </p>
+          </div>
+          <div className="h-2 bg-film-yellow" aria-hidden="true" />
+        </aside>
 
-          {error && (
-            <div
-              role="alert"
-              className="mb-4 p-4 bg-red-900/30 text-red-200 rounded-2xl border border-red-700/50 backdrop-blur-xl animate-fade-in flex items-center gap-3"
-            >
-              <svg
-                className="w-5 h-5 text-red-400 flex-shrink-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span className="text-sm">{error}</span>
+        <section className="flex min-h-full flex-col lg:col-span-3">
+          <header className="flex items-center gap-3 border-b-2 border-film-ink p-4 pr-44 lg:hidden">
+            <AppIcon name="brand" size={38} />
+            <span className="font-display text-xl font-bold uppercase">Film/Randomized</span>
+          </header>
+          <div className="flex flex-1 items-center justify-center px-5 py-12 sm:px-10">
+            <div className="w-full max-w-md">
+              <span className="flex size-14 items-center justify-center border-2 border-film-ink bg-film-blue text-white">
+                {icon}
+              </span>
+              <h1 className="mt-5 font-display text-5xl font-bold uppercase leading-none">
+                {title}
+              </h1>
+              <p className="mt-3 text-sm leading-6 text-film-ink/65">{subtitle}</p>
+
+              {error && (
+                <div
+                  role="alert"
+                  className="mt-6 flex items-start gap-3 border-2 border-danger bg-white p-4 text-danger"
+                >
+                  <AppIcon name="alert" className="mt-0.5 shrink-0" />
+                  <span className="text-sm">{error}</span>
+                </div>
+              )}
+
+              <div className="mt-7">{children}</div>
+              {footer && (
+                <div className="mt-7 border-t-2 border-film-ink pt-5 text-sm">{footer}</div>
+              )}
             </div>
-          )}
-
-          {children}
-
-          {footer && <div className="mt-8 text-center">{footer}</div>}
-        </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
 

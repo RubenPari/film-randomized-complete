@@ -9,6 +9,7 @@ import { useAuth } from '../shared/context/AuthContext.jsx';
 import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
 import AuthTextField from '../shared/components/AuthTextField.jsx';
 import AuthSubmitButton from '../shared/components/AuthSubmitButton.jsx';
+import AppIcon from '../shared/components/AppIcon.jsx';
 import { useAuthFormAction } from '../shared/hooks/useAuthFormAction.js';
 import { getErrorMessage } from '../shared/utils/errorMessage.js';
 
@@ -33,21 +34,16 @@ function LoginPage(): JSX.Element {
     getErrorMessage: (err: unknown) => getErrorMessage(err, t('auth.loginError')),
   });
 
-
   return (
     <AuthFormLayout
-      icon={
-        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-      }
+      icon={<AppIcon name="profile" size={28} />}
       title={t('auth.welcome')}
       subtitle={t('auth.signInToContinue')}
       error={error}
       footer={
-        <p className="text-slate-400">
+        <p>
           {t('auth.noAccount')}{' '}
-          <Link to="/register" className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors">
+          <Link to="/register" className="font-bold text-film-blue underline underline-offset-4">
             {t('auth.createAccount')}
           </Link>
         </p>
@@ -71,7 +67,7 @@ function LoginPage(): JSX.Element {
           autoComplete="current-password"
           disabled={isPending}
           labelSuffix={
-            <Link to="/forgot-password" className="text-xs font-medium text-cyan-400 hover:text-cyan-300 transition-colors">
+            <Link to="/forgot-password" className="text-xs font-bold text-film-blue underline">
               {t('auth.forgotPassword')}
             </Link>
           }
@@ -81,7 +77,7 @@ function LoginPage(): JSX.Element {
           isPending={isPending}
           idleLabel={t('auth.signIn')}
           pendingLabel={t('auth.signingIn')}
-          className="w-full btn-primary py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed mt-6 group"
+          className="ui-button ui-button--primary mt-6 w-full"
           showArrowIcon
         />
       </form>

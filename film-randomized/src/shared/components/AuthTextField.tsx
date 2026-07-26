@@ -1,8 +1,5 @@
 import type { ChangeEvent, ReactNode } from 'react';
 
-const INPUT_CLASS =
-  'w-full px-4 py-3.5 bg-slate-700/30 border border-slate-600/50 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 backdrop-blur-sm';
-
 interface AuthTextFieldProps {
   id: string;
   name: string;
@@ -14,6 +11,7 @@ interface AuthTextFieldProps {
   minLength?: number;
   autoComplete?: string;
   labelSuffix?: ReactNode;
+  hint?: string;
   value?: string;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
@@ -29,23 +27,18 @@ function AuthTextField({
   minLength,
   autoComplete,
   labelSuffix,
+  hint,
   value,
   onChange,
 }: AuthTextFieldProps) {
   return (
     <div>
-      {labelSuffix ? (
-        <div className="flex justify-between items-center mb-2">
-          <label htmlFor={id} className="block text-sm font-bold text-slate-300">
-            {label}
-          </label>
-          {labelSuffix}
-        </div>
-      ) : (
-        <label htmlFor={id} className="block text-sm font-bold text-slate-300 mb-2">
+      <div className="mb-2 flex items-baseline justify-between gap-3">
+        <label htmlFor={id} className="block text-sm font-bold">
           {label}
         </label>
-      )}
+        {labelSuffix}
+      </div>
       <input
         id={id}
         name={name}
@@ -57,8 +50,14 @@ function AuthTextField({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={INPUT_CLASS}
+        aria-describedby={hint ? `${id}-hint` : undefined}
+        className="ui-field"
       />
+      {hint && (
+        <p id={`${id}-hint`} className="mt-2 text-xs leading-5 text-film-ink/65">
+          {hint}
+        </p>
+      )}
     </div>
   );
 }

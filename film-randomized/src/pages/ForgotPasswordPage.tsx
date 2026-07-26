@@ -13,6 +13,7 @@ import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
 import AuthTextField from '../shared/components/AuthTextField.jsx';
 import AuthSuccessAlert from '../shared/components/AuthSuccessAlert.jsx';
 import AuthSubmitButton from '../shared/components/AuthSubmitButton.jsx';
+import AppIcon from '../shared/components/AppIcon.jsx';
 import { useAuthFormFeedback } from '../shared/hooks/useAuthFormFeedback.js';
 
 /**
@@ -25,15 +26,8 @@ function ForgotPasswordPage(): JSX.Element {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const { forgotPassword } = useAuth();
-  const {
-    error,
-    success,
-    isLoading,
-    setError,
-    setSuccess,
-    clearMessages,
-    runWithLoading,
-  } = useAuthFormFeedback();
+  const { error, success, isLoading, setError, setSuccess, clearMessages, runWithLoading } =
+    useAuthFormFeedback();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,16 +48,12 @@ function ForgotPasswordPage(): JSX.Element {
 
   return (
     <AuthFormLayout
-      icon={
-        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c-1.657 0-3 1.567-3 3.5S10.343 18 12 18s3-1.567 3-3.5S13.657 11 12 11zm0-9a9 9 0 100 18 9 9 0 000-18z" />
-        </svg>
-      }
+      icon={<AppIcon name="alert" size={28} />}
       title={t('forgotPassword.title')}
       subtitle={t('forgotPassword.description')}
       error={error}
       footer={
-        <Link to="/login" className="font-medium text-cyan-400 hover:text-cyan-300">
+        <Link to="/login" className="font-bold text-film-blue underline underline-offset-4">
           {t('forgotPassword.backToLogin')}
         </Link>
       }

@@ -9,6 +9,7 @@ import { useAuth } from '../shared/context/AuthContext.jsx';
 import AuthFormLayout from '../shared/components/AuthFormLayout.jsx';
 import AuthTextField from '../shared/components/AuthTextField.jsx';
 import AuthSubmitButton from '../shared/components/AuthSubmitButton.jsx';
+import AppIcon from '../shared/components/AppIcon.jsx';
 import { useAuthFormAction } from '../shared/hooks/useAuthFormAction.js';
 import { getErrorMessage } from '../shared/utils/errorMessage.js';
 import { validatePasswordForm, MIN_PASSWORD_LENGTH } from '../shared/utils/passwordValidation.js';
@@ -33,30 +34,31 @@ function RegisterPage(): JSX.Element {
 
       const validationError = validatePasswordForm(password, confirmPassword);
       if (validationError) {
-        throw new Error(validationError);
+        throw new Error(
+          t(
+            validationError === 'tooShort'
+              ? 'register.passwordTooShort'
+              : 'register.passwordsDoNotMatch'
+          )
+        );
       }
 
       await register(username, email, password);
       navigate('/');
     },
-    getErrorMessage: (err: unknown) =>
-      getErrorMessage(err, t('register.registrationError')),
+    getErrorMessage: (err: unknown) => getErrorMessage(err, t('register.registrationError')),
   });
 
   return (
     <AuthFormLayout
-      icon={
-        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-        </svg>
-      }
+      icon={<AppIcon name="profile" size={28} />}
       title={t('register.title')}
       subtitle={t('register.description')}
       error={error}
       footer={
-        <p className="text-slate-400">
+        <p>
           {t('register.hasAccount')}{' '}
-          <Link to="/login" className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors">
+          <Link to="/login" className="font-bold text-film-blue underline underline-offset-4">
             {t('register.signInInstead')}
           </Link>
         </p>
@@ -86,6 +88,7 @@ function RegisterPage(): JSX.Element {
           type="password"
           label={t('register.password')}
           minLength={MIN_PASSWORD_LENGTH}
+          hint={t('register.passwordRequirement')}
           placeholder={t('register.passwordPlaceholder')}
           autoComplete="new-password"
           disabled={isPending}
@@ -103,7 +106,7 @@ function RegisterPage(): JSX.Element {
           isPending={isPending}
           idleLabel={t('register.createAccount')}
           pendingLabel={t('register.creatingAccount')}
-          className="w-full btn-primary py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed mt-6 group"
+          className="ui-button ui-button--primary mt-6 w-full"
           showArrowIcon
         />
       </form>
