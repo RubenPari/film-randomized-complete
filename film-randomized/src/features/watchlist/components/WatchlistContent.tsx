@@ -7,8 +7,7 @@ import type { NormalizableItem } from '../../../shared/utils/normalizeMediaItem.
 const WATCHLIST_COPY = {
   totalItemsKey: 'watchlist.totalItems',
   inListKey: 'watchlist.inList',
-  emptyIconPath:
-    'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
+  emptyIcon: 'watchlist' as const,
   emptyTitleKeys: {
     all: 'watchlist.empty',
     movies: 'watchlist.emptyMovies',
@@ -19,18 +18,27 @@ const WATCHLIST_COPY = {
   ctaLabelKey: 'watchlist.discoverContent',
   singleItemLabelKey: 'watchlist.item',
   multipleItemsLabelKey: 'watchlist.items',
+  removeErrorKey: 'collections.removeError',
+  dismissErrorKey: 'collections.dismissError',
 };
 
 interface WatchlistContentProps {
   watchlistPromise: Promise<MediaItem[]>;
   filter: 'all' | 'movies' | 'tv';
   token: string | null;
+  onClearFilter: () => void;
 }
 
-function WatchlistContent({ watchlistPromise, filter, token }: WatchlistContentProps) {
+function WatchlistContent({
+  watchlistPromise,
+  filter,
+  token,
+  onClearFilter,
+}: WatchlistContentProps) {
   const onRemove = useCallback(
-    (item: NormalizableItem, authToken: string) => removeFromWatchlist(item.tmdb_id as number, authToken),
-    [],
+    (item: NormalizableItem, authToken: string) =>
+      removeFromWatchlist(item.tmdb_id as number, authToken),
+    []
   );
 
   return (
@@ -40,6 +48,7 @@ function WatchlistContent({ watchlistPromise, filter, token }: WatchlistContentP
       token={token}
       onRemove={onRemove}
       copy={WATCHLIST_COPY}
+      onClearFilter={onClearFilter}
     />
   );
 }

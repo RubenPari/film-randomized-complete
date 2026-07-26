@@ -24,7 +24,12 @@ function DiscoveredPage() {
       loadingLabel={t('discovered.loading')}
     >
       {itemsPromise && (
-        <DiscoveredContent discoveredPromise={itemsPromise} filter={filter} token={token} />
+        <DiscoveredContent
+          discoveredPromise={itemsPromise}
+          filter={filter}
+          token={token}
+          onClearFilter={() => setFilter('all')}
+        />
       )}
     </FilteredCollectionPageLayout>
   );

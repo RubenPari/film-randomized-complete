@@ -1,9 +1,11 @@
+import type { AppIconName } from './AppIcon.js';
+
 export type CollectionFilter = 'all' | 'movies' | 'tv';
 
 export interface CollectionCopy {
   totalItemsKey: string;
   inListKey: string;
-  emptyIconPath: string;
+  emptyIcon: AppIconName;
   emptyTitleKeys: {
     all: string;
     movies: string;
@@ -15,4 +17,6 @@ export interface CollectionCopy {
   ctaTo?: string;
   singleItemLabelKey: string;
   multipleItemsLabelKey: string;
+  removeErrorKey: string;
+  dismissErrorKey: string;
 }

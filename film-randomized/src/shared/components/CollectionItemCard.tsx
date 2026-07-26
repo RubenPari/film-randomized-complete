@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import AppIcon from './AppIcon.jsx';
 import { IMAGE_BASE_URL } from '../constants/api.js';
 import type { MediaItem } from '../types/index.js';
 
@@ -7,96 +8,80 @@ interface CollectionItemCardProps {
   onRemove?: (tmdbId: number, mediaType: 'movie' | 'tv') => void;
 }
 
-/**
- * Card used by every collection grid (watchlist, discovered). Assumes the
- * caller has already normalised the row into snake_case via
- * `normalizeMediaItem` — no camel/snake fallback logic here.
- */
 function CollectionItemCard({ item, onRemove }: CollectionItemCardProps) {
   const { t } = useTranslation();
-
   const genres = parseGenres(item.genres);
   const tmdbId = item.tmdb_id;
   const isTv = item.media_type === 'tv';
-  const year = item.release_date
-    ? new Date(item.release_date).getFullYear()
-    : null;
+  const year = item.release_date ? new Date(item.release_date).getFullYear() : null;
 
   return (
-    <div className="group bg-gradient-to-br from-slate-800/40 to-slate-900/40 rounded-2xl border border-slate-700/50 overflow-hidden hover:border-cyan-500/40 shadow-lg hover:shadow-2xl hover:shadow-cyan-500/20 transition-all duration-300 hover:scale-105 backdrop-blur-sm">
+    <article className="flex h-full flex-col overflow-hidden border-2 border-film-ink bg-white">
       <div className="relative">
         <a
           href={`https://www.themoviedb.org/${isTv ? 'tv' : 'movie'}/${tmdbId}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="block relative aspect-[2/3] bg-slate-900 overflow-hidden group/poster"
+          className="block aspect-[2/3] overflow-hidden bg-film-ink"
           title={t('media.onTmdb', { title: item.title })}
         >
           {item.poster_path ? (
             <img
               src={`${IMAGE_BASE_URL}${item.poster_path}`}
               alt={item.title}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover/poster:scale-110"
+              className="h-full w-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
-              <svg className="w-16 h-16 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
+            <span className="flex h-full w-full flex-col items-center justify-center gap-3 bg-film-blue p-4 text-center text-white">
+              <AppIcon name="brand" size={48} />
+              <span className="font-mono text-[0.65rem] font-semibold uppercase">
+                {t('common.noImage')}
+              </span>
+            </span>
           )}
-
-          <div className="absolute top-3 right-3 px-3 py-1.5 bg-gradient-to-r from-cyan-600/90 to-blue-600/90 backdrop-blur-xl rounded-lg text-xs font-bold text-white shadow-lg border border-cyan-400/30">
-            {isTv ? 'TV' : t('common.movies').slice(0, -1)}
-          </div>
         </a>
-
-        {onRemove ? (
+        {onRemove && (
           <button
             type="button"
             onClick={() => onRemove(tmdbId, isTv ? 'tv' : 'movie')}
-            className="absolute top-3 left-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white p-2.5 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl z-10 transform hover:scale-110"
-            title={t('media.remove')}
+            className="ui-icon-button absolute left-2 top-2 border-white bg-danger text-white hover:bg-danger sm:left-3 sm:top-3"
+            aria-label={`${t('media.remove')}: ${item.title}`}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
+            <AppIcon name="trash" size={18} />
           </button>
-        ) : null}
+        )}
       </div>
 
-      <div className="p-4 space-y-3">
-        <h3 className="font-bold text-white text-sm mb-2 line-clamp-2 min-h-[2.5rem] group-hover:text-cyan-300 transition-colors duration-300">
+      <div className="flex flex-1 flex-col p-3 sm:p-4">
+        <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-wider text-film-blue">
+          {isTv ? t('home.tvShow') : t('home.movie')}
+        </p>
+        <h2 className="mt-1 line-clamp-2 min-h-10 text-sm font-bold leading-5 sm:text-base">
           {item.title}
-        </h3>
-
-        <div className="flex items-center justify-between text-xs text-slate-400 mb-2 space-x-2">
-          {year && (
-            <span className="px-2 py-1 bg-slate-700/40 rounded-md font-medium">
-              {year}
-            </span>
-          )}
+        </h2>
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          {year && <span className="ui-chip min-h-7 px-2 py-0.5">{year}</span>}
           {item.vote_average != null && (
-            <span className="text-amber-400 flex items-center gap-1.5 px-2 py-1 bg-amber-500/10 rounded-md font-semibold">
-              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
-                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-              </svg>
+            <span className="ui-chip min-h-7 bg-film-yellow px-2 py-0.5">
+              <AppIcon name="star" size={12} className="fill-film-ink" />
               {item.vote_average.toFixed(1)}
             </span>
           )}
         </div>
-
         {genres.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
+          <div className="mt-3 flex flex-wrap gap-1">
             {genres.slice(0, 2).map((genre) => (
-              <span key={genre.id} className="text-xs px-2.5 py-1 bg-gradient-to-r from-cyan-600/20 to-blue-600/20 text-cyan-300 rounded-lg border border-cyan-500/30 hover:border-cyan-500/60 transition-colors duration-300 font-medium backdrop-blur-sm">
+              <span
+                key={genre.id}
+                className="truncate border border-film-ink px-2 py-1 text-[0.65rem] font-semibold"
+              >
                 {genre.name}
               </span>
             ))}
           </div>
         )}
       </div>
-    </div>
+    </article>
   );
 }
 

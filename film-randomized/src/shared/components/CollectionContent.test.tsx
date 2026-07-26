@@ -14,7 +14,7 @@ vi.mock('react-i18next', () => ({
 const COPY = {
   totalItemsKey: 'watchlist.totalItems',
   inListKey: 'watchlist.inList',
-  emptyIconPath: 'M0 0',
+  emptyIcon: 'watchlist' as const,
   emptyTitleKeys: {
     all: 'watchlist.empty',
     movies: 'watchlist.emptyMovies',
@@ -25,6 +25,8 @@ const COPY = {
   ctaLabelKey: 'watchlist.discoverContent',
   singleItemLabelKey: 'watchlist.singleItem',
   multipleItemsLabelKey: 'watchlist.multipleItems',
+  removeErrorKey: 'collections.removeError',
+  dismissErrorKey: 'collections.dismissError',
 };
 
 const SAMPLE_ITEMS: NormalizableItem[] = [
@@ -66,6 +68,7 @@ interface RenderCollectionProps {
   items?: NormalizableItem[];
   filter?: 'all' | 'movies' | 'tv';
   onRemove?: (item: NormalizableItem, token: string) => Promise<void>;
+  onClearFilter?: () => void;
 }
 
 function renderCollection(props: RenderCollectionProps) {
@@ -78,9 +81,10 @@ function renderCollection(props: RenderCollectionProps) {
           token="tkn"
           onRemove={props.onRemove ?? vi.fn().mockResolvedValue(undefined)}
           copy={COPY}
+          onClearFilter={props.onClearFilter ?? vi.fn()}
         />
       </Suspense>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 }
 
@@ -88,10 +92,20 @@ describe('CollectionContent', () => {
   it('renders the empty-state CTA when the list is empty', async () => {
     renderCollection({ items: [] });
 
-    expect(
-      await screen.findByText('watchlist.empty'),
-    ).toBeInTheDocument();
+    expect(await screen.findByText('watchlist.empty')).toBeInTheDocument();
     expect(screen.getByText('watchlist.discoverContent')).toBeInTheDocument();
+  });
+
+  it('clears a filtered empty state instead of linking home', async () => {
+    const onClearFilter = vi.fn();
+    renderCollection({ items: [], filter: 'movies', onClearFilter });
+
+    fireEvent.click(await screen.findByRole('button', { name: 'collections.showAll' }));
+
+    expect(onClearFilter).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByRole('link', { name: 'watchlist.discoverContent' })
+    ).not.toBeInTheDocument();
   });
 
   it('filters items by media type', async () => {
@@ -109,15 +123,16 @@ describe('CollectionContent', () => {
 
     expect(await screen.findByText('The Matrix')).toBeInTheDocument();
 
-    const removeButtons = screen.getAllByTitle('media.remove');
-    fireEvent.click(removeButtons[0]);
+    const removeButton = screen.getByRole('button', { name: 'media.remove: The Matrix' });
+    fireEvent.click(removeButton);
 
     await waitFor(() => expect(onRemove).toHaveBeenCalledTimes(1));
 
-    await waitFor(() =>
-      expect(screen.getByText('The Matrix')).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.getByText('The Matrix')).toBeInTheDocument());
     expect(screen.getByText('Breaking Bad')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toHaveTextContent('collections.removeError');
+    fireEvent.click(screen.getByRole('button', { name: 'collections.dismissError' }));
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 
     errorSpy.mockRestore();
   });

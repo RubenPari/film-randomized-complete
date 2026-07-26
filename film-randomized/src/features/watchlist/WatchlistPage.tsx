@@ -25,7 +25,12 @@ function WatchlistPage() {
       loadingLabel={t('watchlist.loading')}
     >
       {itemsPromise && (
-        <WatchlistContent watchlistPromise={itemsPromise} filter={filter} token={token} />
+        <WatchlistContent
+          watchlistPromise={itemsPromise}
+          filter={filter}
+          token={token}
+          onClearFilter={() => setFilter('all')}
+        />
       )}
     </FilteredCollectionPageLayout>
   );

@@ -10,26 +10,17 @@ function CollectionStats({ count, copy }: CollectionStatsProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="mb-8 px-6 py-4 rounded-2xl glass-effect border border-slate-700/50">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <p className="text-slate-400 text-sm font-medium uppercase tracking-wide mb-1">
-            {t(copy.totalItemsKey)}
-          </p>
-          <p className="text-4xl font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
-            {count}
-          </p>
-        </div>
-        <div className="hidden md:block text-slate-600">
-          <p className="text-sm">
-            {count}{' '}
-            {count === 1
-              ? t(copy.singleItemLabelKey)
-              : t(copy.multipleItemsLabelKey)}{' '}
-            {t(copy.inListKey)}
-          </p>
-        </div>
+    <div className="mb-7 flex items-end justify-between border-b-2 border-film-ink pb-4">
+      <div>
+        <p className="font-mono text-xs font-semibold uppercase tracking-wider text-film-ink/60">
+          {t(copy.totalItemsKey)}
+        </p>
+        <p className="font-display text-5xl font-bold leading-none">{count}</p>
       </div>
+      <p className="hidden font-mono text-xs font-semibold uppercase text-film-ink/60 md:block">
+        {count} {count === 1 ? t(copy.singleItemLabelKey) : t(copy.multipleItemsLabelKey)}{' '}
+        {t(copy.inListKey)}
+      </p>
     </div>
   );
 }

@@ -7,31 +7,38 @@ import type { NormalizableItem } from '../../../shared/utils/normalizeMediaItem.
 const DISCOVERED_COPY = {
   totalItemsKey: 'discovered.totalItems',
   inListKey: 'discovered.inList',
-  emptyIconPath:
-    'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z',
+  emptyIcon: 'seen' as const,
   emptyTitleKeys: {
     all: 'discovered.empty',
     movies: 'discovered.emptyMovies',
     tv: 'discovered.emptyTv',
   },
   emptyDescriptionAllKey: 'discovered.emptyDescription',
-  emptyDescriptionFilterKey: 'watchlist.emptyFilterDescription',
+  emptyDescriptionFilterKey: 'discovered.emptyFilterDescription',
   ctaLabelKey: 'discovered.generateMore',
-  singleItemLabelKey: 'watchlist.item',
-  multipleItemsLabelKey: 'watchlist.items',
+  singleItemLabelKey: 'discovered.item',
+  multipleItemsLabelKey: 'discovered.items',
+  removeErrorKey: 'collections.removeError',
+  dismissErrorKey: 'collections.dismissError',
 };
 
 interface DiscoveredContentProps {
   discoveredPromise: Promise<MediaItem[]>;
   filter: 'all' | 'movies' | 'tv';
   token: string | null;
+  onClearFilter: () => void;
 }
 
-function DiscoveredContent({ discoveredPromise, filter, token }: DiscoveredContentProps) {
+function DiscoveredContent({
+  discoveredPromise,
+  filter,
+  token,
+  onClearFilter,
+}: DiscoveredContentProps) {
   const onRemove = useCallback(
     (item: NormalizableItem, authToken: string) =>
       removeDiscovered(item.media_type as MediaType, item.tmdb_id as number, authToken),
-    [],
+    []
   );
 
   return (
@@ -41,6 +48,7 @@ function DiscoveredContent({ discoveredPromise, filter, token }: DiscoveredConte
       token={token}
       onRemove={onRemove}
       copy={DISCOVERED_COPY}
+      onClearFilter={onClearFilter}
     />
   );
 }
