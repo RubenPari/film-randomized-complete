@@ -4,11 +4,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: {
-          highlight: '#22d3ee',
-          deep: '#3b82f6',
-          accent: '#06b6d4',
-        },
+        'film-screen': '#F7F3E8',
+        'film-ink': '#15133C',
+        'film-blue': '#4856E8',
+        'film-yellow': '#FFD166',
+        'film-coral': '#FF6B5E',
+        success: '#247A5A',
+        danger: '#B83A45',
+      },
+      fontFamily: {
+        display: ['Barlow Condensed', 'Arial Narrow', 'sans-serif'],
+        sans: ['Manrope', 'system-ui', 'sans-serif'],
+        mono: ['IBM Plex Mono', 'monospace'],
       },
     },
   },

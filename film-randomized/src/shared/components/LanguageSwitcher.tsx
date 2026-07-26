@@ -1,30 +1,44 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import AppIcon from './AppIcon.jsx';
 
 function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
+  const activeLanguage = i18n.resolvedLanguage ?? i18n.language;
 
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+  useEffect(() => {
+    document.documentElement.lang = activeLanguage.startsWith('it') ? 'it' : 'en';
+  }, [activeLanguage]);
+
+  const changeLanguage = (language: 'en' | 'it') => {
+    void i18n.changeLanguage(language);
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <button
-        onClick={() => changeLanguage('en')}
-        className={`px-2 py-1 text-xs font-bold rounded ${
-          i18n.language.startsWith('en') ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
-        } transition-colors duration-200`}
-      >
-        EN
-      </button>
-      <button
-        onClick={() => changeLanguage('it')}
-        className={`px-2 py-1 text-xs font-bold rounded ${
-          i18n.language.startsWith('it') ? 'bg-cyan-500 text-white' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
-        } transition-colors duration-200`}
-      >
-        IT
-      </button>
+    <div
+      className="inline-flex items-center gap-1 border-2 border-film-ink bg-white p-1"
+      aria-label={t('language.label')}
+    >
+      <AppIcon name="language" className="mx-1" />
+      {(['en', 'it'] as const).map((language) => {
+        const selected = activeLanguage.startsWith(language);
+        return (
+          <button
+            key={language}
+            type="button"
+            onClick={() => changeLanguage(language)}
+            aria-pressed={selected}
+            aria-label={t(`language.${language}`)}
+            className={`min-h-8 px-2 font-mono text-xs font-semibold uppercase ${
+              selected
+                ? 'bg-film-blue text-white'
+                : 'bg-transparent text-film-ink hover:bg-film-yellow'
+            }`}
+          >
+            {language}
+          </button>
+        );
+      })}
     </div>
   );
 }

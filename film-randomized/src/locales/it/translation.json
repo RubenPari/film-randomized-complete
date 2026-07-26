@@ -16,17 +16,36 @@
     "movies": "Film",
     "tvShows": "Serie TV"
   },
+  "navigation": {
+    "primary": "Navigazione principale",
+    "discover": "Scopri",
+    "profile": "Profilo"
+  },
+  "shell": {
+    "skipToContent": "Vai al contenuto",
+    "loadingSession": "Caricamento della tua libreria",
+    "errorTitle": "Il proiettore si è fermato",
+    "errorDescription": "Un errore imprevisto ha interrotto questa schermata. Ricarica per ripartire.",
+    "reload": "Ricarica pagina",
+    "errorDetails": "Dettagli tecnici"
+  },
+  "language": {
+    "label": "Lingua",
+    "en": "Passa alla lingua inglese",
+    "it": "Passa alla lingua italiana"
+  },
   "home": {
-    "title": "Generatore di {{type}} Casuali",
-    "movie": "Film",
-    "tvShow": "Serie TV",
-    "description": "Scopri film e serie TV casuali in base alle tue preferenze. Filtra per genere, anno e valutazione per trovare il tuo prossimo intrattenimento preferito.",
-    "hideFilters": "Nascondi filtri",
-    "showFilters": "Mostra filtri",
-    "generate": "Genera Contenuto Casuale",
-    "generateMobile": "Genera un nuovo {{type}}",
-    "movieMobile": "film",
-    "tvMobile": "contenuto TV"
+    "eyebrow": "La selezione di stasera",
+    "title": "Trova il prossimo {{type}}",
+    "movie": "film",
+    "tvShow": "serie",
+    "description": "Imposta i confini. Sceglieremo un solo titolo dalla libreria e lo porteremo al centro dello schermo.",
+    "generate": "Avvia la pellicola",
+    "generateAgain": "Scegline un altro",
+    "generating": "Ricerca nella libreria...",
+    "emptyTitle": "Lo schermo è pronto",
+    "emptyDescription": "Regola i filtri o lasciali aperti, poi avvia la pellicola per un solo consiglio.",
+    "resultStage": "Consiglio"
   },
   "notFound": {
     "title": "Pagina non trovata",
@@ -34,15 +53,34 @@
     "goHome": "Torna alla home"
   },
   "filters": {
-    "mediaType": "Tipo di Media",
+    "title": "Filtri di scoperta",
+    "open": "Apri filtri",
+    "close": "Chiudi filtri",
+    "reset": "Azzera tutti i filtri",
+    "mediaType": "Tipo di media",
     "rating": "Valutazione",
-    "year": "Anno di Rilascio",
-    "yearDescription": "Scegli un intervallo di anni per limitare la ricerca.",
-    "voteCount": "Numero Minimo di Voti",
+    "year": "Anno di uscita",
+    "yearDescription": "Scegli un intervallo di uscita valido.",
+    "voteCount": "Voti minimi",
     "genres": "Generi",
     "from": "Da",
     "to": "A",
-    "any": "Qualsiasi"
+    "any": "Qualsiasi",
+    "applied": "Filtri applicati",
+    "activeCount": "{{count}} categorie di filtri modificate",
+    "ratingSummary": "Voto {{min}}–{{max}}",
+    "yearsSummary": "{{from}}–{{to}}",
+    "votesSummary": "{{value}}+ voti",
+    "genresSummary": "{{count}} generi",
+    "loadingGenres": "Caricamento generi...",
+    "genreError": "Impossibile caricare i generi. Puoi comunque generare senza selezionarli."
+  },
+  "collections": {
+    "eyebrow": "La tua videoteca",
+    "filterLabel": "Filtra la raccolta per tipo di media",
+    "showAll": "Mostra tutti i titoli",
+    "removeError": "Impossibile rimuovere il titolo. È stato ripristinato nella raccolta.",
+    "dismissError": "Chiudi l'errore di rimozione"
   },
   "watchlist": {
     "title": "La Mia Watchlist",
@@ -66,16 +104,22 @@
     "emptyMovies": "Nessun film scoperto",
     "emptyTv": "Nessuna serie scoperta",
     "emptyDescription": "I titoli che generi compaiono qui e non verranno più proposti finché non li rimuovi.",
+    "emptyFilterDescription": "Nessun {{type}} corrisponde a questo filtro.",
     "generateMore": "Genera altri titoli",
     "totalItems": "Totale scoperti",
-    "inList": "scoperti"
+    "inList": "scoperti",
+    "item": "titolo",
+    "items": "titoli"
   },
   "media": {
     "adding": "Aggiunta...",
     "removing": "Rimozione...",
-    "save": "Aggiungi alla Watchlist",
-    "saved": "Nella Watchlist",
+    "save": "Salva nella watchlist",
+    "saved": "Salvato nella watchlist",
     "remove": "Rimuovi dalla watchlist",
+    "saveError": "Impossibile salvare il titolo.",
+    "removeError": "Impossibile rimuovere il titolo.",
+    "overview": "Trama",
     "onTmdb": "Vedi {{title}} su TMDB"
   },
   "recommendation": {
@@ -86,6 +130,8 @@
     "freshPick": "Titolo fresco, non scartato ripetutamente",
     "feedbackPrompt": "Migliora i prossimi suggerimenti",
     "like": "Continua su questa linea",
+    "dislike": "Non fa per me",
+    "reasonPrompt": "Cosa non ha funzionato?",
     "reason": {
       "not_in_mood": "Non sono nel mood",
       "wrong_genre": "Genere sbagliato",
@@ -95,6 +141,9 @@
     }
   },
   "auth": {
+    "brandEyebrow": "Un titolo. Niente scorrimento infinito.",
+    "brandTitle": "Porta una storia sullo schermo.",
+    "brandDescription": "Definisci la ricerca, avvia la pellicola e conserva i titoli che meritano un posto nella tua lista.",
     "welcome": "Bentornato",
     "signInToContinue": "Accedi per continuare il tuo viaggio",
     "username": "Nome utente",
@@ -130,6 +179,7 @@
     "confirmPassword": "Conferma Password",
     "confirmPasswordPlaceholder": "Ripeti la tua password",
     "passwordTooShort": "La password deve contenere almeno 8 caratteri",
+    "passwordRequirement": "Usa almeno 8 caratteri.",
     "passwordsDoNotMatch": "Le password non corrispondono",
     "registrationError": "Errore durante la registrazione",
     "creatingAccount": "Creazione account...",
@@ -142,6 +192,9 @@
     "description": "Scegli una nuova password per il tuo account.",
     "newPassword": "Nuova Password",
     "confirmNewPassword": "Conferma Nuova Password",
+    "passwordRequirement": "Usa almeno 8 caratteri.",
+    "passwordTooShort": "La password deve contenere almeno 8 caratteri.",
+    "passwordsDoNotMatch": "Le password non corrispondono.",
     "submit": "Reimposta Password",
     "resetting": "Reimpostazione in corso...",
     "success": "Password reimpostata con successo. Reindirizzamento al login...",
@@ -153,8 +206,12 @@
   "changePassword": {
     "title": "Cambia Password",
     "description": "Account: {{email}}",
+    "account": "Account",
     "currentPassword": "Password Attuale",
     "newPassword": "Nuova Password",
+    "passwordRequirement": "Usa almeno 8 caratteri.",
+    "passwordTooShort": "La password deve contenere almeno 8 caratteri.",
+    "passwordsDoNotMatch": "Le password non corrispondono.",
     "confirmNewPassword": "Conferma Nuova Password",
     "submit": "Aggiorna Password",
     "updating": "Aggiornamento in corso...",

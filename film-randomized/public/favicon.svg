@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Film/Randomized">
+  <rect width="64" height="64" rx="8" fill="#15133C"/>
+  <g fill="#FFD166">
+    <rect x="7" y="8" width="7" height="8" rx="1"/>
+    <rect x="7" y="28" width="7" height="8" rx="1"/>
+    <rect x="7" y="48" width="7" height="8" rx="1"/>
+    <rect x="50" y="8" width="7" height="8" rx="1"/>
+    <rect x="50" y="28" width="7" height="8" rx="1"/>
+    <rect x="50" y="48" width="7" height="8" rx="1"/>
+  </g>
+  <rect x="19" y="12" width="26" height="40" rx="3" fill="#4856E8"/>
+  <path d="M24 22h16v4H24zm0 8h12v4H24zm0 8h16v4H24z" fill="#F7F3E8"/>
+</svg>

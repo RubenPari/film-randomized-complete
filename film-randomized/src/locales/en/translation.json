@@ -16,17 +16,36 @@
     "movies": "Movies",
     "tvShows": "TV Shows"
   },
+  "navigation": {
+    "primary": "Primary navigation",
+    "discover": "Discover",
+    "profile": "Profile"
+  },
+  "shell": {
+    "skipToContent": "Skip to content",
+    "loadingSession": "Loading your film library",
+    "errorTitle": "The projector stopped",
+    "errorDescription": "An unexpected error interrupted this screen. Reload to start it again.",
+    "reload": "Reload page",
+    "errorDetails": "Technical details"
+  },
+  "language": {
+    "label": "Language",
+    "en": "Switch language to English",
+    "it": "Switch language to Italian"
+  },
   "home": {
-    "title": "Random {{type}} Generator",
-    "movie": "Movie",
-    "tvShow": "TV Show",
-    "description": "Discover random movies and TV shows based on your preferences. Filter by genre, year, and rating to find your next favorite entertainment.",
-    "hideFilters": "Hide filters",
-    "showFilters": "Show filters",
-    "generate": "Generate Random Content",
-    "generateMobile": "Generate a new {{type}}",
-    "movieMobile": "movie",
-    "tvMobile": "TV content"
+    "eyebrow": "Tonight's selection",
+    "title": "Find your next {{type}}",
+    "movie": "movie",
+    "tvShow": "series",
+    "description": "Set the boundaries. We will pull one title from the library and put it center screen.",
+    "generate": "Roll the film",
+    "generateAgain": "Pick another",
+    "generating": "Searching the library...",
+    "emptyTitle": "The screen is ready",
+    "emptyDescription": "Adjust the filters or leave them wide open, then roll the film for one recommendation.",
+    "resultStage": "Recommendation"
   },
   "notFound": {
     "title": "Page not found",
@@ -34,15 +53,34 @@
     "goHome": "Back to home"
   },
   "filters": {
-    "mediaType": "Media Type",
+    "title": "Discovery filters",
+    "open": "Open filters",
+    "close": "Close filters",
+    "reset": "Reset all filters",
+    "mediaType": "Media type",
     "rating": "Rating",
-    "year": "Release Year",
-    "yearDescription": "Choose a year range to limit the search.",
-    "voteCount": "Minimum Number of Votes",
+    "year": "Release year",
+    "yearDescription": "Choose a bounded release window.",
+    "voteCount": "Minimum votes",
     "genres": "Genres",
     "from": "From",
     "to": "To",
-    "any": "Any"
+    "any": "Any",
+    "applied": "Applied filters",
+    "activeCount": "{{count}} changed filter categories",
+    "ratingSummary": "Rating {{min}}–{{max}}",
+    "yearsSummary": "{{from}}–{{to}}",
+    "votesSummary": "{{value}}+ votes",
+    "genresSummary": "{{count}} genres",
+    "loadingGenres": "Loading genres...",
+    "genreError": "Genres could not be loaded. You can still generate without them."
+  },
+  "collections": {
+    "eyebrow": "Your video library",
+    "filterLabel": "Filter collection by media type",
+    "showAll": "Show all titles",
+    "removeError": "The title could not be removed. It has been restored to the collection.",
+    "dismissError": "Dismiss removal error"
   },
   "watchlist": {
     "title": "My Watchlist",
@@ -66,16 +104,22 @@
     "emptyMovies": "No discovered movies yet",
     "emptyTv": "No discovered TV shows yet",
     "emptyDescription": "Titles you generate appear here and will not be suggested again until you remove them.",
+    "emptyFilterDescription": "No {{type}} match this collection filter.",
     "generateMore": "Generate random titles",
     "totalItems": "Total discovered",
-    "inList": "discovered"
+    "inList": "discovered",
+    "item": "title",
+    "items": "titles"
   },
   "media": {
     "adding": "Adding...",
     "removing": "Removing...",
-    "save": "Add to Watchlist",
-    "saved": "In Watchlist",
+    "save": "Save to watchlist",
+    "saved": "Saved to watchlist",
     "remove": "Remove from watchlist",
+    "saveError": "The title could not be saved.",
+    "removeError": "The title could not be removed.",
+    "overview": "Overview",
     "onTmdb": "View {{title}} on TMDB"
   },
   "recommendation": {
@@ -86,6 +130,8 @@
     "freshPick": "A fresh pick not repeatedly discarded",
     "feedbackPrompt": "Improve your next recommendations",
     "like": "Keep this vibe",
+    "dislike": "Not for me",
+    "reasonPrompt": "What missed the mark?",
     "reason": {
       "not_in_mood": "Not in the mood",
       "wrong_genre": "Wrong genre",
@@ -95,6 +141,9 @@
     }
   },
   "auth": {
+    "brandEyebrow": "One title. No endless scrolling.",
+    "brandTitle": "Put a story on screen.",
+    "brandDescription": "Shape the search, roll the film, and keep the titles that deserve a place in your queue.",
     "welcome": "Welcome Back",
     "signInToContinue": "Sign in to continue your journey",
     "username": "Username",
@@ -130,6 +179,7 @@
     "confirmPassword": "Confirm Password",
     "confirmPasswordPlaceholder": "Repeat your password",
     "passwordTooShort": "Password must be at least 8 characters",
+    "passwordRequirement": "Use at least 8 characters.",
     "passwordsDoNotMatch": "Passwords do not match",
     "registrationError": "Error during registration",
     "creatingAccount": "Creating account...",
@@ -142,6 +192,9 @@
     "description": "Choose a new password for your account.",
     "newPassword": "New Password",
     "confirmNewPassword": "Confirm New Password",
+    "passwordRequirement": "Use at least 8 characters.",
+    "passwordTooShort": "Password must be at least 8 characters.",
+    "passwordsDoNotMatch": "Passwords do not match.",
     "submit": "Reset Password",
     "resetting": "Resetting...",
     "success": "Password has been reset successfully. Redirecting to login...",
@@ -153,8 +206,12 @@
   "changePassword": {
     "title": "Change Password",
     "description": "Account: {{email}}",
+    "account": "Account",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
+    "passwordRequirement": "Use at least 8 characters.",
+    "passwordTooShort": "Password must be at least 8 characters.",
+    "passwordsDoNotMatch": "Passwords do not match.",
     "confirmNewPassword": "Confirm New Password",
     "submit": "Update Password",
     "updating": "Updating...",
