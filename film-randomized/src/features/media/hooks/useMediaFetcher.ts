@@ -27,15 +27,13 @@ import type {
 
 export interface UseMediaFetcherReturn {
   randomMedia: TmdbMedia | null;
+  generatedMediaType: MediaType | null;
   recommendationExplanationKeys: string[];
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
   error: string | null;
   generateRandomMedia: (filters: MediaFilters, mediaType: MediaType) => Promise<void>;
-  submitMediaFeedback: (
-    value: MediaFeedbackValue,
-    reason?: MediaFeedbackReason,
-  ) => void;
+  submitMediaFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
 }
 
 /**
@@ -52,19 +50,22 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
   const loadExclusionList = useMediaExclusionList();
 
   const [randomMedia, setRandomMedia] = useState<TmdbMedia | null>(null);
-  const [currentMediaType, setCurrentMediaType] = useState<MediaType>('movie');
+  const [generatedMediaType, setGeneratedMediaType] = useState<MediaType | null>(null);
   const [recommendationExplanationKeys, setRecommendationExplanationKeys] = useState<string[]>([]);
-  const [currentMediaFeedbackValue, setCurrentMediaFeedbackValue] = useState<MediaFeedbackValue | null>(null);
+  const [currentMediaFeedbackValue, setCurrentMediaFeedbackValue] =
+    useState<MediaFeedbackValue | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const submitMediaFeedback = useCallback(
     (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => {
-      if (!randomMedia) return;
-      const record = buildFeedbackRecord(randomMedia, currentMediaType, value, reason);
+      if (!randomMedia || !generatedMediaType) return;
+      const record = buildFeedbackRecord(randomMedia, generatedMediaType, value, reason);
       const history = saveRecommendationFeedback(user?.id, record);
-      setCurrentMediaFeedbackValue(getMediaFeedbackValue(history, randomMedia.id, record.media_type));
+      setCurrentMediaFeedbackValue(
+        getMediaFeedbackValue(history, randomMedia.id, record.media_type)
+      );
     },
-    [currentMediaType, randomMedia, user?.id],
+    [generatedMediaType, randomMedia, user?.id]
   );
 
   const generateRandomMedia = useCallback(
@@ -76,10 +77,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
         const feedbackHistory = loadRecommendationFeedback(user?.id);
         const recommendationProfile = buildRecommendationProfile(feedbackHistory);
         const excludedItems = await loadExclusionList(token, user?.id);
-        const { discoverUrl, totalPages } = await discoverMedia(
-          mediaType,
-          filters,
-        );
+        const { discoverUrl, totalPages } = await discoverMedia(mediaType, filters);
         const result = await pickRandomValidMedia({
           fetchPage: (page: number) => fetchMediaPage(discoverUrl, page),
           fetchDetails: (mt: MediaType, id: number) => fetchMediaDetails(mt, id),
@@ -96,34 +94,34 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           } catch (recordErr) {
             logger.error(
               'useMediaFetcher.recordDiscovered',
-              recordErr instanceof Error ? recordErr.message : recordErr,
+              recordErr instanceof Error ? recordErr.message : recordErr
             );
             // Do not block the main "generate" flow if discovered persistence fails.
           }
         }
 
         setRandomMedia(result.media);
-        setCurrentMediaType(mediaType);
+        setGeneratedMediaType(mediaType);
         setRecommendationExplanationKeys(result.explanationKeys);
-        setCurrentMediaFeedbackValue(getMediaFeedbackValue(feedbackHistory, result.media.id, mediaType));
-      } catch (err) {
-        logger.error(
-          'useMediaFetcher.generate',
-          err instanceof Error ? err.message : err,
+        setCurrentMediaFeedbackValue(
+          getMediaFeedbackValue(feedbackHistory, result.media.id, mediaType)
         );
+      } catch (err) {
+        logger.error('useMediaFetcher.generate', err instanceof Error ? err.message : err);
         setError(
           (err instanceof Error ? err.message : null) ||
-            'An error occurred. Please try again later.',
+            'An error occurred. Please try again later.'
         );
       } finally {
         setIsLoading(false);
       }
     },
-    [token, loadExclusionList, user?.id],
+    [token, loadExclusionList, user?.id]
   );
 
   return {
     randomMedia,
+    generatedMediaType,
     recommendationExplanationKeys,
     currentMediaFeedbackValue,
     isLoading,

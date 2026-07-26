@@ -36,24 +36,28 @@ function MediaCard({
   const trailerKey = useMediaTrailer(mediaType, media.id as number);
 
   return (
-    <div className="media-card">
-      <div className="flex flex-col md:flex-row">
-        <MediaCardPoster posterPath={media.poster_path} title={title} />
-        <MediaCardInfo
-          title={title}
-          year={year}
-          voteAverage={media.vote_average ?? 0}
-          genres={media.genres}
-          overview={media.overview}
-          recommendationExplanationKeys={recommendationExplanationKeys}
-          currentFeedbackValue={currentMediaFeedbackValue}
-          onFeedback={onFeedback}
-        >
-          <SaveButtons media={media} mediaType={mediaType} />
-        </MediaCardInfo>
+    <article className="overflow-hidden border-2 border-film-ink bg-white shadow-[8px_8px_0_#15133C]">
+      <div className="grid md:grid-cols-12">
+        <div className="md:col-span-5">
+          <MediaCardPoster posterPath={media.poster_path} title={title} />
+        </div>
+        <div className="md:col-span-7">
+          <MediaCardInfo
+            title={title}
+            year={year}
+            voteAverage={media.vote_average ?? 0}
+            genres={media.genres}
+            overview={media.overview}
+            recommendationExplanationKeys={recommendationExplanationKeys}
+            currentFeedbackValue={currentMediaFeedbackValue}
+            onFeedback={onFeedback}
+          >
+            <SaveButtons media={media} mediaType={mediaType} />
+          </MediaCardInfo>
+        </div>
       </div>
       <MediaCardTrailer trailerKey={trailerKey} />
-    </div>
+    </article>
   );
 }
 

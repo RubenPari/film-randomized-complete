@@ -1,26 +1,20 @@
-/**
- * Component for saving media items to watchlist.
- * Handles adding and removing items from the user's watchlist.
- */
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import AppIcon from '../../../shared/components/AppIcon.jsx';
 import { useAuth } from '../../../shared/context/AuthContext.jsx';
 import {
   addToWatchlist,
-  removeFromWatchlist,
   checkInWatchlist,
+  removeFromWatchlist,
 } from '../../../shared/services/watchlistApi.js';
 import { logger } from '../../../shared/utils/logger.js';
-import type { TmdbMedia, MediaType } from '../../../shared/types/index.js';
+import type { MediaType, TmdbMedia } from '../../../shared/types/index.js';
 
 interface SaveButtonsProps {
   media: TmdbMedia;
   mediaType: MediaType;
 }
 
-/**
- * Save buttons component for watchlist management.
- */
 function SaveButtons({ media, mediaType }: SaveButtonsProps) {
   const { t } = useTranslation();
   const { token } = useAuth();
@@ -28,126 +22,76 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Checks if media is already in watchlist on mount.
-   */
-  useEffect(
-    function () {
-      if (!token) return;
-      
-      const checkStatus = async function () {
-        try {
-          const inWatchlist = await checkInWatchlist(media.id as number, token);
-          setIsInWatchlist(inWatchlist);
-        } catch (err) {
-          logger.error('SaveButtons.checkWatchlist', err);
-        }
-      };
-
-      checkStatus();
-    },
-    [media.id, token]
-  );
-
-  /**
-   * Handles adding media to watchlist.
-   */
-  const handleAddToWatchlist = async function () {
+  useEffect(() => {
     if (!token) return;
-    
+
+    const checkStatus = async () => {
+      try {
+        setIsInWatchlist(await checkInWatchlist(media.id as number, token));
+      } catch (statusError) {
+        logger.error('SaveButtons.checkWatchlist', statusError);
+      }
+    };
+
+    void checkStatus();
+  }, [media.id, token]);
+
+  const handleToggle = async () => {
+    if (!token) return;
+
     setIsLoading(true);
     setError(null);
-
     try {
-      await addToWatchlist(media, mediaType, token);
-      setIsInWatchlist(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error adding to watchlist');
-      logger.error('SaveButtons.addToWatchlist', err);
+      if (isInWatchlist) {
+        await removeFromWatchlist(media.id as number, token);
+        setIsInWatchlist(false);
+      } else {
+        await addToWatchlist(media, mediaType, token);
+        setIsInWatchlist(true);
+      }
+    } catch (mutationError) {
+      setError(
+        mutationError instanceof Error
+          ? mutationError.message
+          : t(isInWatchlist ? 'media.removeError' : 'media.saveError')
+      );
+      logger.error('SaveButtons.toggleWatchlist', mutationError);
     } finally {
       setIsLoading(false);
     }
   };
 
-  /**
-   * Handles removing media from watchlist.
-   */
-  const handleRemoveFromWatchlist = async function () {
-    if (!token) return;
-    
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      await removeFromWatchlist(media.id as number, token);
-      setIsInWatchlist(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error removing from watchlist');
-      logger.error('SaveButtons.removeFromWatchlist', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const statusLabel = isLoading
+    ? t(isInWatchlist ? 'media.removing' : 'media.adding')
+    : t(isInWatchlist ? 'media.saved' : 'media.save');
 
   return (
-    <div className="mt-6">
-      {error && (
-        <div className="mb-3 p-3 bg-red-900/50 text-red-200 rounded-lg text-sm border border-red-700/50 flex items-start gap-2">
-          <svg className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span>{error}</span>
-        </div>
-      )}
-
-      <div className="flex gap-3">
-        {!isInWatchlist ? (
-          <button
-            onClick={handleAddToWatchlist}
-            disabled={isLoading}
-            className="btn-primary flex items-center justify-center gap-2 flex-1 font-bold hover:scale-105 transition-all duration-200 shadow-lg shadow-cyan-500/30"
-          >
-            {isLoading ? (
-              <>
-                <div className="loading-spinner"></div>
-                {t('media.adding')}
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                {t('media.save')}
-              </>
-            )}
-          </button>
+    <div className="mt-5">
+      <button
+        type="button"
+        onClick={handleToggle}
+        disabled={isLoading}
+        aria-pressed={isInWatchlist}
+        aria-busy={isLoading}
+        className={`ui-button w-full sm:w-auto ${
+          isInWatchlist ? 'ui-button--secondary' : 'ui-button--primary'
+        }`}
+      >
+        {isLoading ? (
+          <span className="ui-spinner" aria-hidden="true" />
         ) : (
-          <button
-            onClick={handleRemoveFromWatchlist}
-            disabled={isLoading}
-            className="btn-secondary flex items-center justify-center gap-2 flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 border-green-500 text-white font-bold hover:scale-105 transition-all duration-200 shadow-lg shadow-green-500/30"
-          >
-            {isLoading ? (
-              <>
-                <div className="loading-spinner"></div>
-                {t('media.removing')}
-              </>
-            ) : (
-              <>
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                </svg>
-                {t('media.saved')}
-              </>
-            )}
-          </button>
+          <AppIcon name={isInWatchlist ? 'check' : 'bookmark'} />
         )}
-      </div>
+        {statusLabel}
+      </button>
+      <span className="sr-only" role="status" aria-live="polite">
+        {statusLabel}
+      </span>
+      {error && (
+        <p className="mt-3 border-2 border-danger bg-white p-3 text-sm text-danger" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

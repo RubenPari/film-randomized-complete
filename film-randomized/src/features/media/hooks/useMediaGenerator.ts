@@ -26,8 +26,12 @@ export interface UseMediaGeneratorReturn {
   setMinVoteCount: (val: number) => void;
   selectedGenres: number[];
   handleGenreToggle: (genreId: number) => void;
+  resetFilters: () => void;
   genres: Genre[];
+  isGenresLoading: boolean;
+  genresError: string | null;
   randomMedia: TmdbMedia | null;
+  generatedMediaType: MediaType | null;
   recommendationExplanationKeys: string[];
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
@@ -59,12 +63,14 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     setMinVoteCount,
     selectedGenres,
     handleGenreToggle,
+    resetFilters,
   } = useMediaFilters();
 
-  const { genres, error: genresError } = useGenres();
+  const { genres, error: genresError, isLoading: isGenresLoading } = useGenres();
 
   const {
     randomMedia,
+    generatedMediaType,
     recommendationExplanationKeys,
     currentMediaFeedbackValue,
     isLoading: isFetching,
@@ -80,10 +86,13 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
   const handleMediaTypeChange = (val: MediaType) => startTransition(() => setMediaType(val));
   const handleMinRatingChange = (val: number) => startTransition(() => setMinRating(val));
   const handleMaxRatingChange = (val: number) => startTransition(() => setMaxRating(val));
-  const handleReleaseYearFromChange = (val: number) => startTransition(() => setReleaseYearFrom(val));
+  const handleReleaseYearFromChange = (val: number) =>
+    startTransition(() => setReleaseYearFrom(val));
   const handleReleaseYearToChange = (val: number) => startTransition(() => setReleaseYearTo(val));
   const handleMinVoteCountChange = (val: number) => startTransition(() => setMinVoteCount(val));
-  const handleGenreToggleTransition = (val: number) => startTransition(() => handleGenreToggle(val));
+  const handleGenreToggleTransition = (val: number) =>
+    startTransition(() => handleGenreToggle(val));
+  const handleResetFilters = () => startTransition(resetFilters);
 
   const handleGenerateRandomMedia = () => {
     const filters: MediaFilters = {
@@ -112,14 +121,18 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     setMinVoteCount: handleMinVoteCountChange,
     selectedGenres,
     handleGenreToggle: handleGenreToggleTransition,
+    resetFilters: handleResetFilters,
     genres,
+    isGenresLoading,
+    genresError,
     randomMedia,
+    generatedMediaType,
     recommendationExplanationKeys,
     currentMediaFeedbackValue,
     isLoading: isFetching || isPendingFilter,
     isGenerating: isFetching,
     isFilterPending: isPendingFilter,
-    error: fetchError || genresError,
+    error: fetchError,
     generateRandomMedia: handleGenerateRandomMedia,
     submitMediaFeedback,
   };

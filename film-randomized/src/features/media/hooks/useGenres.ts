@@ -6,6 +6,7 @@ import type { Genre } from '../../../shared/types/index.js';
 export interface UseGenresReturn {
   genres: Genre[];
   error: string | null;
+  isLoading: boolean;
 }
 
 /**
@@ -14,6 +15,7 @@ export interface UseGenresReturn {
 export function useGenres(): UseGenresReturn {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -29,6 +31,10 @@ export function useGenres(): UseGenresReturn {
           setError('Failed to fetch genres. Please try again later.');
           logger.error('useGenres.load', err);
         }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -39,5 +45,5 @@ export function useGenres(): UseGenresReturn {
     };
   }, []);
 
-  return { genres, error };
+  return { genres, error, isLoading };
 }

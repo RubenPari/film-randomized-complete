@@ -1,7 +1,3 @@
-/**
- * Year filter component.
- * Allows users to filter media by release year range.
- */
 import { useTranslation } from 'react-i18next';
 import { MIN_RELEASE_YEAR } from '../../../../shared/constants/config.js';
 
@@ -12,53 +8,65 @@ interface YearFilterProps {
   setReleaseYearTo: (val: number) => void;
 }
 
-/**
- * Component for filtering media by release year range.
- */
-function YearFilter({ releaseYearFrom, releaseYearTo, setReleaseYearFrom, setReleaseYearTo }: YearFilterProps) {
+function YearFilter({
+  releaseYearFrom,
+  releaseYearTo,
+  setReleaseYearFrom,
+  setReleaseYearTo,
+}: YearFilterProps) {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
   return (
-    <div>
-      <h2 className="filter-title">{t('filters.year')}</h2>
-      <p className="text-sm text-gray-400 mb-3">{t('filters.yearDescription')}</p>
-      <div className="space-y-4">
+    <fieldset>
+      <legend className="font-mono text-xs font-semibold uppercase tracking-wider">
+        {t('filters.year')}
+      </legend>
+      <p className="mb-4 mt-2 text-sm text-film-ink/65">{t('filters.yearDescription')}</p>
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm mb-1 text-gray-300">{t('filters.from')}</label>
+          <label htmlFor="release-year-from" className="mb-1 block text-sm font-semibold">
+            {t('filters.from')}
+          </label>
           <input
+            id="release-year-from"
             type="number"
             min={MIN_RELEASE_YEAR}
-            max={currentYear}
+            max={releaseYearTo}
             value={releaseYearFrom}
-            onChange={function (e) {
-              setReleaseYearFrom(parseInt(e.target.value));
+            onChange={(event) => {
+              const next = Number.parseInt(event.target.value, 10);
+              if (!Number.isNaN(next)) {
+                setReleaseYearFrom(Math.min(Math.max(next, MIN_RELEASE_YEAR), releaseYearTo));
+              }
             }}
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-field"
           />
         </div>
         <div>
-          <label className="block text-sm mb-1 text-gray-300">{t('filters.to')}</label>
+          <label htmlFor="release-year-to" className="mb-1 block text-sm font-semibold">
+            {t('filters.to')}
+          </label>
           <input
+            id="release-year-to"
             type="number"
-            min={MIN_RELEASE_YEAR}
+            min={releaseYearFrom}
             max={currentYear}
             value={releaseYearTo}
-            onChange={function (e) {
-              setReleaseYearTo(parseInt(e.target.value));
+            onChange={(event) => {
+              const next = Number.parseInt(event.target.value, 10);
+              if (!Number.isNaN(next)) {
+                setReleaseYearTo(Math.max(Math.min(next, currentYear), releaseYearFrom));
+              }
             }}
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="ui-field"
           />
         </div>
       </div>
-      <div className="mt-2 flex justify-between text-sm text-gray-400">
-        <span>1900</span>
-        <span>
-          {releaseYearFrom} - {releaseYearTo}
-        </span>
-        <span>{currentYear}</span>
-      </div>
-    </div>
+      <p className="mt-3 text-center font-mono text-xs font-semibold">
+        {releaseYearFrom} — {releaseYearTo}
+      </p>
+    </fieldset>
   );
 }
 

@@ -1,7 +1,3 @@
-/**
- * Vote count filter component.
- * Allows users to filter media by minimum number of votes.
- */
 import { useTranslation } from 'react-i18next';
 import { VOTE_COUNT_THRESHOLDS } from '../../../../shared/constants/config.js';
 
@@ -10,13 +6,8 @@ interface VoteCountFilterProps {
   setMinVoteCount: (val: number) => void;
 }
 
-/**
- * Component for filtering media by minimum vote count.
- * Provides preset ranges for common vote count thresholds.
- */
 function VoteCountFilter({ minVoteCount, setMinVoteCount }: VoteCountFilterProps) {
   const { t } = useTranslation();
-
   const voteCountLabels: Record<number, string> = {
     1000: '1,000+',
     10000: '10,000+',
@@ -24,34 +15,29 @@ function VoteCountFilter({ minVoteCount, setMinVoteCount }: VoteCountFilterProps
     75000: '75,000+',
   };
 
-  const voteCountRanges = VOTE_COUNT_THRESHOLDS.map((value) => ({
-    value,
-    label: value === 0 ? t('common.all') : voteCountLabels[value],
-  }));
-
   return (
-    <div>
-      <label className="filter-label">{t('filters.voteCount')}</label>
+    <fieldset>
+      <legend className="mb-3 font-mono text-xs font-semibold uppercase tracking-wider">
+        {t('filters.voteCount')}
+      </legend>
       <div className="flex flex-wrap gap-2">
-        {voteCountRanges.map(function (range) {
-          return (
-            <button
-              key={range.value}
-              onClick={function () {
-                setMinVoteCount(range.value);
-              }}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                minVoteCount === range.value
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              {range.label}
-            </button>
-          );
-        })}
+        {VOTE_COUNT_THRESHOLDS.map((value) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setMinVoteCount(value)}
+            aria-pressed={minVoteCount === value}
+            className={`min-h-10 border-2 border-film-ink px-3 py-2 font-mono text-xs font-semibold ${
+              minVoteCount === value
+                ? 'bg-film-blue text-white'
+                : 'bg-white text-film-ink hover:bg-film-yellow'
+            }`}
+          >
+            {value === 0 ? t('common.all') : voteCountLabels[value]}
+          </button>
+        ))}
       </div>
-    </div>
+    </fieldset>
   );
 }
 

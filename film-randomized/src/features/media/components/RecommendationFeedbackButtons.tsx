@@ -1,8 +1,7 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import type {
-  MediaFeedbackReason,
-  MediaFeedbackValue,
-} from '../../../shared/types/index.js';
+import AppIcon from '../../../shared/components/AppIcon.jsx';
+import type { MediaFeedbackReason, MediaFeedbackValue } from '../../../shared/types/index.js';
 
 interface RecommendationFeedbackButtonsProps {
   currentValue: MediaFeedbackValue | null;
@@ -22,40 +21,54 @@ function RecommendationFeedbackButtons({
   onFeedback,
 }: RecommendationFeedbackButtonsProps) {
   const { t } = useTranslation();
+  const [showDislikeReasons, setShowDislikeReasons] = useState(currentValue === 'dislike');
 
   return (
-    <div className="mt-4 space-y-3">
-      <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold">
+    <section className="mt-5 border-t-2 border-film-ink pt-5">
+      <h3 className="font-mono text-xs font-semibold uppercase tracking-wider">
         {t('recommendation.feedbackPrompt')}
-      </p>
-      <div className="flex flex-wrap gap-2">
+      </h3>
+      <div className="mt-3 grid grid-cols-2 gap-2">
         <button
           type="button"
-          onClick={() => onFeedback('like')}
-          className={`px-3 py-2 rounded-lg border text-sm font-semibold transition-colors ${
-            currentValue === 'like'
-              ? 'bg-green-600/20 text-green-300 border-green-500/60'
-              : 'bg-slate-800/60 text-slate-300 border-slate-600/60 hover:border-green-500/50'
-          }`}
+          onClick={() => {
+            setShowDislikeReasons(false);
+            onFeedback('like');
+          }}
+          aria-pressed={currentValue === 'like'}
+          className={`ui-button ${currentValue === 'like' ? 'bg-success text-white' : 'ui-button--quiet'}`}
         >
-          👍 {t('recommendation.like')}
+          <AppIcon name="thumbUp" />
+          {t('recommendation.like')}
         </button>
-        {DISLIKE_REASONS.map((reason) => (
-          <button
-            key={reason}
-            type="button"
-            onClick={() => onFeedback('dislike', reason)}
-            className={`px-3 py-2 rounded-lg border text-sm font-semibold transition-colors ${
-              currentValue === 'dislike'
-                ? 'bg-red-600/20 text-red-300 border-red-500/60'
-                : 'bg-slate-800/60 text-slate-300 border-slate-600/60 hover:border-red-500/50'
-            }`}
-          >
-            👎 {t(`recommendation.reason.${reason}`)}
-          </button>
-        ))}
+        <button
+          type="button"
+          onClick={() => setShowDislikeReasons(true)}
+          aria-pressed={currentValue === 'dislike'}
+          className={`ui-button ${currentValue === 'dislike' ? 'bg-film-coral text-film-ink' : 'ui-button--quiet'}`}
+        >
+          <AppIcon name="thumbDown" />
+          {t('recommendation.dislike')}
+        </button>
       </div>
-    </div>
+      {showDislikeReasons && (
+        <div className="mt-3 border-l-4 border-film-coral pl-3">
+          <p className="mb-2 text-sm font-semibold">{t('recommendation.reasonPrompt')}</p>
+          <div className="flex flex-wrap gap-2">
+            {DISLIKE_REASONS.map((reason) => (
+              <button
+                key={reason}
+                type="button"
+                onClick={() => onFeedback('dislike', reason)}
+                className="ui-chip hover:bg-film-coral"
+              >
+                {t(`recommendation.reason.${reason}`)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
   );
 }
 

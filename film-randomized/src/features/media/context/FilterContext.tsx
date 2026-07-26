@@ -44,6 +44,9 @@ export function useFilterContext() {
     genres: v.genres,
     selectedGenres: v.selectedGenres,
     handleGenreToggle: v.handleGenreToggle,
+    resetFilters: v.resetFilters,
+    isGenresLoading: v.isGenresLoading,
+    genresError: v.genresError,
   };
 }
 
@@ -53,7 +56,7 @@ export function useFilterContext() {
 export function useMediaResults() {
   const v = useMediaGeneratorContext();
   return {
-    mediaType: v.mediaType,
+    generatedMediaType: v.generatedMediaType,
     randomMedia: v.randomMedia,
     recommendationExplanationKeys: v.recommendationExplanationKeys,
     currentMediaFeedbackValue: v.currentMediaFeedbackValue,

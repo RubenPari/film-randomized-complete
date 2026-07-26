@@ -17,6 +17,7 @@ export interface UseMediaFiltersReturn {
   setMinVoteCount: (val: number) => void;
   selectedGenres: number[];
   handleGenreToggle: (genreId: number) => void;
+  resetFilters: () => void;
 }
 
 /**
@@ -40,6 +41,16 @@ export function useMediaFilters(): UseMediaFiltersReturn {
     );
   };
 
+  const resetFilters = () => {
+    setMediaType('movie');
+    setMinRating(0);
+    setMaxRating(10);
+    setReleaseYearFrom(MIN_RELEASE_YEAR);
+    setReleaseYearTo(new Date().getFullYear());
+    setMinVoteCount(0);
+    setSelectedGenres([]);
+  };
+
   return {
     mediaType,
     setMediaType,
@@ -55,5 +66,6 @@ export function useMediaFilters(): UseMediaFiltersReturn {
     setMinVoteCount,
     selectedGenres,
     handleGenreToggle,
+    resetFilters,
   };
 }

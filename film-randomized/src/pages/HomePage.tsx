@@ -1,24 +1,20 @@
-/**
- * Home page component with media generator.
- * Main page where users generate random media based on filters.
- */
 import { useState, type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../shared/context/AuthContext.jsx';
-import { useMediaResults } from '../features/media/context/FilterContext.jsx';
-import FilterPanel from '../features/media/components/filters/FilterPanel.jsx';
+import { useFilterContext, useMediaResults } from '../features/media/context/FilterContext.jsx';
+import FilterDrawer from '../features/media/components/filters/FilterDrawer.jsx';
+import MediaTypeSelector from '../features/media/components/filters/MediaTypeSelector.jsx';
 import MediaCard from '../features/media/components/MediaCard.jsx';
-import HomeHeader from './home/HomeHeader.jsx';
+import AppIcon from '../shared/components/AppIcon.jsx';
 import HomeHero from './home/HomeHero.jsx';
+import ActiveFilterSummary from './home/ActiveFilterSummary.jsx';
 import GenerateButton from './home/GenerateButton.jsx';
-import MobileFiltersToggle from './home/MobileFiltersToggle.jsx';
 
 function HomePage(): JSX.Element {
   const { t } = useTranslation();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { mediaType, setMediaType } = useFilterContext();
   const {
-    mediaType,
+    generatedMediaType,
     randomMedia,
     recommendationExplanationKeys,
     currentMediaFeedbackValue,
@@ -29,75 +25,87 @@ function HomePage(): JSX.Element {
   } = useMediaResults();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 p-4 pb-24 md:p-8 md:pb-8">
-      <div className="max-w-6xl mx-auto">
-        <HomeHeader user={user} onLogout={logout} />
+    <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-7 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
+      <HomeHero mediaType={mediaType} />
 
-        <HomeHero mediaType={mediaType} />
+      <section className="ui-panel grid gap-5 p-4 lg:grid-cols-[15rem_1fr_auto] lg:items-end">
+        <MediaTypeSelector mediaType={mediaType} setMediaType={setMediaType} />
+        <ActiveFilterSummary />
+        <button
+          type="button"
+          onClick={() => setFiltersOpen(true)}
+          className="ui-button ui-button--secondary"
+          aria-haspopup="dialog"
+          aria-expanded={filtersOpen}
+        >
+          <AppIcon name="filter" />
+          {t('filters.open')}
+        </button>
+      </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 order-1 lg:order-2">
-            <MobileFiltersToggle filtersOpen={filtersOpen} onToggle={setFiltersOpen} />
-
-            <GenerateButton
-              variant="desktop"
-              isLoading={isGenerating}
-              onGenerate={generateRandomMedia}
-            />
-
-            {error && (
-              <div className="mt-4 p-4 bg-red-900/50 text-red-200 rounded-xl border border-red-700/50 backdrop-blur-sm flex items-start gap-3">
-                <svg
-                  className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <div>
-                  <div className="font-bold mb-1">{t('common.error')}</div>
-                  <div>{error}</div>
-                </div>
-              </div>
-            )}
-
-            {randomMedia && !isGenerating && (
-              <MediaCard
-                media={randomMedia}
-                mediaType={mediaType}
-                recommendationExplanationKeys={recommendationExplanationKeys}
-                currentMediaFeedbackValue={currentMediaFeedbackValue}
-                onFeedback={submitMediaFeedback}
-              />
-            )}
-          </div>
-
+      <section
+        aria-label={t('home.resultStage')}
+        className="flex min-h-[24rem] flex-1 items-stretch"
+      >
+        {isGenerating ? (
           <div
-            className={
-              'lg:col-span-1 space-y-6 order-2 lg:order-1 ' +
-              (filtersOpen ? 'block ' : 'hidden ') +
-              'lg:block'
-            }
+            className="ui-panel grid min-h-[28rem] w-full animate-pulse overflow-hidden md:grid-cols-5"
+            aria-busy="true"
+            role="status"
           >
-            <FilterPanel />
+            <span className="sr-only">{t('home.generating')}</span>
+            <div className="min-h-72 bg-film-ink/15 md:col-span-2" aria-hidden="true" />
+            <div className="space-y-5 p-7 md:col-span-3" aria-hidden="true">
+              <div className="h-12 w-4/5 bg-film-ink/15" />
+              <div className="h-7 w-2/5 bg-film-ink/15" />
+              <div className="h-24 w-full bg-film-ink/10" />
+              <div className="h-11 w-1/2 bg-film-ink/15" />
+            </div>
           </div>
-        </div>
-      </div>
+        ) : randomMedia && generatedMediaType ? (
+          <div key={`${generatedMediaType}-${randomMedia.id}`} className="film-frame-enter w-full">
+            <MediaCard
+              media={randomMedia}
+              mediaType={generatedMediaType}
+              recommendationExplanationKeys={recommendationExplanationKeys}
+              currentMediaFeedbackValue={currentMediaFeedbackValue}
+              onFeedback={submitMediaFeedback}
+            />
+          </div>
+        ) : (
+          <div className="ui-panel flex min-h-[28rem] w-full flex-col items-center justify-center p-8 text-center">
+            <AppIcon name="brand" size={88} />
+            <h2 className="mt-6 font-display text-4xl font-bold uppercase">
+              {t('home.emptyTitle')}
+            </h2>
+            <p className="mt-3 max-w-md text-sm leading-6 text-film-ink/65">
+              {t('home.emptyDescription')}
+            </p>
+          </div>
+        )}
+      </section>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 border-t border-brand-accent/30 px-4 py-3 flex items-center justify-between lg:hidden backdrop-blur-md">
-        <span className="text-sm text-gray-300">
-          {t('home.generateMobile', {
-            type: mediaType === 'movie' ? t('home.movieMobile') : t('home.tvMobile'),
-          })}
-        </span>
-        <GenerateButton variant="mobile" isLoading={isGenerating} onGenerate={generateRandomMedia} />
-      </div>
+      <section className="bottom-safe-tabs sticky z-20 -mx-4 border-y-2 border-film-ink bg-film-screen px-4 py-3 sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:flex lg:items-start lg:justify-between lg:gap-5 lg:border-0 lg:bg-transparent lg:p-0">
+        {error && (
+          <div
+            className="mb-3 flex items-start gap-3 border-2 border-danger bg-white p-3 text-sm text-danger lg:mb-0 lg:max-w-2xl"
+            role="alert"
+          >
+            <AppIcon name="alert" className="mt-0.5 shrink-0" />
+            <div>
+              <p className="font-bold">{t('common.error')}</p>
+              <p>{error}</p>
+            </div>
+          </div>
+        )}
+        <GenerateButton
+          isLoading={isGenerating}
+          onGenerate={generateRandomMedia}
+          className="ml-auto"
+        />
+      </section>
+
+      <FilterDrawer open={filtersOpen} onClose={() => setFiltersOpen(false)} />
     </div>
   );
 }

@@ -1,73 +1,35 @@
-/**
- * Primary "Generate" action — shared layout for desktop and mobile sticky bar.
- */
 import { type JSX } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMediaResults } from '../../features/media/context/FilterContext.jsx';
+import AppIcon from '../../shared/components/AppIcon.jsx';
 
 interface Props {
   isLoading: boolean;
   onGenerate: () => void;
-  variant: 'desktop' | 'mobile';
+  className?: string;
 }
 
-function GenerateButton({ isLoading, onGenerate, variant }: Props): JSX.Element {
+function GenerateButton({ isLoading, onGenerate, className = '' }: Props): JSX.Element {
   const { t } = useTranslation();
-
-  if (variant === 'desktop') {
-    return (
-      <div className="text-center mb-8 hidden lg:block">
-        <button
-          type="button"
-          onClick={onGenerate}
-          disabled={isLoading}
-          className="btn-primary flex items-center mx-auto gap-2 px-8 py-4 text-lg font-bold hover:scale-105 transition-all duration-300 shadow-lg shadow-brand-accent/30"
-        >
-          {isLoading ? (
-            <>
-              <div className="loading-spinner mr-2"></div>
-              {t('common.loading')}
-            </>
-          ) : (
-            <>
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
-              {t('home.generate')}
-            </>
-          )}
-        </button>
-      </div>
-    );
-  }
+  const { randomMedia } = useMediaResults();
 
   return (
     <button
       type="button"
       onClick={onGenerate}
       disabled={isLoading}
-      className="btn-primary flex items-center px-4 py-2 text-sm gap-2 shadow-lg shadow-brand-accent/30"
+      aria-busy={isLoading}
+      className={`ui-button ui-button--primary w-full text-base lg:w-auto lg:min-w-56 ${className}`}
     >
       {isLoading ? (
         <>
-          <div className="loading-spinner mr-2"></div>
-          {t('common.loading')}
+          <span className="ui-spinner" aria-hidden="true" />
+          {t('home.generating')}
         </>
       ) : (
         <>
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M13 10V3L4 14h7v7l9-11h-7z"
-            />
-          </svg>
-          {t('home.generate')}
+          <AppIcon name="shuffle" size={22} />
+          {t(randomMedia ? 'home.generateAgain' : 'home.generate')}
         </>
       )}
     </button>
