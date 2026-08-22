@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { DiscoveredItem } from '../entities/discovered-item.entity.js';
 import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 import { MediaCollectionService } from '../common/services/media-collection.service.js';
@@ -29,7 +29,7 @@ export class DiscoveredService extends MediaCollectionService<DiscoveredItem> {
       userId,
       tmdbId: dto.tmdb_id,
       mediaType: dto.media_type,
-    } as FindOptionsWhere<DiscoveredItem>);
+    });
 
     if (existing) {
       return existing;
@@ -53,6 +53,6 @@ export class DiscoveredService extends MediaCollectionService<DiscoveredItem> {
       mediaType,
       tmdbId,
       userId,
-    } as FindOptionsWhere<DiscoveredItem>);
+    });
   }
 }

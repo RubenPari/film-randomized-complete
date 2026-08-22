@@ -4,11 +4,7 @@
 export type MediaType = 'movie' | 'tv';
 export type MediaFeedbackValue = 'like' | 'dislike';
 export type MediaFeedbackReason =
-  | 'not_in_mood'
-  | 'wrong_genre'
-  | 'already_seen'
-  | 'too_long'
-  | 'too_slow';
+  'not_in_mood' | 'wrong_genre' | 'already_seen' | 'too_long' | 'too_slow';
 
 /**
  * Raw TMDb media item (camelCase, as returned by the TMDb API).

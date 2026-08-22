@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { WatchlistItem } from '../entities/watchlist-item.entity.js';
 import { TmdbMediaPayloadDto } from '../common/dto/tmdb-media-payload.dto.js';
 import { MediaCollectionService } from '../common/services/media-collection.service.js';
@@ -33,7 +33,7 @@ export class WatchlistService extends MediaCollectionService<WatchlistItem> {
     const existing = await this.findOneFor({
       tmdbId: dto.tmdb_id,
       userId,
-    } as FindOptionsWhere<WatchlistItem>);
+    });
 
     if (existing) {
       throw new ConflictException('Item already in watchlist');
@@ -55,7 +55,7 @@ export class WatchlistService extends MediaCollectionService<WatchlistItem> {
     return this.findOneOrThrow({
       tmdbId,
       userId,
-    } as FindOptionsWhere<WatchlistItem>);
+    });
   }
 
   /**
@@ -67,6 +67,6 @@ export class WatchlistService extends MediaCollectionService<WatchlistItem> {
     await this.deleteWhere({
       tmdbId,
       userId,
-    } as FindOptionsWhere<WatchlistItem>);
+    });
   }
 }
