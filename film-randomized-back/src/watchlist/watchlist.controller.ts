@@ -25,7 +25,7 @@ import { WatchlistService } from './watchlist.service.js';
 @Controller('watchlist')
 @UseGuards(AuthGuard('jwt'))
 export class WatchlistController {
-  constructor(private readonly watchlistService: WatchlistService) { }
+  constructor(private readonly watchlistService: WatchlistService) {}
 
   /**
    * Aggiunge un film alla lista di film da vedere (watchlist) dell'utente

@@ -6,7 +6,8 @@ describe('getTypeOrmConnectionOptions', () => {
       DATABASE_URL:
         'postgresql://film_app:password@db.internal:25060/film_randomized?sslmode=require',
       DB_SSL: 'true',
-      DB_SSL_CA: '-----BEGIN CERTIFICATE-----\\ncertificate\\n-----END CERTIFICATE-----',
+      DB_SSL_CA:
+        '-----BEGIN CERTIFICATE-----\\ncertificate\\n-----END CERTIFICATE-----',
     });
 
     expect(options).toMatchObject({

@@ -17,8 +17,15 @@ async function handleApiResponse<T = unknown>(response: Response): Promise<T> {
   if (!response.ok) {
     let errorMessage = 'An error occurred';
     try {
-      const error = (await response.json()) as { error?: string; detail?: string };
-      errorMessage = error.error || error.detail || errorMessage;
+      const error = (await response.json()) as {
+        error?: string;
+        detail?: string;
+        message?: string | string[];
+      };
+      const messageContent = Array.isArray(error.message)
+        ? error.message.join(', ')
+        : error.message;
+      errorMessage = messageContent || error.error || error.detail || errorMessage;
     } catch {
       errorMessage = `HTTP ${response.status}: ${response.statusText}`;
     }
@@ -72,7 +79,7 @@ export const apiClient = {
   async post<T = unknown>(
     endpoint: string,
     body: unknown,
-    token: string | null = null,
+    token: string | null = null
   ): Promise<T> {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
@@ -89,11 +96,7 @@ export const apiClient = {
    * @param token Token di autenticazione
    * @returns Risposta PUT
    */
-  async put<T = unknown>(
-    endpoint: string,
-    body: unknown,
-    token: string | null = null,
-  ): Promise<T> {
+  async put<T = unknown>(endpoint: string, body: unknown, token: string | null = null): Promise<T> {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'PUT',
       headers: createHeaders(token),
@@ -121,4 +124,3 @@ export const apiClient = {
     return handleApiResponse<void>(response);
   },
 };
-

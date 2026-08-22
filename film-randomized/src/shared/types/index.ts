@@ -214,7 +214,7 @@ export interface User {
   /**
    * ID univoco dell'utente
    */
-  id: number;
+  id: string;
   /**
    * Nome utente
    */

@@ -2,7 +2,7 @@
  * TMDB API Service
  * Handles all interactions with The Movie Database API
  */
-import { API_ENDPOINTS } from '../constants/api.js';
+import { API_ENDPOINTS, API_KEY } from '../constants/api.js';
 import { TMDB_MAX_PAGE } from '../constants/config.js';
 import { tmdbClient, TmdbError } from './tmdbClient.js';
 import {
@@ -24,7 +24,7 @@ import {
  */
 export const discoverMedia = async (
   mediaType: MediaType,
-  filters: MediaFilters,
+  filters: MediaFilters
 ): Promise<TmdbDiscoverResult> => {
   // Prendo l'endpoint di scoperta
   const endpoint = API_ENDPOINTS.discover(mediaType);
@@ -44,7 +44,7 @@ export const discoverMedia = async (
   if (filters.releaseYearFrom) {
     urlParams.append(
       mediaType === 'movie' ? 'primary_release_date.gte' : 'first_air_date.gte',
-      `${filters.releaseYearFrom}-01-01`,
+      `${filters.releaseYearFrom}-01-01`
     );
   }
 
@@ -52,7 +52,7 @@ export const discoverMedia = async (
   if (filters.releaseYearTo) {
     urlParams.append(
       mediaType === 'movie' ? 'primary_release_date.lte' : 'first_air_date.lte',
-      `${filters.releaseYearTo}-12-31`,
+      `${filters.releaseYearTo}-12-31`
     );
   }
 
@@ -84,7 +84,7 @@ export const discoverMedia = async (
  */
 export const fetchMediaPage = async (
   discoverUrl: string,
-  pageNumber: number,
+  pageNumber: number
 ): Promise<TmdbPageResponse> => {
   return tmdbClient.get<TmdbPageResponse>(`${discoverUrl}&page=${pageNumber}`);
 };
@@ -97,7 +97,7 @@ export const fetchMediaPage = async (
  */
 export const fetchMediaDetails = async (
   mediaType: MediaType,
-  mediaId: number,
+  mediaId: number
 ): Promise<TmdbMedia> => {
   const endpoint = API_ENDPOINTS.details(mediaType, mediaId);
   return tmdbClient.get<TmdbMedia>(endpoint);
@@ -111,14 +111,14 @@ export const fetchMediaDetails = async (
  */
 export const fetchMediaVideos = async (
   mediaType: MediaType,
-  mediaId: number,
+  mediaId: number
 ): Promise<TmdbVideosResponse> => {
   const endpoint = API_ENDPOINTS.videos(mediaType, mediaId);
   const data = await tmdbClient.get<TmdbVideosResponse>(endpoint);
 
   if (!data.results || data.results.length === 0) {
     const responseEn = await tmdbClient.fetchRaw<TmdbVideosResponse>(
-      `${endpoint}?api_key=${import.meta.env.VITE_TMDB_API_KEY}&language=en-US`,
+      `${endpoint}?api_key=${API_KEY}&language=en-US`
     );
     return responseEn;
   }
@@ -164,7 +164,7 @@ export const fetchGenres = async (): Promise<Genre[]> => {
 
         // Ordino i generi per nome
         cachedGenres = Array.from(uniqueGenresMap.values()).sort((a, b) =>
-          a.name.localeCompare(b.name),
+          a.name.localeCompare(b.name)
         );
         // Restituisco i generi
         return cachedGenres;

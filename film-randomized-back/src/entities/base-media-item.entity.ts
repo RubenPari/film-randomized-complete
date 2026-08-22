@@ -12,7 +12,6 @@ import { MediaType } from '../common/enums/media-type.enum.js';
  * e ne inserisce le colonne in ogni tabella sottoclasse.
  */
 export abstract class BaseMediaItem {
-
   /**
    * ID dell'item
    */

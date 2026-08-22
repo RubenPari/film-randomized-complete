@@ -11,7 +11,7 @@ const UNIQUE_VIOLATION_CODE = '23505';
  * @param err Errore di violazione del vincolo unico
  * @returns Eccezione di conflitto
  */
-function mapUniqueViolation(err: QueryFailedError): ConflictException {
+function mapUniqueViolation(err: QueryFailedError<any>): ConflictException {
   const constraint = (err.driverError as { constraint?: string } | undefined)
     ?.constraint;
 
@@ -31,7 +31,7 @@ export class UsersService {
     private readonly dataSource: DataSource,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) { }
+  ) {}
 
   /**
    * Transactional user creation with DB-constraint-based conflict handling.
@@ -50,7 +50,7 @@ export class UsersService {
         if (
           err instanceof QueryFailedError &&
           (err.driverError as { code?: string } | undefined)?.code ===
-          UNIQUE_VIOLATION_CODE
+            UNIQUE_VIOLATION_CODE
         ) {
           throw mapUniqueViolation(err);
         }

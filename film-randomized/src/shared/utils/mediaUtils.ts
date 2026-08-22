@@ -49,7 +49,7 @@ export function matchesMediaListFilter(item: MediaRow, filter: 'all' | 'movies' 
 export function isExcludedForCurrentType(
   tmdbId: number,
   currentMediaType: MediaType,
-  excludedItems: MediaRow[],
+  excludedItems: MediaRow[]
 ): boolean {
   if (!excludedItems || excludedItems.length === 0) return false;
   return excludedItems.some(function (item) {
@@ -76,7 +76,7 @@ export function filterValidMedia(
     first_air_date?: string;
   }[],
   excludedItems: MediaRow[] = [],
-  currentMediaType: MediaType,
+  currentMediaType: MediaType
 ): {
   id: number;
   overview?: string;

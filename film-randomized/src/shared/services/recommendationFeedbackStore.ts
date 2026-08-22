@@ -11,7 +11,7 @@ import type { MediaRow } from '../utils/mediaUtils.js';
 const STORAGE_PREFIX = 'film-randomized-feedback-v1';
 const SMART_EXCLUSION_REPEAT_THRESHOLD = 2;
 
-function storageKey(userId: number | null | undefined): string {
+function storageKey(userId: string | number | null | undefined): string {
   return `${STORAGE_PREFIX}:${userId ?? 'guest'}`;
 }
 
@@ -23,7 +23,9 @@ function getStorage(): Storage | null {
   }
 }
 
-export function loadRecommendationFeedback(userId: number | null | undefined): RecommendationFeedback[] {
+export function loadRecommendationFeedback(
+  userId: string | number | null | undefined
+): RecommendationFeedback[] {
   const storage = getStorage();
   if (!storage) return [];
   try {
@@ -38,8 +40,8 @@ export function loadRecommendationFeedback(userId: number | null | undefined): R
 }
 
 export function saveRecommendationFeedback(
-  userId: number | null | undefined,
-  feedback: RecommendationFeedback,
+  userId: string | number | null | undefined,
+  feedback: RecommendationFeedback
 ): RecommendationFeedback[] {
   const storage = getStorage();
   if (!storage) return [];
@@ -52,13 +54,15 @@ export function saveRecommendationFeedback(
 export function getMediaFeedbackValue(
   history: RecommendationFeedback[],
   tmdbId: number,
-  mediaType: MediaType,
+  mediaType: MediaType
 ): MediaFeedbackValue | null {
   const found = history.find((item) => item.tmdb_id === tmdbId && item.media_type === mediaType);
   return found?.value ?? null;
 }
 
-export function buildRecommendationProfile(history: RecommendationFeedback[]): RecommendationProfile {
+export function buildRecommendationProfile(
+  history: RecommendationFeedback[]
+): RecommendationProfile {
   const likedGenreCount = new Map<number, number>();
   const dislikedGenreCount = new Map<number, number>();
   const dislikedMediaCount = new Map<string, number>();
@@ -104,7 +108,7 @@ export function buildSmartExclusionRows(history: RecommendationFeedback[]): Medi
   return profile.dislikedMediaKeys.map((key) => {
     const [media_type, id] = key.split('-');
     return {
-      media_type,
+      media_type: media_type as MediaType,
       tmdb_id: Number(id),
     };
   });
@@ -114,7 +118,7 @@ export function buildFeedbackRecord(
   media: TmdbMedia,
   mediaType: MediaType,
   value: MediaFeedbackValue,
-  reason?: MediaFeedbackReason,
+  reason?: MediaFeedbackReason
 ): RecommendationFeedback {
   const releaseYearRaw = media.release_date || media.first_air_date;
   return {

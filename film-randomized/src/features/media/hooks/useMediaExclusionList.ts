@@ -16,36 +16,27 @@ import type { MediaItem } from '../../../shared/types/index.js';
  * the two populated, or whose list endpoint happens to be down.
  */
 export function useMediaExclusionList() {
-  return useCallback(
-    async function loadExclusionList(
-      token: string | null,
-      userId: number | null | undefined,
-    ): Promise<MediaItem[]> {
-      if (!token) {
-        const feedbackHistory = loadRecommendationFeedback(userId);
-        return buildSmartExclusionRows(feedbackHistory) as MediaItem[];
-      }
-
-      const [watchlist, discovered] = await Promise.all([
-        getWatchlist(token).catch((err: unknown) => {
-          logger.warn(
-            'useMediaExclusionList.watchlist',
-            err instanceof Error ? err.message : err,
-          );
-          return [];
-        }),
-        getDiscovered(token).catch((err: unknown) => {
-          logger.warn(
-            'useMediaExclusionList.discovered',
-            err instanceof Error ? err.message : err,
-          );
-          return [];
-        }),
-      ]);
+  return useCallback(async function loadExclusionList(
+    token: string | null,
+    userId: string | number | null | undefined
+  ): Promise<MediaItem[]> {
+    if (!token) {
       const feedbackHistory = loadRecommendationFeedback(userId);
-      const smartExclusionRows = buildSmartExclusionRows(feedbackHistory) as MediaItem[];
-      return [...watchlist, ...discovered, ...smartExclusionRows];
-    },
-    [],
-  );
+      return buildSmartExclusionRows(feedbackHistory) as MediaItem[];
+    }
+
+    const [watchlist, discovered] = await Promise.all([
+      getWatchlist(token).catch((err: unknown) => {
+        logger.warn('useMediaExclusionList.watchlist', err instanceof Error ? err.message : err);
+        return [];
+      }),
+      getDiscovered(token).catch((err: unknown) => {
+        logger.warn('useMediaExclusionList.discovered', err instanceof Error ? err.message : err);
+        return [];
+      }),
+    ]);
+    const feedbackHistory = loadRecommendationFeedback(userId);
+    const smartExclusionRows = buildSmartExclusionRows(feedbackHistory) as MediaItem[];
+    return [...watchlist, ...discovered, ...smartExclusionRows];
+  }, []);
 }

@@ -64,12 +64,12 @@ export const authApi = {
   async changePassword(
     currentPassword: string,
     newPassword: string,
-    token: string | null,
+    token: string | null
   ): Promise<MessageResponse> {
     return apiClient.post<MessageResponse>(
       '/auth/change-password',
       { currentPassword, newPassword },
-      token,
+      token
     );
   },
 };

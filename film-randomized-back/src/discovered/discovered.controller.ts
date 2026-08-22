@@ -27,7 +27,7 @@ import { DiscoveredService } from './discovered.service.js';
 @Controller('discovered')
 @UseGuards(AuthGuard('jwt'))
 export class DiscoveredController {
-  constructor(private readonly discoveredService: DiscoveredService) { }
+  constructor(private readonly discoveredService: DiscoveredService) {}
 
   /**
    * Registra un film scoperto

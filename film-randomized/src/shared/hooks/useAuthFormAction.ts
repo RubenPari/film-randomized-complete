@@ -24,6 +24,6 @@ export function useAuthFormAction({
         return getErrorMessage(error);
       }
     },
-    null,
+    null
   );
 }

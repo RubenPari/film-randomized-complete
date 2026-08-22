@@ -37,9 +37,7 @@ describe('pickRandomValidMedia', () => {
    * Test case for a valid movie
    */
   it('returns details for the first valid candidate it encounters', async () => {
-    const fetchPage = vi
-      .fn()
-      .mockResolvedValue({ results: [makeMovie(1), makeMovie(2)] });
+    const fetchPage = vi.fn().mockResolvedValue({ results: [makeMovie(1), makeMovie(2)] });
     const fetchDetails = vi.fn().mockResolvedValue(makeMovie(1));
 
     const result = await pickRandomValidMedia({
@@ -119,7 +117,7 @@ describe('pickRandomValidMedia', () => {
         totalPages: 10,
         mediaType: 'movie',
         maxAttempts: 2,
-      }),
+      })
     ).rejects.toThrow('No content found');
 
     expect(fetchPage).toHaveBeenCalledTimes(2);

@@ -16,6 +16,9 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { ResetPasswordDto } from './dto/reset-password.dto.js';
+import { LoginResponseDto } from './dto/responses/login.response.dto.js';
+import { MessageResponseDto } from './dto/responses/message.response.dto.js';
+import { UserResponseDto } from './dto/responses/user.response.dto.js';
 import type { AuthenticatedUser } from './types/authenticated-user.js';
 
 const SENSITIVE_ENDPOINT_THROTTLE = { default: { limit: 5, ttl: 60_000 } };
@@ -27,14 +30,14 @@ export class AuthController {
   @Post('login')
   @Throttle(SENSITIVE_ENDPOINT_THROTTLE)
   @HttpCode(HttpStatus.OK)
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     return this.authService.login(loginDto.username, loginDto.password);
   }
 
   @Post('register')
   @Throttle(SENSITIVE_ENDPOINT_THROTTLE)
   @HttpCode(HttpStatus.OK)
-  async register(@Body() registerDto: RegisterDto) {
+  async register(@Body() registerDto: RegisterDto): Promise<LoginResponseDto> {
     return this.authService.register(
       registerDto.username,
       registerDto.email,
@@ -44,21 +47,27 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
-  async getMe(@CurrentUser() user: AuthenticatedUser) {
+  async getMe(
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<UserResponseDto> {
     return this.authService.getMe(user.id);
   }
 
   @Post('forgot-password')
   @Throttle(SENSITIVE_ENDPOINT_THROTTLE)
   @HttpCode(HttpStatus.OK)
-  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+  async forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<MessageResponseDto> {
     return this.authService.forgotPassword(forgotPasswordDto.email);
   }
 
   @Post('reset-password')
   @Throttle(SENSITIVE_ENDPOINT_THROTTLE)
   @HttpCode(HttpStatus.OK)
-  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ): Promise<MessageResponseDto> {
     return this.authService.resetPassword(
       resetPasswordDto.token,
       resetPasswordDto.newPassword,
@@ -71,7 +80,7 @@ export class AuthController {
   async changePassword(
     @CurrentUser() user: AuthenticatedUser,
     @Body() changePasswordDto: ChangePasswordDto,
-  ) {
+  ): Promise<MessageResponseDto> {
     return this.authService.changePassword(
       user.id,
       changePasswordDto.currentPassword,

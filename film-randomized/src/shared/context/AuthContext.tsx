@@ -58,7 +58,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return response;
   };
 
-  const register = async (username: string, email: string, password: string): Promise<AuthResponse> => {
+  const register = async (
+    username: string,
+    email: string,
+    password: string
+  ): Promise<AuthResponse> => {
     const response = await authApi.register(username, email, password);
     setToken(response.token);
     setUser(response.user);
@@ -78,14 +82,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const resetPassword = async (
     tokenParam: string,
-    newPassword: string,
+    newPassword: string
   ): Promise<MessageResponse> => {
     return await authApi.resetPassword(tokenParam, newPassword);
   };
 
   const changePassword = async (
     currentPassword: string,
-    newPassword: string,
+    newPassword: string
   ): Promise<MessageResponse> => {
     return await authApi.changePassword(currentPassword, newPassword, token);
   };

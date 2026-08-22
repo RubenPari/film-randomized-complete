@@ -9,11 +9,11 @@ import translationIT from './locales/it/translation.json';
 // The translations
 const resources: Resource = {
   en: {
-    translation: translationEN
+    translation: translationEN,
   },
   it: {
-    translation: translationIT
-  }
+    translation: translationIT,
+  },
 };
 
 i18n
@@ -24,8 +24,8 @@ i18n
     fallbackLng: 'en',
     debug: false,
     interpolation: {
-      escapeValue: false // React already escapes values
-    }
+      escapeValue: false, // React already escapes values
+    },
   });
 
 export default i18n;

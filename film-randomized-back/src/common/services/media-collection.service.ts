@@ -10,12 +10,12 @@ import {
 /**
  * Servizio condiviso per qualsiasi operazione CRUD su una raccolta multimediale per utente
  * (`watchlist`, `discovered`, `bookmarks`, ecc.).
- * 
+ *
  * I servizi concreti estendono questa classe e devono solo:
  *   - chiamare `super(repository, EntityClass, notFoundMessage)`;
  *   - decidere la propria semantica di conflitto in `create()` (lanciare eccezione o idempotente),
  *     possibilmente utilizzando `findOneFor()` come blocco di costruzione.
- * 
+ *
  * Mantenuto intenzionalmente snello: solo le operazioni che sono *letteralmente* identiche
  * tra watchlist e discovered vivono qui. Qualsiasi operazione più sottile (ad esempio la
  * decisione "lancia eccezione su duplicato" vs "restituisci esistente") rimane nella sottoclasse.
@@ -25,7 +25,7 @@ export abstract class MediaCollectionService<T extends BaseMediaItem> {
     protected readonly repository: Repository<T>,
     protected readonly entityCtor: MediaItemConstructor<T>,
     protected readonly notFoundMessage: string,
-  ) { }
+  ) {}
 
   /**
    * Restituisce ogni riga posseduta da `userId`, dal più recente al meno recente.

@@ -26,7 +26,7 @@ export async function getDiscovered(token: string | null): Promise<MediaItem[]> 
 export async function recordDiscovered(
   media: TmdbMedia,
   mediaType: MediaType,
-  token: string | null,
+  token: string | null
 ): Promise<MediaItem> {
   const payload = buildBackendMediaPayload(media, toMediaType(mediaType));
 
@@ -43,7 +43,7 @@ export async function recordDiscovered(
 export async function removeDiscovered(
   mediaType: MediaType,
   tmdbId: number,
-  token: string | null,
+  token: string | null
 ): Promise<void> {
   return apiClient.delete(`/discovered/${mediaType}/${tmdbId}`, token);
 }

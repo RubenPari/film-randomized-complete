@@ -37,5 +37,6 @@ export const API_ENDPOINTS = {
   tvGenres: `${BASE_URL}/genre/tv/list`,
   discover: (mediaTypes: 'movie' | 'tv'): string => `${BASE_URL}/discover/${mediaTypes}`,
   details: (mediaType: 'movie' | 'tv', id: number): string => `${BASE_URL}/${mediaType}/${id}`,
-  videos: (mediaType: 'movie' | 'tv', id: number): string => `${BASE_URL}/${mediaType}/${id}/videos`,
+  videos: (mediaType: 'movie' | 'tv', id: number): string =>
+    `${BASE_URL}/${mediaType}/${id}/videos`,
 } as const;

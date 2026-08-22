@@ -116,7 +116,7 @@ export interface NormalizableItem extends Record<string, unknown> {
  * @returns Item del media normalizzato
  */
 export function normalizeMediaItem(
-  item: NormalizableItem | null | undefined,
+  item: NormalizableItem | null | undefined
 ): NormalizableItem | null | undefined {
   if (!item || typeof item !== 'object') return item;
 

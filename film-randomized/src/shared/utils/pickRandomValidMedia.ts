@@ -40,7 +40,7 @@ function scoreCandidate(
     vote_average?: number;
     genre_ids?: number[];
   },
-  profile?: RecommendationProfile,
+  profile?: RecommendationProfile
 ): number {
   const ratingScore = Math.max(0.2, (candidate.vote_average ?? 0) / 8);
   if (!profile) return ratingScore;
@@ -65,10 +65,7 @@ function pickWeightedCandidate(candidates: CandidateWithScore[]): CandidateWithS
   return candidates[candidates.length - 1];
 }
 
-function buildExplanationKeys(
-  media: TmdbMedia,
-  profile?: RecommendationProfile,
-): string[] {
+function buildExplanationKeys(media: TmdbMedia, profile?: RecommendationProfile): string[] {
   const keys: string[] = [];
   if ((media.vote_average ?? 0) >= 7.5) {
     keys.push('recommendation.highRating');
@@ -115,11 +112,7 @@ export async function pickRandomValidMedia({
     // Recupero della pagina di media
     const pageData = await fetchPage(page);
     // Filtraggio dei media validi
-    const validCandidates = filterValidMedia(
-      pageData?.results ?? [],
-      excludedItems,
-      mediaType,
-    );
+    const validCandidates = filterValidMedia(pageData?.results ?? [], excludedItems, mediaType);
     if (validCandidates.length === 0) continue;
 
     const candidates = validCandidates.map((candidate) => ({
@@ -131,10 +124,7 @@ export async function pickRandomValidMedia({
     const details = await fetchDetails(mt, candidate.id);
 
     // Controllo se il candidato è valido
-    if (
-      hasValidDescription(details) &&
-      !isExcludedForCurrentType(details.id, mt, excludedItems)
-    ) {
+    if (hasValidDescription(details) && !isExcludedForCurrentType(details.id, mt, excludedItems)) {
       return {
         media: details,
         explanationKeys: buildExplanationKeys(details, recommendationProfile),

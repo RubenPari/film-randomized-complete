@@ -12,6 +12,7 @@ import {
   toUserResponse,
 } from './mappers/auth-response.mapper.js';
 import { LoginResponseDto } from './dto/responses/login.response.dto.js';
+import { MessageResponseDto } from './dto/responses/message.response.dto.js';
 import { UserResponseDto } from './dto/responses/user.response.dto.js';
 
 @Injectable()
@@ -58,15 +59,22 @@ export class AuthService {
     return toUserResponse(user);
   }
 
-  forgotPassword(email: string) {
+  forgotPassword(email: string): Promise<MessageResponseDto> {
     return this.passwordService.forgotPassword(email);
   }
 
-  resetPassword(token: string, newPassword: string) {
+  resetPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<MessageResponseDto> {
     return this.passwordService.resetPassword(token, newPassword);
   }
 
-  changePassword(userId: string, currentPassword: string, newPassword: string) {
+  changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<MessageResponseDto> {
     return this.passwordService.changePassword(
       userId,
       currentPassword,

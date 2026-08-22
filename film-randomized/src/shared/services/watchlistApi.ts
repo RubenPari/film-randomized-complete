@@ -14,7 +14,7 @@ import { buildBackendMediaPayload } from './mediaPayload.js';
 export async function addToWatchlist(
   media: TmdbMedia,
   mediaType: MediaType,
-  token: string | null,
+  token: string | null
 ): Promise<MediaItem> {
   const payload = buildBackendMediaPayload(media, toMediaType(mediaType));
 

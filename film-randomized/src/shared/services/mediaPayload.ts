@@ -70,7 +70,7 @@ export interface BackendMediaPayload {
  */
 export function buildBackendMediaPayload(
   media: TmdbMedia,
-  mediaType: MediaType,
+  mediaType: MediaType
 ): BackendMediaPayload {
   return {
     tmdb_id: media.id,

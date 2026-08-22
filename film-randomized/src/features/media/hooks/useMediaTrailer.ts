@@ -15,10 +15,7 @@ import type { MediaType, TmdbVideosResponse } from '../../../shared/types/index.
  * @param mediaId - TMDB ID of the media
  * @returns Trailer video key or null if no trailer found
  */
-export default function useMediaTrailer(
-  mediaType: MediaType,
-  mediaId: number,
-): string | null {
+export default function useMediaTrailer(mediaType: MediaType, mediaId: number): string | null {
   const [trailerKey, setTrailerKey] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,13 +26,13 @@ export default function useMediaTrailer(
 
         // 1. Try to find a YouTube Trailer
         let trailer = videos.find(
-          (v: { site: string; type: string }) => v.site === 'YouTube' && v.type === 'Trailer',
+          (v: { site: string; type: string }) => v.site === 'YouTube' && v.type === 'Trailer'
         );
 
         // 2. If not found, try a Teaser
         if (!trailer) {
           trailer = videos.find(
-            (v: { site: string; type: string }) => v.site === 'YouTube' && v.type === 'Teaser',
+            (v: { site: string; type: string }) => v.site === 'YouTube' && v.type === 'Teaser'
           );
         }
 

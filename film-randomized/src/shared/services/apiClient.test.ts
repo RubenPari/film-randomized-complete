@@ -31,8 +31,8 @@ describe('apiClient', () => {
           ok: true,
           status: 200,
           json: () => Promise.resolve({}),
-        } as Response),
-      ),
+        } as Response)
+      )
     );
   });
 
@@ -62,7 +62,7 @@ describe('apiClient', () => {
       expect.objectContaining({
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-      }),
+      })
     );
   });
 
@@ -86,7 +86,7 @@ describe('apiClient', () => {
           'Content-Type': 'application/json',
           Authorization: 'Bearer tok',
         },
-      }),
+      })
     );
   });
 
@@ -104,6 +104,46 @@ describe('apiClient', () => {
     await expect(apiClient.post('/x', {})).rejects.toMatchObject({
       name: 'ApiError',
       message: 'Invalid payload',
+      status: 400,
+    });
+  });
+
+  it('extracts detailed message over generic error name from NestJS response', async () => {
+    vi.mocked(globalThis.fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 409,
+      statusText: 'Conflict',
+      json: () =>
+        Promise.resolve({
+          statusCode: 409,
+          error: 'Conflict',
+          message: 'Username already exists',
+        }),
+    } as Response);
+
+    await expect(apiClient.post('/auth/register', {})).rejects.toMatchObject({
+      name: 'ApiError',
+      message: 'Username already exists',
+      status: 409,
+    });
+  });
+
+  it('joins array validation error messages from NestJS response', async () => {
+    vi.mocked(globalThis.fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      statusText: 'Bad Request',
+      json: () =>
+        Promise.resolve({
+          statusCode: 400,
+          error: 'Bad Request',
+          message: ['password must be at least 8 characters', 'email must be an email'],
+        }),
+    } as Response);
+
+    await expect(apiClient.post('/auth/register', {})).rejects.toMatchObject({
+      name: 'ApiError',
+      message: 'password must be at least 8 characters, email must be an email',
       status: 400,
     });
   });
