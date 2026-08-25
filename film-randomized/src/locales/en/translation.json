@@ -19,6 +19,7 @@
   "navigation": {
     "primary": "Primary navigation",
     "discover": "Discover",
+    "search": "Search",
     "profile": "Profile"
   },
   "shell": {
@@ -81,6 +82,17 @@
     "showAll": "Show all titles",
     "removeError": "The title could not be removed. It has been restored to the collection.",
     "dismissError": "Dismiss removal error"
+  },
+  "search": {
+    "eyebrow": "Find a title",
+    "title": "Search",
+    "placeholder": "Search for a movie or TV show...",
+    "loading": "Searching...",
+    "emptyIdle": "Start typing to search",
+    "noResults": "No results found",
+    "moviesSection": "Movies",
+    "tvSection": "TV Shows",
+    "error": "Something went wrong while searching"
   },
   "watchlist": {
     "title": "My Watchlist",

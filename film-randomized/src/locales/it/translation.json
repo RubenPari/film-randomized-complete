@@ -19,6 +19,7 @@
   "navigation": {
     "primary": "Navigazione principale",
     "discover": "Scopri",
+    "search": "Cerca",
     "profile": "Profilo"
   },
   "shell": {
@@ -81,6 +82,17 @@
     "showAll": "Mostra tutti i titoli",
     "removeError": "Impossibile rimuovere il titolo. È stato ripristinato nella raccolta.",
     "dismissError": "Chiudi l'errore di rimozione"
+  },
+  "search": {
+    "eyebrow": "Trova un titolo",
+    "title": "Cerca",
+    "placeholder": "Cerca un film o una serie TV...",
+    "loading": "Ricerca in corso...",
+    "emptyIdle": "Inizia a digitare per cercare",
+    "noResults": "Nessun risultato trovato",
+    "moviesSection": "Film",
+    "tvSection": "Serie TV",
+    "error": "Si è verificato un errore durante la ricerca"
   },
   "watchlist": {
     "title": "La Mia Watchlist",

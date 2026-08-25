@@ -15,6 +15,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import WatchlistPage from './features/watchlist/WatchlistPage.jsx';
+import SearchPage from './features/search/SearchPage.jsx';
 import DiscoveredPage from './features/discovered/DiscoveredPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
@@ -42,6 +43,7 @@ function App(): JSX.Element {
                 </FilterProvider>
               }
             />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/watchlist" element={<WatchlistPage />} />
             <Route path="/discovered" element={<DiscoveredPage />} />
             <Route path="/profile" element={<ChangePasswordPage />} />

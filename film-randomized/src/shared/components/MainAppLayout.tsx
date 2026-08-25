@@ -11,6 +11,7 @@ const APP_DESTINATIONS: readonly {
   icon: AppIconName;
 }[] = [
   { to: '/', labelKey: 'navigation.discover', icon: 'discover' },
+  { to: '/search', labelKey: 'navigation.search', icon: 'search' },
   { to: '/watchlist', labelKey: 'common.watchlist', icon: 'watchlist' },
   { to: '/discovered', labelKey: 'common.discovered', icon: 'seen' },
   { to: '/profile', labelKey: 'navigation.profile', icon: 'profile' },

@@ -126,6 +126,28 @@ export const fetchMediaVideos = async (
   return data;
 };
 
+/**
+ * Cerca film e serie TV per titolo
+ * @param query Testo di ricerca
+ * @returns Risultati separati per film e serie TV
+ */
+export const searchMedia = async (
+  query: string
+): Promise<{ movies: TmdbMedia[]; tvShows: TmdbMedia[] }> => {
+  const trimmedQuery = query.trim();
+
+  if (!trimmedQuery) {
+    return { movies: [], tvShows: [] };
+  }
+
+  const [movieData, tvData] = await Promise.all([
+    tmdbClient.get<TmdbPageResponse>(API_ENDPOINTS.search('movie', trimmedQuery)),
+    tmdbClient.get<TmdbPageResponse>(API_ENDPOINTS.search('tv', trimmedQuery)),
+  ]);
+
+  return { movies: movieData.results, tvShows: tvData.results };
+};
+
 let cachedGenres: Genre[] | null = null;
 let cachedGenresPromise: Promise<Genre[]> | null = null;
 

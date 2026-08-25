@@ -3,6 +3,7 @@ import type { JSX } from 'react';
 export type AppIconName =
   | 'brand'
   | 'discover'
+  | 'search'
   | 'watchlist'
   | 'seen'
   | 'profile'
@@ -57,6 +58,7 @@ const AppIcon = ({ name, size = 20, className }: AppIconProps): JSX.Element => {
     discover: (
       <path d="m14.2 9.8-2.9 5.8-5.5 2.6 2.6-5.5 5.8-2.9Zm0 0 4-4m-1.4-2.6 4 4M12 22a10 10 0 1 1 10-10" />
     ),
+    search: <path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-5.5-5.5" />,
     watchlist: <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z" />,
     seen: (
       <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
