@@ -20,7 +20,8 @@ export type AppIconName =
   | 'thumbUp'
   | 'thumbDown'
   | 'alert'
-  | 'arrowLeft';
+  | 'arrowLeft'
+  | 'similar';
 
 interface AppIconProps {
   name: AppIconName;
@@ -88,6 +89,7 @@ const AppIcon = ({ name, size = 20, className }: AppIconProps): JSX.Element => {
     ),
     alert: <path d="M12 3 2 21h20L12 3Zm0 6v5m0 3v.01" />,
     arrowLeft: <path d="m15 18-6-6 6-6M9 12h12" />,
+    similar: <path d="M4 18V6h4v12H4ZM10 18V6h4v12h-4Zm6-12v12h4V6h-4Z" />,
   };
 
   return (

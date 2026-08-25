@@ -17,18 +17,23 @@ import {
   loadRecommendationFeedback,
   saveRecommendationFeedback,
 } from '../../../shared/services/recommendationFeedbackStore.js';
+import { getAiExplanation } from '../../../shared/services/recommendationApi.js';
+import { fetchGenres } from '../../../shared/services/tmdbApi.js';
 import type {
   MediaFeedbackReason,
   MediaFeedbackValue,
   MediaFilters,
   MediaType,
   TmdbMedia,
+  RecommendationFeedback,
+  Genre,
 } from '../../../shared/types/index.js';
 
 export interface UseMediaFetcherReturn {
   randomMedia: TmdbMedia | null;
   generatedMediaType: MediaType | null;
   recommendationExplanationKeys: string[];
+  aiExplanation: string | null;
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
   error: string | null;
@@ -52,6 +57,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
   const [randomMedia, setRandomMedia] = useState<TmdbMedia | null>(null);
   const [generatedMediaType, setGeneratedMediaType] = useState<MediaType | null>(null);
   const [recommendationExplanationKeys, setRecommendationExplanationKeys] = useState<string[]>([]);
+  const [aiExplanation, setAiExplanation] = useState<string | null>(null);
   const [currentMediaFeedbackValue, setCurrentMediaFeedbackValue] =
     useState<MediaFeedbackValue | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -100,9 +106,50 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           }
         }
 
+        let aiExplanationText: string | null = null;
+        if (token && user?.id) {
+          try {
+            const genres = await fetchGenres();
+            const profile = buildAiRequestProfile(feedbackHistory, genres);
+            const candidateTitle = result.media.title || result.media.name || '';
+            const candidateGenres = (result.media.genres || []).map((g) => g.name);
+            const releaseDate =
+              result.media.release_date || result.media.first_air_date;
+            const releaseYear = releaseDate
+              ? new Date(releaseDate).getFullYear()
+              : undefined;
+
+            const aiResult = await getAiExplanation(
+              {
+                userProfile: profile,
+                candidate: {
+                  title: candidateTitle,
+                  overview: result.media.overview || '',
+                  genres: candidateGenres,
+                  voteAverage: result.media.vote_average ?? 0,
+                  voteCount: result.media.vote_count ?? 0,
+                  releaseYear,
+                  runtime: result.media.runtime,
+                },
+              },
+              token,
+            );
+
+            if (aiResult.explanation) {
+              aiExplanationText = aiResult.explanation;
+            }
+          } catch (aiErr) {
+            logger.error(
+              'useMediaFetcher.aiExplain',
+              aiErr instanceof Error ? aiErr.message : aiErr,
+            );
+          }
+        }
+
         setRandomMedia(result.media);
         setGeneratedMediaType(mediaType);
         setRecommendationExplanationKeys(result.explanationKeys);
+        setAiExplanation(aiExplanationText);
         setCurrentMediaFeedbackValue(
           getMediaFeedbackValue(feedbackHistory, result.media.id, mediaType)
         );
@@ -123,10 +170,67 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
     randomMedia,
     generatedMediaType,
     recommendationExplanationKeys,
+    aiExplanation,
     currentMediaFeedbackValue,
     isLoading,
     error,
     generateRandomMedia,
     submitMediaFeedback,
+  };
+}
+
+function buildAiRequestProfile(
+  feedbackHistory: RecommendationFeedback[],
+  genres: Genre[],
+) {
+  const genreMap = new Map(genres.map((g) => [g.id, g.name]));
+
+  const likedItems = feedbackHistory.filter((f) => f.value === 'like');
+  const dislikedItems = feedbackHistory.filter((f) => f.value === 'dislike');
+
+  const likedGenreCounts = new Map<number, number>();
+  const dislikedGenreCounts = new Map<number, number>();
+
+  for (const item of likedItems) {
+    for (const gid of item.genre_ids) {
+      likedGenreCounts.set(gid, (likedGenreCounts.get(gid) || 0) + 1);
+    }
+  }
+
+  for (const item of dislikedItems) {
+    for (const gid of item.genre_ids) {
+      dislikedGenreCounts.set(gid, (dislikedGenreCounts.get(gid) || 0) + 1);
+    }
+  }
+
+  const topLikedGenres = [...likedGenreCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([id]) => ({ id, name: genreMap.get(id) || 'Unknown' }));
+
+  const topDislikedGenres = [...dislikedGenreCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([id]) => ({ id, name: genreMap.get(id) || 'Unknown' }));
+
+  const likedMedia = likedItems.slice(0, 5).map((f) => ({
+    title: String(f.tmdb_id),
+    overview: '',
+    genres: f.genre_ids.map((id) => genreMap.get(id) || 'Unknown'),
+  }));
+
+  const dislikedMedia = dislikedItems.slice(0, 5).map((f) => ({
+    title: String(f.tmdb_id),
+    overview: '',
+    genres: f.genre_ids.map((id) => genreMap.get(id) || 'Unknown'),
+    reason: f.reason,
+  }));
+
+  return {
+    likedGenres: topLikedGenres,
+    dislikedGenres: topDislikedGenres,
+    likedMedia,
+    dislikedMedia,
+    likedCount: likedItems.length,
   };
 }

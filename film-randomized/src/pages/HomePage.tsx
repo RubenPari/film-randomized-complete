@@ -17,6 +17,7 @@ function HomePage(): JSX.Element {
     generatedMediaType,
     randomMedia,
     recommendationExplanationKeys,
+    aiExplanation,
     currentMediaFeedbackValue,
     isGenerating,
     error,
@@ -68,6 +69,7 @@ function HomePage(): JSX.Element {
               media={randomMedia}
               mediaType={generatedMediaType}
               recommendationExplanationKeys={recommendationExplanationKeys}
+              aiExplanation={aiExplanation}
               currentMediaFeedbackValue={currentMediaFeedbackValue}
               onFeedback={submitMediaFeedback}
             />

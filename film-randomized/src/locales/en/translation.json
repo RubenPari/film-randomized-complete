@@ -215,6 +215,14 @@
     "invalidToken": "Invalid or missing reset token.",
     "backToLogin": "Back to login"
   },
+  "similar": {
+    "eyebrow": "More like this",
+    "title": "Similar to {{title}}",
+    "loading": "Searching for similar titles...",
+    "empty": "No similar titles found",
+    "error": "Something went wrong loading similar titles",
+    "action": "See similar titles"
+  },
   "changePassword": {
     "title": "Change Password",
     "description": "Account: {{email}}",

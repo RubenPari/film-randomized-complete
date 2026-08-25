@@ -44,15 +44,18 @@ describe('MainAppLayout', () => {
       [...document.querySelectorAll('nav a')].map((link) => link.getAttribute('href'))
     ).toEqual([
       '/',
+      '/search',
       '/watchlist',
       '/discovered',
       '/profile',
       '/',
+      '/search',
       '/watchlist',
       '/discovered',
       '/profile',
     ]);
     expect(screen.getAllByRole('link', { name: 'navigation.discover' })).toHaveLength(2);
+    expect(screen.getAllByRole('link', { name: 'navigation.search' })).toHaveLength(2);
     expect(screen.getAllByRole('link', { name: 'common.watchlist' })).toHaveLength(2);
     expect(screen.getAllByRole('link', { name: 'common.discovered' })).toHaveLength(2);
     expect(screen.getAllByRole('link', { name: 'navigation.profile' })).toHaveLength(3);

@@ -33,6 +33,7 @@ export interface UseMediaGeneratorReturn {
   randomMedia: TmdbMedia | null;
   generatedMediaType: MediaType | null;
   recommendationExplanationKeys: string[];
+  aiExplanation: string | null;
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
   isGenerating: boolean;
@@ -72,6 +73,7 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     randomMedia,
     generatedMediaType,
     recommendationExplanationKeys,
+    aiExplanation,
     currentMediaFeedbackValue,
     isLoading: isFetching,
     error: fetchError,
@@ -128,6 +130,7 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     randomMedia,
     generatedMediaType,
     recommendationExplanationKeys,
+    aiExplanation,
     currentMediaFeedbackValue,
     isLoading: isFetching || isPendingFilter,
     isGenerating: isFetching,

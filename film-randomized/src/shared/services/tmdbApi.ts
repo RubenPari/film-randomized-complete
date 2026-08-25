@@ -201,3 +201,12 @@ export const fetchGenres = async (): Promise<Genre[]> => {
   // Restituisco la promise
   return cachedGenresPromise;
 };
+
+export const fetchSimilarMedia = async (
+  mediaType: MediaType,
+  mediaId: number,
+): Promise<TmdbMedia[]> => {
+  const endpoint = API_ENDPOINTS.similar(mediaType, mediaId);
+  const data = await tmdbClient.get<TmdbPageResponse>(endpoint);
+  return data.results;
+};

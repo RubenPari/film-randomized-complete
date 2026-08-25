@@ -17,6 +17,7 @@ import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import WatchlistPage from './features/watchlist/WatchlistPage.jsx';
 import SearchPage from './features/search/SearchPage.jsx';
 import DiscoveredPage from './features/discovered/DiscoveredPage.jsx';
+import SimilarPage from './pages/SimilarPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
 /**
@@ -46,6 +47,7 @@ function App(): JSX.Element {
             <Route path="/search" element={<SearchPage />} />
             <Route path="/watchlist" element={<WatchlistPage />} />
             <Route path="/discovered" element={<DiscoveredPage />} />
+            <Route path="/similar/:mediaType/:mediaId" element={<SimilarPage />} />
             <Route path="/profile" element={<ChangePasswordPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />

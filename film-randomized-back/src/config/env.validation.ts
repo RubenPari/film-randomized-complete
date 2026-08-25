@@ -53,4 +53,8 @@ export const envValidationSchema = Joi.object({
   // Email (optional — feature stays disabled if not set)
   MAILTRAP_TOKEN: Joi.string().optional().allow(''),
   MAILTRAP_SENDER_EMAIL: Joi.string().email().optional().allow(''),
+
+  // AI Gateway (optional — feature stays disabled if not set)
+  AI_GATEWAY_URL: Joi.string().uri().optional().allow(''),
+  AI_GATEWAY_KEY: Joi.string().optional().allow(''),
 });

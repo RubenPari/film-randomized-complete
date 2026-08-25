@@ -16,6 +16,7 @@ import { WatchlistModule } from './watchlist/watchlist.module.js';
 import { DiscoveredModule } from './discovered/discovered.module.js';
 import { EmailModule } from './email/email.module.js';
 import { HealthModule } from './health/health.module.js';
+import { RecommendationModule } from './recommendation/recommendation.module.js';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { HealthModule } from './health/health.module.js';
     DiscoveredModule,
     EmailModule,
     HealthModule,
+    RecommendationModule,
   ],
   providers: [
     {

@@ -13,6 +13,7 @@ interface MediaCardInfoProps {
   genres?: { id: number; name: string }[];
   overview?: string;
   recommendationExplanationKeys?: string[];
+  aiExplanation?: string | null;
   currentFeedbackValue?: MediaFeedbackValue | null;
   onFeedback?: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
   children?: ReactNode;
@@ -25,6 +26,7 @@ function MediaCardInfo({
   genres,
   overview,
   recommendationExplanationKeys = [],
+  aiExplanation = null,
   currentFeedbackValue = null,
   onFeedback,
   children,
@@ -87,7 +89,18 @@ function MediaCardInfo({
         </section>
       )}
 
-      {recommendationExplanationKeys.length > 0 && (
+      {aiExplanation && (
+        <section className="mt-6 border-2 border-film-blue bg-film-blue/5 p-4">
+          <h3 className="font-mono text-xs font-semibold uppercase tracking-wider text-film-blue">
+            {t('recommendation.whyTitle')}
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-film-ink/85">
+            {aiExplanation}
+          </p>
+        </section>
+      )}
+
+      {!aiExplanation && recommendationExplanationKeys.length > 0 && (
         <section className="mt-6 border-2 border-film-ink bg-film-yellow p-4">
           <h3 className="font-mono text-xs font-semibold uppercase tracking-wider">
             {t('recommendation.whyTitle')}

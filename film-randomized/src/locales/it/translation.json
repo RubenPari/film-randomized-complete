@@ -215,6 +215,14 @@
     "invalidToken": "Token di ripristino non valido o mancante.",
     "backToLogin": "Torna al login"
   },
+  "similar": {
+    "eyebrow": "Altri come questo",
+    "title": "Simile a {{title}}",
+    "loading": "Ricerca di titoli simili...",
+    "empty": "Nessun titolo simile trovato",
+    "error": "Si è verificato un errore durante il caricamento dei titoli simili",
+    "action": "Vedi titoli simili"
+  },
   "changePassword": {
     "title": "Cambia Password",
     "description": "Account: {{email}}",
