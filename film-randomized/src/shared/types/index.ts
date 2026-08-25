@@ -322,6 +322,58 @@ export interface TmdbGenreListResponse {
   genres: Genre[];
 }
 
+export interface MediaCredit {
+  id: number;
+  name: string;
+  character?: string;
+  profile_path?: string | null;
+  known_for_department?: string;
+  job?: string;
+}
+
+export interface CreditsResponse {
+  id: number;
+  cast: MediaCredit[];
+  crew: MediaCredit[];
+}
+
+export interface PersonDetails {
+  id: number;
+  name: string;
+  biography?: string;
+  profile_path?: string | null;
+  known_for_department?: string;
+  birthday?: string;
+  place_of_birth?: string;
+}
+
+export interface PersonCredit extends TmdbMedia {
+  character?: string;
+  job?: string;
+  media_type?: string;
+}
+
+export interface PersonCreditsResponse {
+  id: number;
+  cast: PersonCredit[];
+  crew: PersonCredit[];
+}
+
+export interface PersonSearchResult {
+  id: number;
+  name: string;
+  profile_path?: string | null;
+  known_for_department?: string;
+  known_for?: TmdbMedia[];
+}
+
+export interface PersonSearchResponse {
+  page: number;
+  results: PersonSearchResult[];
+  total_pages: number;
+  total_results: number;
+}
+
 /**
  * Interfaccia per la risposta dei video TMDb
  */

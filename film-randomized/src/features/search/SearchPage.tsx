@@ -4,10 +4,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AppIcon from '../../shared/components/AppIcon.jsx';
-import { searchMedia } from '../../shared/services/tmdbApi.js';
+import { searchMedia, searchPerson } from '../../shared/services/tmdbApi.js';
 import { logger } from '../../shared/utils/logger.js';
 import SearchResultCard from './components/SearchResultCard.jsx';
-import type { TmdbMedia } from '../../shared/types/index.js';
+import PersonResultCard from './components/PersonResultCard.jsx';
+import type { PersonSearchResult, TmdbMedia } from '../../shared/types/index.js';
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -16,6 +17,8 @@ function SearchPage() {
   const [query, setQuery] = useState('');
   const [movies, setMovies] = useState<TmdbMedia[]>([]);
   const [tvShows, setTvShows] = useState<TmdbMedia[]>([]);
+  const [people, setPeople] = useState<PersonSearchResult[]>([]);
+  const [mode, setMode] = useState<'titles' | 'people'>('titles');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -26,6 +29,7 @@ function SearchPage() {
     if (!trimmedQuery) {
       setMovies([]);
       setTvShows([]);
+      setPeople([]);
       setError(null);
       setIsLoading(false);
       setHasSearched(false);
@@ -37,11 +41,12 @@ function SearchPage() {
     setError(null);
 
     const timeoutId = window.setTimeout(() => {
-      searchMedia(trimmedQuery)
-        .then((result) => {
+      Promise.all([searchMedia(trimmedQuery), searchPerson(trimmedQuery)])
+        .then(([result, personResults]) => {
           if (isCancelled) return;
           setMovies(result.movies);
           setTvShows(result.tvShows);
+          setPeople(personResults);
           setHasSearched(true);
         })
         .catch((searchError: unknown) => {
@@ -60,7 +65,9 @@ function SearchPage() {
     };
   }, [query, t]);
 
-  const hasResults = movies.length > 0 || tvShows.length > 0;
+  const hasTitleResults = movies.length > 0 || tvShows.length > 0;
+  const hasPeopleResults = people.length > 0;
+  const hasResults = mode === 'titles' ? hasTitleResults : hasPeopleResults;
 
   return (
     <section className="mx-auto min-h-full w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
@@ -89,6 +96,29 @@ function SearchPage() {
         />
       </div>
 
+      <fieldset className="mb-6">
+        <legend className="mb-3 font-mono text-xs font-semibold uppercase tracking-wider">
+          {t('search.modeLabel')}
+        </legend>
+        <div className="flex gap-2">
+          {(['titles', 'people'] as const).map((tabMode) => (
+            <button
+              key={tabMode}
+              type="button"
+              onClick={() => setMode(tabMode)}
+              aria-pressed={mode === tabMode}
+              className={`min-h-11 border-2 border-film-ink px-4 py-2 text-sm font-bold ${
+                mode === tabMode
+                  ? 'bg-film-blue text-white'
+                  : 'bg-white text-film-ink hover:bg-film-yellow'
+              }`}
+            >
+              {tabMode === 'titles' ? t('search.modeTitles') : t('search.modePeople')}
+            </button>
+          ))}
+        </div>
+      </fieldset>
+
       {isLoading && (
         <div className="ui-panel flex min-h-52 items-center justify-center gap-3 p-8" role="status">
           <span className="ui-spinner text-film-blue" aria-hidden="true" />
@@ -115,7 +145,7 @@ function SearchPage() {
         <p className="font-mono text-sm text-film-ink/60">{t('search.noResults')}</p>
       )}
 
-      {!isLoading && !error && hasResults && (
+      {!isLoading && !error && hasResults && mode === 'titles' && (
         <div className="flex flex-col gap-8">
           {movies.length > 0 && (
             <div>
@@ -138,6 +168,14 @@ function SearchPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {!isLoading && !error && hasResults && mode === 'people' && (
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+          {people.map((person) => (
+            <PersonResultCard key={person.id} person={person} />
+          ))}
         </div>
       )}
     </section>

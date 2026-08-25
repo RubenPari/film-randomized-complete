@@ -9,6 +9,7 @@ import type {
   TmdbMedia,
   MediaFilters,
   MediaType,
+  MediaCredit,
 } from '../../../shared/types/index.js';
 
 export interface UseMediaGeneratorReturn {
@@ -34,6 +35,7 @@ export interface UseMediaGeneratorReturn {
   generatedMediaType: MediaType | null;
   recommendationExplanationKeys: string[];
   aiExplanation: string | null;
+  cast: MediaCredit[];
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
   isGenerating: boolean;
@@ -74,6 +76,7 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     generatedMediaType,
     recommendationExplanationKeys,
     aiExplanation,
+    cast,
     currentMediaFeedbackValue,
     isLoading: isFetching,
     error: fetchError,
@@ -131,6 +134,7 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     generatedMediaType,
     recommendationExplanationKeys,
     aiExplanation,
+    cast,
     currentMediaFeedbackValue,
     isLoading: isFetching || isPendingFilter,
     isGenerating: isFetching,

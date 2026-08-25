@@ -13,3 +13,6 @@ export const TMDB_MAX_PAGE = 500;
 
 /** Minimum vote-count presets (aligned with VoteCountFilter labels). */
 export const VOTE_COUNT_THRESHOLDS: number[] = [0, 1000, 10000, 50000, 75000];
+
+/** Max cast members shown as chips on a recommendation card. */
+export const MAX_CAST_CHIPS = 5;

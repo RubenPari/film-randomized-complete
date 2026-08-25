@@ -11,10 +11,13 @@
     "showLess": "Show less",
     "noImage": "No image available",
     "trailer": "Trailer",
+    "showTrailer": "Watch Trailer",
+    "hideTrailer": "Hide Trailer",
     "remove": "Remove",
     "all": "All",
     "movies": "Movies",
-    "tvShows": "TV Shows"
+    "tvShows": "TV Shows",
+    "cast": "Cast"
   },
   "navigation": {
     "primary": "Primary navigation",
@@ -86,12 +89,15 @@
   "search": {
     "eyebrow": "Find a title",
     "title": "Search",
-    "placeholder": "Search for a movie or TV show...",
+    "placeholder": "Search for a movie, TV show, or person...",
     "loading": "Searching...",
     "emptyIdle": "Start typing to search",
     "noResults": "No results found",
     "moviesSection": "Movies",
     "tvSection": "TV Shows",
+    "modeLabel": "Search type",
+    "modeTitles": "Titles",
+    "modePeople": "People",
     "error": "Something went wrong while searching"
   },
   "watchlist": {
@@ -222,6 +228,15 @@
     "empty": "No similar titles found",
     "error": "Something went wrong loading similar titles",
     "action": "See similar titles"
+  },
+  "person": {
+    "eyebrow": "Cast & Crew",
+    "title": "Filmography of {{name}}",
+    "loading": "Loading filmography...",
+    "empty": "No filmography found",
+    "error": "Something went wrong loading this person",
+    "bornOn": "Born {{date}}",
+    "bornIn": "in {{place}}"
   },
   "changePassword": {
     "title": "Change Password",

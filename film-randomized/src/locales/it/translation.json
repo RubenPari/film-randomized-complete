@@ -11,10 +11,13 @@
     "showLess": "Mostra meno",
     "noImage": "Nessuna immagine disponibile",
     "trailer": "Trailer",
+    "showTrailer": "Guarda il Trailer",
+    "hideTrailer": "Nascondi Trailer",
     "remove": "Rimuovi",
     "all": "Tutti",
     "movies": "Film",
-    "tvShows": "Serie TV"
+    "tvShows": "Serie TV",
+    "cast": "Cast"
   },
   "navigation": {
     "primary": "Navigazione principale",
@@ -86,12 +89,15 @@
   "search": {
     "eyebrow": "Trova un titolo",
     "title": "Cerca",
-    "placeholder": "Cerca un film o una serie TV...",
+    "placeholder": "Cerca un film, una serie TV o una persona...",
     "loading": "Ricerca in corso...",
     "emptyIdle": "Inizia a digitare per cercare",
     "noResults": "Nessun risultato trovato",
     "moviesSection": "Film",
     "tvSection": "Serie TV",
+    "modeLabel": "Tipo di ricerca",
+    "modeTitles": "Titoli",
+    "modePeople": "Persone",
     "error": "Si è verificato un errore durante la ricerca"
   },
   "watchlist": {
@@ -222,6 +228,15 @@
     "empty": "Nessun titolo simile trovato",
     "error": "Si è verificato un errore durante il caricamento dei titoli simili",
     "action": "Vedi titoli simili"
+  },
+  "person": {
+    "eyebrow": "Cast & Crew",
+    "title": "Filmografia di {{name}}",
+    "loading": "Caricamento della filmografia...",
+    "empty": "Nessuna filmografia trovata",
+    "error": "Si è verificato un errore nel caricamento di questa persona",
+    "bornOn": "Nato il {{date}}",
+    "bornIn": "a {{place}}"
   },
   "changePassword": {
     "title": "Cambia Password",

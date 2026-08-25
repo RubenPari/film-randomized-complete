@@ -14,6 +14,11 @@ import {
   TmdbVideosResponse,
   Genre,
   TmdbMedia,
+  CreditsResponse,
+  PersonDetails,
+  PersonCreditsResponse,
+  PersonSearchResult,
+  PersonSearchResponse,
 } from '../types/index.js';
 
 /**
@@ -148,6 +153,19 @@ export const searchMedia = async (
   return { movies: movieData.results, tvShows: tvData.results };
 };
 
+export const searchPerson = async (query: string): Promise<PersonSearchResult[]> => {
+  const trimmedQuery = query.trim();
+
+  if (!trimmedQuery) {
+    return [];
+  }
+
+  const data = await tmdbClient.get<PersonSearchResponse>(
+    API_ENDPOINTS.searchPerson(trimmedQuery)
+  );
+  return data.results;
+};
+
 let cachedGenres: Genre[] | null = null;
 let cachedGenresPromise: Promise<Genre[]> | null = null;
 
@@ -209,4 +227,24 @@ export const fetchSimilarMedia = async (
   const endpoint = API_ENDPOINTS.similar(mediaType, mediaId);
   const data = await tmdbClient.get<TmdbPageResponse>(endpoint);
   return data.results;
+};
+
+export const fetchMediaCredits = async (
+  mediaType: MediaType,
+  mediaId: number
+): Promise<CreditsResponse> => {
+  const endpoint = API_ENDPOINTS.credits(mediaType, mediaId);
+  return tmdbClient.get<CreditsResponse>(endpoint);
+};
+
+export const fetchPersonDetails = async (personId: number): Promise<PersonDetails> => {
+  const endpoint = API_ENDPOINTS.person(personId);
+  return tmdbClient.get<PersonDetails>(endpoint);
+};
+
+export const fetchPersonCombinedCredits = async (
+  personId: number
+): Promise<PersonCreditsResponse> => {
+  const endpoint = API_ENDPOINTS.personCombinedCredits(personId);
+  return tmdbClient.get<PersonCreditsResponse>(endpoint);
 };

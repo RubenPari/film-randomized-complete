@@ -3,7 +3,12 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import AppIcon from '../../../shared/components/AppIcon.jsx';
 import { OVERVIEW_MAX_LENGTH } from '../../../shared/constants/config.js';
-import type { MediaFeedbackReason, MediaFeedbackValue } from '../../../shared/types/index.js';
+import type {
+  MediaCredit,
+  MediaFeedbackReason,
+  MediaFeedbackValue,
+} from '../../../shared/types/index.js';
+import CastChips from './CastChips.jsx';
 import RecommendationFeedbackButtons from './RecommendationFeedbackButtons.jsx';
 
 interface MediaCardInfoProps {
@@ -14,6 +19,7 @@ interface MediaCardInfoProps {
   overview?: string;
   recommendationExplanationKeys?: string[];
   aiExplanation?: string | null;
+  cast?: MediaCredit[];
   currentFeedbackValue?: MediaFeedbackValue | null;
   onFeedback?: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
   children?: ReactNode;
@@ -27,6 +33,7 @@ function MediaCardInfo({
   overview,
   recommendationExplanationKeys = [],
   aiExplanation = null,
+  cast = [],
   currentFeedbackValue = null,
   onFeedback,
   children,
@@ -86,6 +93,15 @@ function MediaCardInfo({
               {isOverviewExpanded ? t('common.showLess') : t('common.showMore')}
             </button>
           )}
+        </section>
+      )}
+
+      {cast.length > 0 && (
+        <section className="mt-6 border-t-2 border-film-ink pt-5">
+          <h3 className="font-mono text-xs font-semibold uppercase tracking-wider">
+            {t('common.cast')}
+          </h3>
+          <CastChips cast={cast} />
         </section>
       )}
 

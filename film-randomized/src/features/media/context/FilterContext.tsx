@@ -60,6 +60,7 @@ export function useMediaResults() {
     randomMedia: v.randomMedia,
     recommendationExplanationKeys: v.recommendationExplanationKeys,
     aiExplanation: v.aiExplanation,
+    cast: v.cast,
     currentMediaFeedbackValue: v.currentMediaFeedbackValue,
     isLoading: v.isLoading,
     isGenerating: v.isGenerating,

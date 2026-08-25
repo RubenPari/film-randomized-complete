@@ -5,6 +5,7 @@ import {
   discoverMedia,
   fetchMediaPage,
   fetchMediaDetails,
+  fetchMediaCredits,
 } from '../../../shared/services/tmdbApi.js';
 import { MAX_GENERATION_ATTEMPTS } from '../../../shared/constants/config.js';
 import { pickRandomValidMedia } from '../../../shared/utils/pickRandomValidMedia.js';
@@ -27,6 +28,7 @@ import type {
   TmdbMedia,
   RecommendationFeedback,
   Genre,
+  MediaCredit,
 } from '../../../shared/types/index.js';
 
 export interface UseMediaFetcherReturn {
@@ -34,6 +36,7 @@ export interface UseMediaFetcherReturn {
   generatedMediaType: MediaType | null;
   recommendationExplanationKeys: string[];
   aiExplanation: string | null;
+  cast: MediaCredit[];
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
   error: string | null;
@@ -58,6 +61,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
   const [generatedMediaType, setGeneratedMediaType] = useState<MediaType | null>(null);
   const [recommendationExplanationKeys, setRecommendationExplanationKeys] = useState<string[]>([]);
   const [aiExplanation, setAiExplanation] = useState<string | null>(null);
+  const [cast, setCast] = useState<MediaCredit[]>([]);
   const [currentMediaFeedbackValue, setCurrentMediaFeedbackValue] =
     useState<MediaFeedbackValue | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -93,6 +97,16 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           recommendationProfile,
           maxAttempts: MAX_GENERATION_ATTEMPTS,
         });
+
+        const creditsPromise = fetchMediaCredits(mediaType, result.media.id as number).catch(
+          (creditsErr: unknown) => {
+            logger.error(
+              'useMediaFetcher.fetchCredits',
+              creditsErr instanceof Error ? creditsErr.message : creditsErr
+            );
+            return null;
+          }
+        );
 
         if (token) {
           try {
@@ -146,10 +160,12 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           }
         }
 
+        const credits = await creditsPromise;
         setRandomMedia(result.media);
         setGeneratedMediaType(mediaType);
         setRecommendationExplanationKeys(result.explanationKeys);
         setAiExplanation(aiExplanationText);
+        setCast(credits?.cast ?? []);
         setCurrentMediaFeedbackValue(
           getMediaFeedbackValue(feedbackHistory, result.media.id, mediaType)
         );
@@ -171,6 +187,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
     generatedMediaType,
     recommendationExplanationKeys,
     aiExplanation,
+    cast,
     currentMediaFeedbackValue,
     isLoading,
     error,

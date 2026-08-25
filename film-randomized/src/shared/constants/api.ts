@@ -41,6 +41,13 @@ export const API_ENDPOINTS = {
     `${BASE_URL}/${mediaType}/${id}/videos`,
   search: (mediaType: 'movie' | 'tv', query: string): string =>
     `${BASE_URL}/search/${mediaType}?query=${encodeURIComponent(query)}`,
+  searchPerson: (query: string): string =>
+    `${BASE_URL}/search/person?query=${encodeURIComponent(query)}`,
   similar: (mediaType: 'movie' | 'tv', id: number): string =>
     `${BASE_URL}/${mediaType}/${id}/similar`,
+  credits: (mediaType: 'movie' | 'tv', id: number): string =>
+    `${BASE_URL}/${mediaType}/${id}/credits`,
+  person: (personId: number): string => `${BASE_URL}/person/${personId}`,
+  personCombinedCredits: (personId: number): string =>
+    `${BASE_URL}/person/${personId}/combined_credits`,
 } as const;

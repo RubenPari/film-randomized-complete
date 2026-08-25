@@ -18,6 +18,7 @@ vi.mock('../../../shared/services/tmdbApi.js', () => ({
   discoverMedia: vi.fn().mockResolvedValue({ discoverUrl: '/discover', totalPages: 1 }),
   fetchMediaPage: vi.fn(),
   fetchMediaDetails: vi.fn(),
+  fetchMediaCredits: vi.fn().mockResolvedValue({ id: 0, cast: [], crew: [] }),
 }));
 
 vi.mock('../../../shared/services/discoveredApi.js', () => ({

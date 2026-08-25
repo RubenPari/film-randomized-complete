@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useMediaTrailer from '../hooks/useMediaTrailer.js';
@@ -7,6 +8,7 @@ import MediaCardTrailer from './MediaCardTrailer.jsx';
 import SaveButtons from './SaveButtons.jsx';
 import AppIcon from '../../../shared/components/AppIcon.jsx';
 import type {
+  MediaCredit,
   MediaFeedbackReason,
   MediaFeedbackValue,
   MediaType,
@@ -18,6 +20,7 @@ interface MediaCardProps {
   mediaType: MediaType;
   recommendationExplanationKeys: string[];
   aiExplanation?: string | null;
+  cast?: MediaCredit[];
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   onFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
 }
@@ -32,10 +35,12 @@ function MediaCard({
   mediaType,
   recommendationExplanationKeys,
   aiExplanation = null,
+  cast = [],
   currentMediaFeedbackValue,
   onFeedback,
 }: MediaCardProps) {
   const { t } = useTranslation();
+  const [showTrailer, setShowTrailer] = useState(false);
   const title = media.title || media.name || '';
   const releaseDate = media.release_date || media.first_air_date;
   const year = releaseDate ? new Date(releaseDate).getFullYear() : null;
@@ -57,6 +62,7 @@ function MediaCard({
             overview={media.overview}
             recommendationExplanationKeys={recommendationExplanationKeys}
             aiExplanation={aiExplanation}
+            cast={cast}
             currentFeedbackValue={currentMediaFeedbackValue}
             onFeedback={onFeedback}
           >
@@ -69,11 +75,22 @@ function MediaCard({
               {t('similar.action')}
             </Link>
             <SaveButtons media={media} mediaType={mediaType} />
+            {trailerKey && (
+              <button
+                type="button"
+                onClick={() => setShowTrailer((prev) => !prev)}
+                className="ui-button ui-button--secondary inline-flex items-center gap-1.5 text-sm"
+                aria-expanded={showTrailer}
+              >
+                <AppIcon name="play" size={18} className="fill-film-coral" />
+                {showTrailer ? t('common.hideTrailer') : t('common.showTrailer')}
+              </button>
+            )}
           </div>
           </MediaCardInfo>
         </div>
       </div>
-      <MediaCardTrailer trailerKey={trailerKey} />
+      {showTrailer && trailerKey && <MediaCardTrailer trailerKey={trailerKey} />}
     </article>
   );
 }
