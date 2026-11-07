@@ -109,35 +109,4 @@ describe('UsersService', () => {
       service.registerUser('alice', 'a@b.com', 'hashed'),
     ).rejects.toThrow('Username already exists');
   });
-
-  /**
-   * Test per il metodo consumeResetTokenAndUpdatePassword
-   */
-  it('consumeResetTokenAndUpdatePassword returns false when token mismatch', async () => {
-    const txRepo = {
-      createQueryBuilder: jest.fn().mockReturnValue({
-        setLock: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        getOne: jest.fn().mockResolvedValue({
-          id: 'uid',
-          resetToken: 'different',
-          resetTokenExpiry: new Date(Date.now() + 1000),
-        }),
-      }),
-      update: jest.fn(),
-    };
-    dataSource.transaction.mockImplementation(
-      (cb: (manager: { getRepository: () => typeof txRepo }) => unknown) =>
-        cb({ getRepository: () => txRepo }),
-    );
-
-    const updated = await service.consumeResetTokenAndUpdatePassword(
-      'uid',
-      'provided-token',
-      'newhash',
-    );
-
-    expect(updated).toBe(false);
-    expect(txRepo.update).not.toHaveBeenCalled();
-  });
 });

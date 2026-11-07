@@ -13,39 +13,19 @@ services:
       timeout: 5s
       retries: 8
 
-  backend:
+  app:
     build:
-      context: ./film-randomized-back
-      dockerfile: Dockerfile
+      context: .
+      args:
+        VITE_TMDB_API_KEY: ${VITE_TMDB_API_KEY:?set VITE_TMDB_API_KEY in .env}
     environment:
-      NODE_ENV: production
-      PORT: '8000'
-      DB_HOST: db
-      DB_PORT: '5432'
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-      DB_DATABASE: film_randomized
-      DB_SYNCHRONIZE: 'false'
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/film_randomized
       JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env (min 32 characters)}
-      FRONTEND_URL: http://localhost
-      MAILTRAP_TOKEN: ${MAILTRAP_TOKEN:-}
-      MAILTRAP_SENDER_EMAIL: ${MAILTRAP_SENDER_EMAIL:-}
     depends_on:
       db:
         condition: service_healthy
-    expose:
-      - '8000'
-
-  frontend:
-    build:
-      context: ./film-randomized
-      dockerfile: Dockerfile
-      args:
-        VITE_TMDB_API_KEY: ${VITE_TMDB_API_KEY:?set VITE_TMDB_API_KEY in .env}
     ports:
-      - '80:80'
-    depends_on:
-      - backend
+      - '8000:8000'
 
 volumes:
   pgdata:

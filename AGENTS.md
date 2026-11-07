@@ -28,14 +28,15 @@ npm run test:e2e     # E2E tests
 
 ## Required Environment Variables
 
-Create `.env` in root:
+Create `.env` in root (see `.env.example` for optional ones):
 ```
 VITE_TMDB_API_KEY=your_tmdb_api_key
-MAILTRAP_TOKEN=your_mailtrap_token
-MAILTRAP_SENDER_EMAIL=your_sender_email
-JWT_SECRET=your_jwt_secret
-FRONTEND_URL=http://localhost:80
+JWT_SECRET=your_jwt_secret_min_32_chars
 ```
+
+## Release / Deploy
+
+Push a tag `v*` → `.github/workflows/release.yml` deploys to GCP Cloud Run and creates the GitHub Release. One-time GCP setup: `scripts/gcp-bootstrap.sh`.
 
 ## Code Style
 

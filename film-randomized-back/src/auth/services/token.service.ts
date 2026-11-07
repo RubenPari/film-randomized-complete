@@ -5,7 +5,6 @@ import { User } from '../../entities/user.entity.js';
 import {
   ACCESS_TOKEN_TTL,
   BCRYPT_SALT_ROUNDS,
-  RESET_TOKEN_TTL,
 } from '../constants/auth.constants.js';
 
 @Injectable()
@@ -24,17 +23,6 @@ export class TokenService {
     return this.jwtService.sign(
       { sub: user.id, username: user.username },
       { expiresIn: ACCESS_TOKEN_TTL },
-    );
-  }
-
-  verifyResetToken(token: string): { sub: string } {
-    return this.jwtService.verify<{ sub: string }>(token);
-  }
-
-  issueResetToken(userId: string): string {
-    return this.jwtService.sign(
-      { sub: userId },
-      { expiresIn: RESET_TOKEN_TTL },
     );
   }
 }

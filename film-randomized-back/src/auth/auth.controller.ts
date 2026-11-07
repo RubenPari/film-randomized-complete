@@ -12,10 +12,8 @@ import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service.js';
 import { CurrentUser } from './decorators/current-user.decorator.js';
 import { ChangePasswordDto } from './dto/change-password.dto.js';
-import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RegisterDto } from './dto/register.dto.js';
-import { ResetPasswordDto } from './dto/reset-password.dto.js';
 import { LoginResponseDto } from './dto/responses/login.response.dto.js';
 import { MessageResponseDto } from './dto/responses/message.response.dto.js';
 import { UserResponseDto } from './dto/responses/user.response.dto.js';
@@ -51,27 +49,6 @@ export class AuthController {
     @CurrentUser() user: AuthenticatedUser,
   ): Promise<UserResponseDto> {
     return this.authService.getMe(user.id);
-  }
-
-  @Post('forgot-password')
-  @Throttle(SENSITIVE_ENDPOINT_THROTTLE)
-  @HttpCode(HttpStatus.OK)
-  async forgotPassword(
-    @Body() forgotPasswordDto: ForgotPasswordDto,
-  ): Promise<MessageResponseDto> {
-    return this.authService.forgotPassword(forgotPasswordDto.email);
-  }
-
-  @Post('reset-password')
-  @Throttle(SENSITIVE_ENDPOINT_THROTTLE)
-  @HttpCode(HttpStatus.OK)
-  async resetPassword(
-    @Body() resetPasswordDto: ResetPasswordDto,
-  ): Promise<MessageResponseDto> {
-    return this.authService.resetPassword(
-      resetPasswordDto.token,
-      resetPasswordDto.newPassword,
-    );
   }
 
   @Post('change-password')

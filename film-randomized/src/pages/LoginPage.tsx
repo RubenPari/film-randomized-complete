@@ -66,11 +66,6 @@ function LoginPage(): JSX.Element {
           placeholder={t('auth.passwordPlaceholder')}
           autoComplete="current-password"
           disabled={isPending}
-          labelSuffix={
-            <Link to="/forgot-password" className="text-xs font-bold text-film-blue underline">
-              {t('auth.forgotPassword')}
-            </Link>
-          }
         />
 
         <AuthSubmitButton

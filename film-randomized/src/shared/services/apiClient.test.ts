@@ -58,7 +58,7 @@ describe('apiClient', () => {
 
     expect(data).toEqual({ id: 1 });
     expect(fetchMock).toHaveBeenCalledWith(
-      'http://localhost:8000/api/foo',
+      '/api/foo',
       expect.objectContaining({
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },

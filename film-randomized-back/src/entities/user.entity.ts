@@ -41,19 +41,6 @@ export class User {
   password: string;
 
   /**
-   * Token di reset
-   */
-  @Exclude()
-  @Column({ type: 'varchar', nullable: true, default: null })
-  resetToken: string | null;
-
-  /**
-   * Scadenza del token di reset
-   */
-  @Column({ type: 'timestamptz', nullable: true, default: null })
-  resetTokenExpiry: Date | null;
-
-  /**
    * Data di creazione
    */
   @CreateDateColumn({ type: 'timestamptz' })

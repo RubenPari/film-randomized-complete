@@ -87,61 +87,11 @@ export class UsersService {
   }
 
   /**
-   * Aggiorna il token di reset
-   * @param userId ID dell'utente
-   * @param resetToken Token di reset
-   * @param resetTokenExpiry Scadenza del token di reset
-   */
-  async updateResetToken(
-    userId: string,
-    resetToken: string | null,
-    resetTokenExpiry: Date | null,
-  ): Promise<void> {
-    await this.userRepository.update(userId, { resetToken, resetTokenExpiry });
-  }
-
-  /**
    * Aggiorna la password
    * @param userId ID dell'utente
    * @param newPassword Nuova password
    */
   async updatePassword(userId: string, newPassword: string): Promise<void> {
     await this.userRepository.update(userId, { password: newPassword });
-  }
-
-  /**
-   * Atomically consumes a reset token and updates the password.
-   * Returns false when the token is missing/expired/doesn't match.
-   */
-  async consumeResetTokenAndUpdatePassword(
-    userId: string,
-    resetToken: string,
-    newPassword: string,
-  ): Promise<boolean> {
-    return this.dataSource.transaction(async (manager) => {
-      const repo = manager.getRepository(User);
-      const user = await repo
-        .createQueryBuilder('user')
-        .setLock('pessimistic_write')
-        .where('user.id = :id', { id: userId })
-        .getOne();
-
-      if (
-        !user ||
-        user.resetToken !== resetToken ||
-        !user.resetTokenExpiry ||
-        new Date() > new Date(user.resetTokenExpiry)
-      ) {
-        return false;
-      }
-
-      await repo.update(user.id, {
-        password: newPassword,
-        resetToken: null,
-        resetTokenExpiry: null,
-      });
-
-      return true;
-    });
   }
 }

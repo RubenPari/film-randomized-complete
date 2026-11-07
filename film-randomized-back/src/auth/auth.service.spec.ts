@@ -14,8 +14,6 @@ describe('AuthService', () => {
     username: 'testuser',
     email: 'test@example.com',
     password: 'hashedpassword',
-    resetToken: null,
-    resetTokenExpiry: null,
   };
 
   const mockUsersService = {
@@ -23,9 +21,7 @@ describe('AuthService', () => {
     findByUsername: jest.fn(),
     findByEmail: jest.fn(),
     findById: jest.fn(),
-    updateResetToken: jest.fn(),
     updatePassword: jest.fn(),
-    consumeResetTokenAndUpdatePassword: jest.fn(),
   };
 
   const mockTokenService = {
@@ -38,8 +34,6 @@ describe('AuthService', () => {
   };
 
   const mockPasswordService = {
-    forgotPassword: jest.fn(),
-    resetPassword: jest.fn(),
     changePassword: jest.fn(),
   };
 
@@ -138,29 +132,10 @@ describe('AuthService', () => {
       const result = await service.getMe('test-user-id');
 
       expect(result).not.toHaveProperty('password');
-      expect(result).not.toHaveProperty('resetToken');
-      expect(result).not.toHaveProperty('resetTokenExpiry');
     });
   });
 
   describe('password operations delegate', () => {
-    it('forgotPassword delegates to PasswordService', async () => {
-      mockPasswordService.forgotPassword.mockResolvedValue({ message: 'sent' });
-      await service.forgotPassword('a@b.com');
-      expect(mockPasswordService.forgotPassword).toHaveBeenCalledWith(
-        'a@b.com',
-      );
-    });
-
-    it('resetPassword delegates to PasswordService', async () => {
-      mockPasswordService.resetPassword.mockResolvedValue({ message: 'ok' });
-      await service.resetPassword('token', 'newPassword12345');
-      expect(mockPasswordService.resetPassword).toHaveBeenCalledWith(
-        'token',
-        'newPassword12345',
-      );
-    });
-
     it('changePassword delegates to PasswordService', async () => {
       mockPasswordService.changePassword.mockResolvedValue({ message: 'ok' });
       await service.changePassword('user-id', 'old', 'newPassword12345');

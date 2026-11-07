@@ -10,12 +10,10 @@ import { RegistrationService } from './services/registration.service.js';
 import { TokenService } from './services/token.service.js';
 import { ACCESS_TOKEN_TTL } from './constants/auth.constants.js';
 import { UsersModule } from '../users/users.module.js';
-import { EmailModule } from '../email/email.module.js';
 
 @Module({
   imports: [
     UsersModule,
-    EmailModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

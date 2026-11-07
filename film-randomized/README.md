@@ -84,17 +84,14 @@ docker compose up --build
 Questo comando:
 
 - avvia **PostgreSQL** (`db`)
-- builda ed esegue il **backend NestJS** (`backend`, migrazioni TypeORM all’avvio, API sulla porta 8000 nella rete Docker)
-- builda il **frontend** Vite e lo serve con **Nginx** (`frontend`, porta **80** sull’host)
-
-Nginx inoltra le richieste `/api/*` al backend (template `nginx.conf.template`, variabile `BACKEND_UPSTREAM`, default `backend:8000` nel Dockerfile).
+- builda un'unica immagine (`Dockerfile` in root): build Vite + build NestJS; il backend serve la SPA e le API, applicando le migrazioni TypeORM all'avvio
 
 ### URL di accesso
 
-- Applicazione web: `http://localhost`
-- API (stesso host, percorso prefissato): `http://localhost/api/…` (es. `GET /api/health`)
+- Applicazione web: `http://localhost:8000`
+- API (stesso host): `http://localhost:8000/api/…` (es. `GET /api/health`)
 
-Il backend non espone la porta 8000 sull’host di default: in sviluppo locale senza Docker usi `http://localhost:8000` dal package `film-randomized-back`.
+In sviluppo senza Docker, `npm run dev` inoltra `/api` a `http://localhost:8000` (proxy Vite).
 
 Per fermare tutto:
 
@@ -102,30 +99,19 @@ Per fermare tutto:
 docker compose down
 ```
 
-## ☁️ Deploy su DigitalOcean
+## ☁️ Release e deploy su GCP
 
-Il deploy di produzione è definito in [`../.do/app.yaml`](../.do/app.yaml): App Platform
-esegue il frontend Nginx come unico endpoint pubblico, mentre l'API NestJS rimane accessibile
-solo sulla rete interna. PostgreSQL è un Managed Database separato in FRA1.
+Produzione: un servizio **Cloud Run** (`film-randomized`) + **Cloud SQL** PostgreSQL 16.
 
-Prima del primo deploy:
+1. Una tantum: `PROJECT_ID=<progetto> ./scripts/gcp-bootstrap.sh` dalla root (crea Artifact Registry,
+   Cloud SQL, secret `jwt-secret`/`database-url`, service account, Workload Identity Federation e il
+   servizio Cloud Run), poi esegui i comandi `gh variable set …` / `gh secret set VITE_TMDB_API_KEY`
+   che stampa.
+2. Ogni release: `git tag v1.2.0 && git push origin v1.2.0`. Il workflow
+   [release.yml](../.github/workflows/release.yml) esegue test e build, pubblica l'immagine, la
+   deploya su Cloud Run e crea la GitHub Release con note generate.
 
-1. Crea in DigitalOcean il cluster PostgreSQL 16 `film-randomized-db` in FRA1 e il database
-   `film_randomized`; associa poi il cluster all'App Platform come trusted source. Il manifest
-   usa inizialmente l'utente gestito `doadmin` per applicare le migrazioni.
-2. In GitHub configura i secrets `DIGITALOCEAN_ACCESS_TOKEN`, `JWT_SECRET` (almeno 32
-   caratteri) e `VITE_TMDB_API_KEY`. `MAILTRAP_TOKEN` e `MAILTRAP_SENDER_EMAIL` sono
-   facoltativi, ma necessari per le email di recupero password.
-3. Collega DigitalOcean al repository GitHub. Il workflow
-   [deploy-digitalocean.yml](../.github/workflows/deploy-digitalocean.yml) verifica entrambi
-   i package e aggiorna App Platform a ogni push su `main`.
-
-App Platform associa al backend la connessione TLS e il certificato CA del database. Il backend
-applica le migrazioni prima di avviarsi e fallisce il rilascio se non riescono.
-
-Quando il dominio sarà disponibile, aggiungilo alle Domains dell'app come **Primary** e crea i
-record DNS indicati da DigitalOcean. `FRONTEND_URL` usa `${APP_URL}`, quindi i link di reset
-password si aggiorneranno al dominio primario senza modifiche al codice.
+[ci.yml](../.github/workflows/ci.yml) esegue test e build su PR e push su `main`, senza deploy.
 
 ## 📋 Comandi Disponibili
 
@@ -160,7 +146,7 @@ npm run format:check # Verifica la formattazione senza modificare
 #### APIs
 
 - **TMDb API**: film e serie TV (chiamate dal browser al build/runtime)
-- **Backend NestJS** (`../film-randomized-back/`): autenticazione, watchlist, email (fuori da questo package; in produzione Docker le chiamate passano da `/api`)
+- **Backend NestJS** (`../film-randomized-back/`): autenticazione, watchlist (fuori da questo package; le chiamate passano sempre da `/api`)
 
 ### Struttura del Progetto (sintesi)
 
@@ -176,9 +162,6 @@ film-randomized/
 │   ├── main.jsx
 │   └── index.css
 ├── public/
-├── Dockerfile                # Build Vite + Nginx (usato da docker-compose nella root del monorepo)
-├── nginx.conf.template       # Proxy /api → http://${BACKEND_UPSTREAM}/api/
-├── fly.toml                  # Deploy Fly.io (web)
 ├── vite.config.js
 ├── tailwind.config.js
 ├── package.json

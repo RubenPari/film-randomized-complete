@@ -1,33 +1,24 @@
+import { parse } from 'pg-connection-string';
 import { getTypeOrmConnectionOptions } from './typeorm-env.js';
 
 describe('getTypeOrmConnectionOptions', () => {
-  it('uses the managed database URL with verified TLS and its CA certificate', () => {
-    const options = getTypeOrmConnectionOptions({
-      DATABASE_URL:
-        'postgresql://film_app:password@db.internal:25060/film_randomized?sslmode=require',
-      DB_SSL: 'true',
-      DB_SSL_CA:
-        '-----BEGIN CERTIFICATE-----\\ncertificate\\n-----END CERTIFICATE-----',
-    });
-
-    expect(options).toMatchObject({
-      type: 'postgres',
-      url: 'postgresql://film_app:password@db.internal:25060/film_randomized',
-      ssl: {
-        rejectUnauthorized: true,
-        ca: '-----BEGIN CERTIFICATE-----\ncertificate\n-----END CERTIFICATE-----',
-      },
-    });
+  it('defaults to the local Postgres database', () => {
+    expect(getTypeOrmConnectionOptions({}).url).toBe(
+      'postgresql://postgres:postgres@localhost:5432/film_randomized',
+    );
   });
 
-  it('keeps local connections unencrypted by default', () => {
-    const options = getTypeOrmConnectionOptions({
-      DB_HOST: 'localhost',
-      DB_USERNAME: 'postgres',
-      DB_PASSWORD: 'postgres',
-      DB_DATABASE: 'film_randomized',
-    });
+  it('passes a Cloud SQL socket URL through so pg connects via the socket', () => {
+    const url =
+      'postgresql://film_app:secret@localhost/film_randomized?host=/cloudsql/proj:europe-west1:film-randomized-db';
 
-    expect(options.ssl).toBe(false);
+    const options = getTypeOrmConnectionOptions({ DATABASE_URL: ` ${url} ` });
+
+    expect(options.url).toBe(url);
+    expect(parse(options.url)).toMatchObject({
+      host: '/cloudsql/proj:europe-west1:film-randomized-db',
+      user: 'film_app',
+      database: 'film_randomized',
+    });
   });
 });

@@ -59,17 +59,6 @@ export class AuthService {
     return toUserResponse(user);
   }
 
-  forgotPassword(email: string): Promise<MessageResponseDto> {
-    return this.passwordService.forgotPassword(email);
-  }
-
-  resetPassword(
-    token: string,
-    newPassword: string,
-  ): Promise<MessageResponseDto> {
-    return this.passwordService.resetPassword(token, newPassword);
-  }
-
   changePassword(
     userId: string,
     currentPassword: string,

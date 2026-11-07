@@ -13,8 +13,6 @@ interface AuthContextValue {
   login: (username: string, password: string) => Promise<AuthResponse>;
   register: (username: string, email: string, password: string) => Promise<AuthResponse>;
   logout: () => void;
-  forgotPassword: (email: string) => Promise<MessageResponse>;
-  resetPassword: (token: string, newPassword: string) => Promise<MessageResponse>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<MessageResponse>;
   isAuthenticated: boolean;
   loading: boolean;
@@ -76,17 +74,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     localStorage.removeItem('token');
   };
 
-  const forgotPassword = async (email: string): Promise<MessageResponse> => {
-    return await authApi.forgotPassword(email);
-  };
-
-  const resetPassword = async (
-    tokenParam: string,
-    newPassword: string
-  ): Promise<MessageResponse> => {
-    return await authApi.resetPassword(tokenParam, newPassword);
-  };
-
   const changePassword = async (
     currentPassword: string,
     newPassword: string
@@ -100,8 +87,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     login,
     register,
     logout,
-    forgotPassword,
-    resetPassword,
     changePassword,
     isAuthenticated: !!token && !!user,
     loading,

@@ -36,25 +36,6 @@ export const authApi = {
   },
 
   /**
-   * Recupera la password
-   * @param email Email
-   * @returns Risposta di autenticazione
-   */
-  async forgotPassword(email: string): Promise<MessageResponse> {
-    return apiClient.post<MessageResponse>('/auth/forgot-password', { email });
-  },
-
-  /**
-   * Resetta la password
-   * @param token Token di autenticazione
-   * @param newPassword Nuova password
-   * @returns Risposta di autenticazione
-   */
-  async resetPassword(token: string, newPassword: string): Promise<MessageResponse> {
-    return apiClient.post<MessageResponse>('/auth/reset-password', { token, newPassword });
-  },
-
-  /**
    * Cambia la password
    * @param currentPassword Password corrente
    * @param newPassword Nuova password

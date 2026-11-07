@@ -11,8 +11,6 @@ import { FilterProvider } from './features/media/context/FilterContext.jsx';
 import HomePage from './pages/HomePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
-import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx';
-import ResetPasswordPage from './pages/ResetPasswordPage.jsx';
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import WatchlistPage from './features/watchlist/WatchlistPage.jsx';
 import SearchPage from './features/search/SearchPage.jsx';
@@ -34,8 +32,6 @@ function App(): JSX.Element {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route element={<MainAppLayout />}>
             <Route
               path="/"

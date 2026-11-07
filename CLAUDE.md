@@ -40,7 +40,7 @@ npm run seed                 # Idempotent seed (demo user + sample data)
 
 ### Docker Compose (root)
 ```bash
-docker compose up --build   # Full stack (Postgres + backend + frontend)
+docker compose up --build   # Full stack (Postgres + app) at http://localhost:8000
 ```
 
 ## Code Style
@@ -55,7 +55,7 @@ docker compose up --build   # Full stack (Postgres + backend + frontend)
 
 The browser talks to **two APIs**:
 1. **TMDb API** — called directly from the browser via `tmdbClient.js`. API key is a Vite build-time env var (`VITE_TMDB_API_KEY`) baked into the JS bundle.
-2. **NestJS backend** — called via `apiClient.js`. In dev: `http://localhost:8000/api`. In production: relative `/api` (nginx proxies to backend).
+2. **NestJS backend** — called via `apiClient.js`. Always relative `/api`: in dev the Vite server proxies it to `http://localhost:8000`; in production NestJS serves both SPA and API.
 
 ### Frontend Key Patterns
 
@@ -74,20 +74,22 @@ The browser talks to **two APIs**:
 
 ### Database
 
-PostgreSQL 16 with TypeORM migrations (synchronize is off in production). Supports `DATABASE_URL` (Fly Postgres) or discrete `DB_*` vars. Three tables: `users`, `watchlist_items`, `discovered_items`. `media_type_enum` is a Postgres ENUM.
+PostgreSQL 16 with TypeORM migrations (synchronize always off). Connection from `DATABASE_URL` only (`database/typeorm-env.ts`). Three tables: `users`, `watchlist_items`, `discovered_items`. `media_type_enum` is a Postgres ENUM.
 
 ## Environment Variables
 
-Set in root `.env` (see `.env.example`):
+Set in root `.env` (see `.env.example`). Required:
 - `VITE_TMDB_API_KEY` — TMDb API key (build-time for frontend)
 - `JWT_SECRET` — min 32 chars
-- `DB_*` or `DATABASE_URL` — PostgreSQL connection
-- `MAILTRAP_TOKEN`, `MAILTRAP_SENDER_EMAIL` — password reset emails (optional; email service disabled if absent)
-- `FRONTEND_URL` — used for password reset links
-- `PORT` — backend port (default 8000)
+
+Optional:
+- `DATABASE_URL` — default `postgresql://postgres:postgres@localhost:5432/film_randomized`; SSL/socket options go in the URL
+- `AI_GATEWAY_URL`, `AI_GATEWAY_KEY` — AI recommendation explanations (disabled if absent)
 
 ## Deployment
 
-Both apps deploy to **Fly.io** (FRA region) with their own `fly.toml`:
-- Frontend: nginx serves the SPA and proxies `/api` to `film-randomized-api.internal:8000`
-- Backend: runs migrations on startup via `docker-entrypoint.sh`, health check on `GET /api/health`
+**GCP Cloud Run**, one service `film-randomized`: root `Dockerfile` builds the SPA and the API into one image; NestJS serves the SPA from `public/` (same origin, no CORS, no nginx). Postgres on **Cloud SQL** via Unix socket.
+- Release = push a tag `v*` (`git tag v1.2.0 && git push origin v1.2.0`). `.github/workflows/release.yml` runs CI, builds + pushes the image to Artifact Registry, deploys it (image only), then creates the GitHub Release.
+- `.github/workflows/ci.yml` runs tests/builds on PRs and pushes to `main` (no deploy).
+- Runtime config (secrets `jwt-secret`, `database-url`) lives on the Cloud Run service / Secret Manager, set once by `scripts/gcp-bootstrap.sh`. GitHub needs secret `VITE_TMDB_API_KEY` and vars `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_WIF_PROVIDER`, `GCP_DEPLOY_SA` (keyless auth via Workload Identity Federation).
+- Migrations run on container start (`film-randomized-back/docker-entrypoint.sh`); health check `GET /api/health`.

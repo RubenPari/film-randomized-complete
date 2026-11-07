@@ -166,7 +166,6 @@
     "signInToContinue": "Sign in to continue your journey",
     "username": "Username",
     "password": "Password",
-    "forgotPassword": "Forgot password?",
     "signIn": "Sign In",
     "signingIn": "Signing in...",
     "noAccount": "Don't have an account?",
@@ -174,16 +173,6 @@
     "usernamePlaceholder": "Enter your username",
     "passwordPlaceholder": "Enter your password",
     "loginError": "Error during login"
-  },
-  "forgotPassword": {
-    "title": "Forgot your password?",
-    "description": "Enter your email and we'll send you a link to reset your password.",
-    "emailLabel": "Email address",
-    "sending": "Sending...",
-    "sendResetLink": "Send Reset Link",
-    "successMessage": "If that email exists, a password reset link has been sent.",
-    "errorMessage": "An error occurred while requesting password reset.",
-    "backToLogin": "Back to login"
   },
   "register": {
     "title": "Join Us",
@@ -204,22 +193,6 @@
     "createAccount": "Create Account",
     "hasAccount": "Already have an account?",
     "signInInstead": "Sign in instead"
-  },
-  "resetPassword": {
-    "title": "Reset your password",
-    "description": "Choose a new password for your account.",
-    "newPassword": "New Password",
-    "confirmNewPassword": "Confirm New Password",
-    "passwordRequirement": "Use at least 8 characters.",
-    "passwordTooShort": "Password must be at least 8 characters.",
-    "passwordsDoNotMatch": "Passwords do not match.",
-    "submit": "Reset Password",
-    "resetting": "Resetting...",
-    "success": "Password has been reset successfully. Redirecting to login...",
-    "error": "An error occurred while resetting password.",
-    "missingToken": "No reset token found in URL.",
-    "invalidToken": "Invalid or missing reset token.",
-    "backToLogin": "Back to login"
   },
   "similar": {
     "eyebrow": "More like this",

@@ -1,45 +1,18 @@
-import type { PostgresConnectionCredentialsOptions } from 'typeorm/driver/postgres/PostgresConnectionCredentialsOptions.js';
-
 type EnvLike = Record<string, string | undefined>;
 
+const DEFAULT_DATABASE_URL =
+  'postgresql://postgres:postgres@localhost:5432/film_randomized';
+
 /**
- * Builds Postgres connection fields for TypeORM from process-style env.
- * Prefer DATABASE_URL (e.g. Fly `postgres attach`); otherwise use discrete DB_* vars.
+ * Builds the TypeORM Postgres connection from DATABASE_URL (local Postgres by default).
+ * SSL or a Unix socket (Cloud SQL: `?host=/cloudsql/<instance>`) are set in the URL itself.
  */
-export function getTypeOrmConnectionOptions(
-  env: EnvLike,
-): { type: 'postgres' } & PostgresConnectionCredentialsOptions {
-  const sslEnabled = env.DB_SSL === 'true';
-  const rejectUnauthorized = env.DB_SSL_REJECT_UNAUTHORIZED !== 'false';
-  const ca = env.DB_SSL_CA?.replace(/\\n/g, '\n');
-  const ssl: PostgresConnectionCredentialsOptions['ssl'] = sslEnabled
-    ? { rejectUnauthorized, ...(ca ? { ca } : {}) }
-    : false;
-
-  const databaseUrl = env.DATABASE_URL?.trim();
-  if (databaseUrl) {
-    const parsedDatabaseUrl = new URL(databaseUrl);
-    // Managed PostgreSQL URLs often include sslmode=require. The pg connection
-    // parser gives that URL option precedence over our explicit CA, so remove
-    // URL-level SSL settings and use the verified `ssl` configuration above.
-    parsedDatabaseUrl.searchParams.delete('sslmode');
-    parsedDatabaseUrl.searchParams.delete('ssl');
-    parsedDatabaseUrl.searchParams.delete('uselibpqcompat');
-
-    return {
-      type: 'postgres',
-      url: parsedDatabaseUrl.toString(),
-      ssl,
-    };
-  }
-
+export function getTypeOrmConnectionOptions(env: EnvLike): {
+  type: 'postgres';
+  url: string;
+} {
   return {
     type: 'postgres',
-    host: env.DB_HOST ?? 'localhost',
-    port: Number(env.DB_PORT ?? 5432),
-    username: env.DB_USERNAME ?? 'postgres',
-    password: env.DB_PASSWORD ?? 'postgres',
-    database: env.DB_DATABASE ?? 'film_randomized',
-    ssl,
+    url: env.DATABASE_URL?.trim() || DEFAULT_DATABASE_URL,
   };
 }

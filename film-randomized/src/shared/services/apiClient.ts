@@ -6,7 +6,8 @@
 import { ApiError } from '../types/index.js';
 export { ApiError };
 
-const API_BASE_URL: string = import.meta.env.PROD ? '/api' : 'http://localhost:8000/api';
+// Same origin in production; Vite dev server proxies /api to the backend (vite.config.ts).
+const API_BASE_URL = '/api';
 
 /**
  * Gestisce le risposte API

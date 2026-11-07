@@ -6,7 +6,7 @@ import { UserResponseDto } from '../dto/responses/user.response.dto.js';
 /**
  * Convert a User entity into the public response shape. `excludeExtraneousValues`
  * drops anything not marked `@Expose()` — a second barrier on top of the
- * `@Exclude()` decorators on User.password / resetToken.
+ * `@Exclude()` decorator on User.password.
  */
 export function toUserResponse(user: User): UserResponseDto {
   return plainToInstance(
