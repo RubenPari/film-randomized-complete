@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # One-time GCP setup for Film Randomized (Cloud Run + Cloud SQL + Workload Identity Federation).
-# Usage: PROJECT_ID=my-project [REGION=europe-west1] ./scripts/gcp-bootstrap.sh
+# Usage: PROJECT_ID=my-project [REGION=europe-west8] ./scripts/gcp-bootstrap.sh
+# Idempotent: resources that already exist are kept and skipped.
 # After this, every pushed tag v* deploys via .github/workflows/release.yml.
 set -euo pipefail
 
 : "${PROJECT_ID:?set PROJECT_ID}"
-REGION="${REGION:-europe-west1}"
+REGION="${REGION:-europe-west8}"
 GITHUB_REPO="${GITHUB_REPO:-RubenPari/film-randomized-complete}"
 SERVICE=film-randomized
 SQL_INSTANCE=film-randomized-db
@@ -16,6 +17,9 @@ DEPLOY_SA="github-deployer@${PROJECT_ID}.iam.gserviceaccount.com"
 WIF_POOL=github
 WIF_PROVIDER=github
 
+# have <describe command...>: true if the resource already exists
+have() { "$@" >/dev/null 2>&1; }
+
 gcloud config set project "$PROJECT_ID"
 PROJECT_NUMBER=$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')
 CONNECTION_NAME="${PROJECT_ID}:${REGION}:${SQL_INSTANCE}"
@@ -25,24 +29,37 @@ gcloud services enable run.googleapis.com sqladmin.googleapis.com artifactregist
   secretmanager.googleapis.com iam.googleapis.com iamcredentials.googleapis.com sts.googleapis.com
 
 echo "==> Artifact Registry"
-gcloud artifacts repositories create "$SERVICE" --repository-format=docker --location="$REGION"
+have gcloud artifacts repositories describe "$SERVICE" --location="$REGION" \
+  || gcloud artifacts repositories create "$SERVICE" --repository-format=docker --location="$REGION"
 
 echo "==> Cloud SQL (takes a few minutes)"
-gcloud sql instances create "$SQL_INSTANCE" --database-version=POSTGRES_16 \
-  --edition=enterprise --tier=db-f1-micro --region="$REGION"
-gcloud sql databases create "$DB_NAME" --instance="$SQL_INSTANCE"
-DB_PASSWORD=$(openssl rand -hex 24)
-gcloud sql users create "$DB_USER" --instance="$SQL_INSTANCE" --password="$DB_PASSWORD"
+have gcloud sql instances describe "$SQL_INSTANCE" \
+  || gcloud sql instances create "$SQL_INSTANCE" --database-version=POSTGRES_16 \
+    --edition=enterprise --tier=db-f1-micro --region="$REGION"
+have gcloud sql databases describe "$DB_NAME" --instance="$SQL_INSTANCE" \
+  || gcloud sql databases create "$DB_NAME" --instance="$SQL_INSTANCE"
 
 echo "==> Secrets"
-openssl rand -hex 32 | tr -d '\n' | gcloud secrets create jwt-secret --data-file=-
-printf 'postgresql://%s:%s@localhost/%s?host=/cloudsql/%s' \
-  "$DB_USER" "$DB_PASSWORD" "$DB_NAME" "$CONNECTION_NAME" \
-  | gcloud secrets create database-url --data-file=-
+have gcloud secrets describe jwt-secret \
+  || openssl rand -hex 32 | tr -d '\n' | gcloud secrets create jwt-secret --data-file=-
+# The DB password only lives in the database-url secret: (re)set it only when that secret is new.
+if ! have gcloud secrets describe database-url; then
+  DB_PASSWORD=$(openssl rand -hex 24)
+  if have gcloud sql users describe "$DB_USER" --instance="$SQL_INSTANCE"; then
+    gcloud sql users set-password "$DB_USER" --instance="$SQL_INSTANCE" --password="$DB_PASSWORD"
+  else
+    gcloud sql users create "$DB_USER" --instance="$SQL_INSTANCE" --password="$DB_PASSWORD"
+  fi
+  printf 'postgresql://%s:%s@localhost/%s?host=/cloudsql/%s' \
+    "$DB_USER" "$DB_PASSWORD" "$DB_NAME" "$CONNECTION_NAME" \
+    | gcloud secrets create database-url --data-file=-
+fi
 
 echo "==> Service accounts"
-gcloud iam service-accounts create film-randomized-run --display-name="Film Randomized runtime"
-gcloud iam service-accounts create github-deployer --display-name="GitHub Actions deployer"
+have gcloud iam service-accounts describe "$RUN_SA" \
+  || gcloud iam service-accounts create film-randomized-run --display-name="Film Randomized runtime"
+have gcloud iam service-accounts describe "$DEPLOY_SA" \
+  || gcloud iam service-accounts create github-deployer --display-name="GitHub Actions deployer"
 gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$RUN_SA" \
   --role=roles/cloudsql.client --condition=None
 for secret in jwt-secret database-url; do
@@ -57,8 +74,11 @@ gcloud iam service-accounts add-iam-policy-binding "$RUN_SA" \
   --member="serviceAccount:$DEPLOY_SA" --role=roles/iam.serviceAccountUser
 
 echo "==> Workload Identity Federation for $GITHUB_REPO (release tags v* only)"
-gcloud iam workload-identity-pools create "$WIF_POOL" --location=global --display-name="GitHub"
-gcloud iam workload-identity-pools providers create-oidc "$WIF_PROVIDER" --location=global \
+have gcloud iam workload-identity-pools describe "$WIF_POOL" --location=global \
+  || gcloud iam workload-identity-pools create "$WIF_POOL" --location=global --display-name="GitHub"
+have gcloud iam workload-identity-pools providers describe "$WIF_PROVIDER" --location=global \
+  --workload-identity-pool="$WIF_POOL" \
+  || gcloud iam workload-identity-pools providers create-oidc "$WIF_PROVIDER" --location=global \
   --workload-identity-pool="$WIF_POOL" --issuer-uri="https://token.actions.githubusercontent.com" \
   --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.ref=assertion.ref" \
   --attribute-condition="assertion.repository=='${GITHUB_REPO}' && assertion.ref.startsWith('refs/tags/v')"
