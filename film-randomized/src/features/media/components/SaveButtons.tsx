@@ -50,11 +50,7 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
         setIsInWatchlist(true);
       }
     } catch (mutationError) {
-      setError(
-        mutationError instanceof Error
-          ? mutationError.message
-          : t(isInWatchlist ? 'media.removeError' : 'media.saveError')
-      );
+      setError(t(isInWatchlist ? 'media.removeError' : 'media.saveError'));
       logger.error('SaveButtons.toggleWatchlist', mutationError);
     } finally {
       setIsLoading(false);

@@ -47,6 +47,7 @@ export function useFilterContext() {
     resetFilters: v.resetFilters,
     isGenresLoading: v.isGenresLoading,
     genresError: v.genresError,
+    reloadGenres: v.reloadGenres,
   };
 }
 
@@ -66,6 +67,7 @@ export function useMediaResults() {
     isGenerating: v.isGenerating,
     isFilterPending: v.isFilterPending,
     error: v.error,
+    errorKind: v.errorKind,
     generateRandomMedia: v.generateRandomMedia,
     submitMediaFeedback: v.submitMediaFeedback,
     markSeen: v.markSeen,

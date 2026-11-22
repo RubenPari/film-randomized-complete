@@ -17,7 +17,8 @@
     "all": "All",
     "movies": "Movies",
     "tvShows": "TV Shows",
-    "cast": "Cast"
+    "cast": "Cast",
+    "retry": "Try again"
   },
   "navigation": {
     "primary": "Primary navigation",
@@ -49,7 +50,12 @@
     "generating": "Searching the library...",
     "emptyTitle": "The screen is ready",
     "emptyDescription": "Adjust the filters or leave them wide open, then roll the film for one recommendation.",
-    "resultStage": "Recommendation"
+    "resultStage": "Recommendation",
+    "errors": {
+      "noMatch": "No title matches these filters. Loosen them or reset.",
+      "network": "Connection problem. Check your network and try again.",
+      "generic": "Could not pick a title. Try again."
+    }
   },
   "notFound": {
     "title": "Page not found",
@@ -203,7 +209,8 @@
     "loading": "Searching for similar titles...",
     "empty": "No similar titles found",
     "error": "Something went wrong loading similar titles",
-    "action": "See similar titles"
+    "action": "See similar titles",
+    "invalid": "This title link is not valid."
   },
   "person": {
     "eyebrow": "Cast & Crew",

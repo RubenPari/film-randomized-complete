@@ -276,6 +276,14 @@ export class TmdbError extends Error {
   }
 }
 
+/** Nessun titolo valido trovato con i filtri correnti */
+export class NoContentError extends Error {
+  constructor() {
+    super('No content found. Try modifying the filters.');
+    this.name = 'NoContentError';
+  }
+}
+
 /**
  * Interfaccia per la risposta di scoperta TMDb
  */

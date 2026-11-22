@@ -23,7 +23,7 @@ function SimilarPage() {
     const numericId = Number(mediaId);
 
     if (!isValidMediaType(mediaType) || Number.isNaN(numericId)) {
-      setError('Invalid media type or ID');
+      setError(t('similar.invalid'));
       setIsLoading(false);
       return;
     }
@@ -100,12 +100,13 @@ function SimilarPage() {
       )}
 
       {!isLoading && error && (
-        <p
-          className="border border-danger bg-surface p-4 text-sm font-semibold text-danger"
-          role="alert"
-        >
-          {error}
-        </p>
+        <div className="border border-danger bg-surface p-4 text-danger" role="alert">
+          <p className="text-sm font-semibold">{error}</p>
+          <Link to="/" className="ui-button ui-button--secondary mt-3">
+            <AppIcon name="arrowLeft" size={20} />
+            {t('common.home')}
+          </Link>
+        </div>
       )}
 
       {!isLoading && !error && similarItems.length === 0 && sourceMedia && (

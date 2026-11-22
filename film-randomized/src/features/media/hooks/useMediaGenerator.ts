@@ -1,7 +1,7 @@
 import { useTransition } from 'react';
 import { useMediaFilters } from './useMediaFilters.js';
 import { useGenres } from './useGenres.js';
-import { useMediaFetcher } from './useMediaFetcher.js';
+import { useMediaFetcher, type GenerationErrorKind } from './useMediaFetcher.js';
 import type {
   Genre,
   MediaFeedbackReason,
@@ -41,6 +41,8 @@ export interface UseMediaGeneratorReturn {
   isGenerating: boolean;
   isFilterPending: boolean;
   error: string | null;
+  errorKind: GenerationErrorKind | null;
+  reloadGenres: () => void;
   generateRandomMedia: () => void;
   submitMediaFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
   markSeen: (() => void) | undefined;
@@ -71,7 +73,12 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     resetFilters,
   } = useMediaFilters();
 
-  const { genres, error: genresError, isLoading: isGenresLoading } = useGenres();
+  const {
+    genres,
+    error: genresError,
+    isLoading: isGenresLoading,
+    reload: reloadGenres,
+  } = useGenres();
 
   const {
     randomMedia,
@@ -82,6 +89,7 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     currentMediaFeedbackValue,
     isLoading: isFetching,
     error: fetchError,
+    errorKind,
     generateRandomMedia,
     submitMediaFeedback,
     markSeen,
@@ -134,6 +142,7 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     genres,
     isGenresLoading,
     genresError,
+    reloadGenres,
     randomMedia,
     generatedMediaType,
     recommendationExplanationKeys,
@@ -144,6 +153,7 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     isGenerating: isFetching,
     isFilterPending: isPendingFilter,
     error: fetchError,
+    errorKind,
     generateRandomMedia: handleGenerateRandomMedia,
     submitMediaFeedback,
     markSeen,
