@@ -41,7 +41,7 @@ const NavItems = ({ mobile = false }: { mobile?: boolean }) => {
         [
           'group flex items-center font-bold',
           mobile
-            ? 'min-w-0 flex-1 flex-col justify-center gap-1 px-1 py-2 text-[0.65rem]'
+            ? 'min-w-0 flex-1 flex-col justify-center gap-1 px-0.5 py-2 text-[0.6rem]'
             : 'gap-3 rounded-xl border border-transparent px-3 py-3 text-sm',
           isActive
             ? 'border-accent/40 bg-accent/15 text-accent'

@@ -58,8 +58,10 @@ function AuthFormLayout({
         <section className="flex min-h-full flex-col lg:col-span-3">
           <header className="flex items-center gap-3 border-b border-line p-4 pr-32 lg:hidden">
             <AppIcon name="brand" size={38} />
-            <span className="min-w-0 truncate font-display text-xl font-bold uppercase">
-              Film/Randomized
+            <span className="min-w-0 font-display text-xl font-bold uppercase leading-none">
+              Film/
+              <wbr />
+              Randomized
             </span>
           </header>
           <div className="flex flex-1 items-center justify-center px-5 py-12 sm:px-10">
