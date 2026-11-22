@@ -44,13 +44,13 @@ const AppIcon = ({ name, size = 20, className }: AppIconProps): JSX.Element => {
   if (name === 'brand') {
     return (
       <svg {...commonProps} viewBox="0 0 32 32">
-        <rect width="32" height="32" rx="4" fill="#15133C" />
+        <rect width="32" height="32" rx="4" fill="#16161D" />
         <path
           d="M4 4h4v5H4zm0 9h4v6H4zm0 10h4v5H4zm20-19h4v5h-4zm0 9h4v6h-4zm0 10h4v5h-4z"
-          fill="#FFD166"
+          fill="#F5B544"
         />
-        <rect x="11" y="6" width="10" height="20" rx="1.5" fill="#4856E8" />
-        <path d="M13 11h6v2h-6zm0 4h5v2h-5zm0 4h6v2h-6z" fill="#F7F3E8" />
+        <rect x="11" y="6" width="10" height="20" rx="1.5" fill="#F5B544" />
+        <path d="M13 11h6v2h-6zm0 4h5v2h-5zm0 4h6v2h-6z" fill="#0B0B10" />
       </svg>
     );
   }

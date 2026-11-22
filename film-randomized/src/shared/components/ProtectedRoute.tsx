@@ -18,13 +18,10 @@ function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (loading) {
     return (
-      <div
-        className="flex min-h-screen items-center justify-center bg-film-screen p-6"
-        aria-busy="true"
-      >
+      <div className="flex min-h-screen items-center justify-center bg-canvas p-6" aria-busy="true">
         <div className="ui-panel flex max-w-sm flex-col items-center px-10 py-12 text-center">
           <AppIcon name="brand" size={56} />
-          <span className="ui-spinner my-6 text-film-blue" aria-hidden="true" />
+          <span className="ui-spinner my-6 text-accent" aria-hidden="true" />
           <p className="font-mono text-xs font-semibold uppercase tracking-wider" role="status">
             {t('shell.loadingSession')}
           </p>

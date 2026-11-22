@@ -18,7 +18,7 @@ function CastChips({ cast }: CastChipsProps) {
         <Link
           key={member.id}
           to={`/person/${member.id}`}
-          className="ui-chip gap-1.5 pl-1.5 hover:bg-film-blue/10"
+          className="ui-chip gap-1.5 pl-1.5 hover:bg-surface-2"
         >
           {member.profile_path ? (
             <img

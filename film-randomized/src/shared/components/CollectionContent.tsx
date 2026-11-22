@@ -47,7 +47,7 @@ function CollectionContent({
     <>
       {removeError && (
         <div
-          className="mb-6 flex items-start justify-between gap-4 border-2 border-danger bg-white p-4 text-danger"
+          className="mb-6 flex items-start justify-between gap-4 border border-danger bg-surface p-4 text-danger"
           role="alert"
         >
           <p className="text-sm font-semibold">{t(copy.removeErrorKey)}</p>

@@ -58,7 +58,7 @@ function RegisterPage(): JSX.Element {
       footer={
         <p>
           {t('register.hasAccount')}{' '}
-          <Link to="/login" className="font-bold text-film-blue underline underline-offset-4">
+          <Link to="/login" className="font-bold text-accent underline underline-offset-4">
             {t('register.signInInstead')}
           </Link>
         </p>

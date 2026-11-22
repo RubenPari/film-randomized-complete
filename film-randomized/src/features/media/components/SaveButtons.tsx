@@ -88,7 +88,7 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
         {statusLabel}
       </span>
       {error && (
-        <p className="mt-3 border-2 border-danger bg-white p-3 text-sm text-danger" role="alert">
+        <p className="mt-3 border border-danger bg-surface p-3 text-sm text-danger" role="alert">
           {error}
         </p>
       )}

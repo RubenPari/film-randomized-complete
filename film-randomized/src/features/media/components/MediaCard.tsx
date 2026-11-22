@@ -7,6 +7,7 @@ import MediaCardInfo from './MediaCardInfo.jsx';
 import MediaCardTrailer from './MediaCardTrailer.jsx';
 import SaveButtons from './SaveButtons.jsx';
 import AppIcon from '../../../shared/components/AppIcon.jsx';
+import { BACKDROP_BASE_URL } from '../../../shared/constants/api.js';
 import type {
   MediaCredit,
   MediaFeedbackReason,
@@ -48,8 +49,18 @@ function MediaCard({
   const mediaId = media.id as number;
 
   return (
-    <article className="overflow-hidden border-2 border-film-ink bg-white shadow-[8px_8px_0_#15133C]">
-      <div className="grid md:grid-cols-12">
+    <article className="relative overflow-hidden rounded-2xl border border-line bg-surface shadow-xl shadow-black/40">
+      {media.backdrop_path && (
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <img
+            src={`${BACKDROP_BASE_URL}${media.backdrop_path}`}
+            alt=""
+            className="size-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/70 to-surface/30" />
+        </div>
+      )}
+      <div className="relative grid md:grid-cols-12">
         <div className="md:col-span-5">
           <MediaCardPoster posterPath={media.poster_path} title={title} />
         </div>
@@ -67,26 +78,26 @@ function MediaCard({
             onFeedback={onFeedback}
           >
             <div className="mt-4 flex flex-wrap items-center gap-2">
-            <Link
-              to={`/similar/${mediaType}/${mediaId}`}
-              className="ui-button ui-button--secondary inline-flex items-center gap-1.5 text-sm"
-            >
-              <AppIcon name="similar" size={18} />
-              {t('similar.action')}
-            </Link>
-            <SaveButtons media={media} mediaType={mediaType} />
-            {trailerKey && (
-              <button
-                type="button"
-                onClick={() => setShowTrailer((prev) => !prev)}
+              <Link
+                to={`/similar/${mediaType}/${mediaId}`}
                 className="ui-button ui-button--secondary inline-flex items-center gap-1.5 text-sm"
-                aria-expanded={showTrailer}
               >
-                <AppIcon name="play" size={18} className="fill-film-coral" />
-                {showTrailer ? t('common.hideTrailer') : t('common.showTrailer')}
-              </button>
-            )}
-          </div>
+                <AppIcon name="similar" size={18} />
+                {t('similar.action')}
+              </Link>
+              <SaveButtons media={media} mediaType={mediaType} />
+              {trailerKey && (
+                <button
+                  type="button"
+                  onClick={() => setShowTrailer((prev) => !prev)}
+                  className="ui-button ui-button--secondary inline-flex items-center gap-1.5 text-sm"
+                  aria-expanded={showTrailer}
+                >
+                  <AppIcon name="play" size={18} className="fill-film-coral" />
+                  {showTrailer ? t('common.hideTrailer') : t('common.showTrailer')}
+                </button>
+              )}
+            </div>
           </MediaCardInfo>
         </div>
       </div>

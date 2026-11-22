@@ -2,16 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AppIcon from '../shared/components/AppIcon.jsx';
-import {
-  fetchMediaDetails,
-  fetchSimilarMedia,
-} from '../shared/services/tmdbApi.js';
+import { fetchMediaDetails, fetchSimilarMedia } from '../shared/services/tmdbApi.js';
 import { logger } from '../shared/utils/logger.js';
 import SearchResultCard from '../features/search/components/SearchResultCard.jsx';
-import type {
-  MediaType,
-  TmdbMedia,
-} from '../shared/types/index.js';
+import type { MediaType, TmdbMedia } from '../shared/types/index.js';
 
 function SimilarPage() {
   const { t } = useTranslation();
@@ -38,10 +32,7 @@ function SimilarPage() {
     setIsLoading(true);
     setError(null);
 
-    Promise.all([
-      fetchMediaDetails(mediaType, numericId),
-      fetchSimilarMedia(mediaType, numericId),
-    ])
+    Promise.all([fetchMediaDetails(mediaType, numericId), fetchSimilarMedia(mediaType, numericId)])
       .then(([details, similar]) => {
         if (isCancelled) return;
         setSourceMedia(details);
@@ -62,22 +53,20 @@ function SimilarPage() {
   }, [mediaType, mediaId, t]);
 
   const sourceTitle = sourceMedia?.title || sourceMedia?.name || '';
-  const sourceYear = sourceMedia?.release_date || sourceMedia?.first_air_date
-    ? new Date((sourceMedia.release_date || sourceMedia.first_air_date)!).getFullYear()
-    : null;
+  const sourceYear =
+    sourceMedia?.release_date || sourceMedia?.first_air_date
+      ? new Date((sourceMedia.release_date || sourceMedia.first_air_date)!).getFullYear()
+      : null;
 
   return (
     <div className="mx-auto min-h-full w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
-      <Link
-        to="/"
-        className="ui-button ui-button--quiet mb-6 inline-flex items-center"
-      >
+      <Link to="/" className="ui-button ui-button--quiet mb-6 inline-flex items-center">
         <AppIcon name="arrowLeft" size={20} />
         {t('common.home')}
       </Link>
 
       <header className="mb-8">
-        <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-film-blue">
+        <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-accent">
           {t('similar.eyebrow')}
         </p>
         <h1 className="mt-2 font-display text-4xl font-bold uppercase leading-none sm:text-5xl">
@@ -87,8 +76,8 @@ function SimilarPage() {
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {sourceYear && <span className="ui-chip">{sourceYear}</span>}
             {sourceMedia.vote_average != null && sourceMedia.vote_average > 0 && (
-              <span className="ui-chip bg-film-yellow">
-                <AppIcon name="star" size={14} className="fill-film-ink" />
+              <span className="ui-chip bg-accent text-on-accent">
+                <AppIcon name="star" size={14} className="fill-on-accent" />
                 {sourceMedia.vote_average.toFixed(1)}/10
               </span>
             )}
@@ -103,7 +92,7 @@ function SimilarPage() {
 
       {isLoading && (
         <div className="ui-panel flex min-h-52 items-center justify-center gap-3 p-8" role="status">
-          <span className="ui-spinner text-film-blue" aria-hidden="true" />
+          <span className="ui-spinner text-accent" aria-hidden="true" />
           <span className="font-mono text-xs font-semibold uppercase tracking-wider">
             {t('similar.loading')}
           </span>
@@ -112,7 +101,7 @@ function SimilarPage() {
 
       {!isLoading && error && (
         <p
-          className="border-2 border-danger bg-white p-4 text-sm font-semibold text-danger"
+          className="border border-danger bg-surface p-4 text-sm font-semibold text-danger"
           role="alert"
         >
           {error}
@@ -120,19 +109,13 @@ function SimilarPage() {
       )}
 
       {!isLoading && !error && similarItems.length === 0 && sourceMedia && (
-        <p className="font-mono text-sm text-film-ink/60">
-          {t('similar.empty')}
-        </p>
+        <p className="font-mono text-sm text-fg/60">{t('similar.empty')}</p>
       )}
 
       {!isLoading && !error && similarItems.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
           {similarItems.map((media) => (
-            <SearchResultCard
-              key={media.id}
-              media={media}
-              mediaType={mediaType as MediaType}
-            />
+            <SearchResultCard key={media.id} media={media} mediaType={mediaType as MediaType} />
           ))}
         </div>
       )}

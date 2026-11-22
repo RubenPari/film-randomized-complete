@@ -27,10 +27,10 @@ function VoteCountFilter({ minVoteCount, setMinVoteCount }: VoteCountFilterProps
             type="button"
             onClick={() => setMinVoteCount(value)}
             aria-pressed={minVoteCount === value}
-            className={`min-h-10 border-2 border-film-ink px-3 py-2 font-mono text-xs font-semibold ${
+            className={`min-h-10 rounded-xl border border-line px-3 py-2 font-mono text-xs font-semibold ${
               minVoteCount === value
-                ? 'bg-film-blue text-white'
-                : 'bg-white text-film-ink hover:bg-film-yellow'
+                ? 'bg-accent text-on-accent'
+                : 'bg-surface text-fg hover:bg-surface-2'
             }`}
           >
             {value === 0 ? t('common.all') : voteCountLabels[value]}

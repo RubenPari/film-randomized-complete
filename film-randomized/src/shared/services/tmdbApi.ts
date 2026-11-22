@@ -160,9 +160,7 @@ export const searchPerson = async (query: string): Promise<PersonSearchResult[]>
     return [];
   }
 
-  const data = await tmdbClient.get<PersonSearchResponse>(
-    API_ENDPOINTS.searchPerson(trimmedQuery)
-  );
+  const data = await tmdbClient.get<PersonSearchResponse>(API_ENDPOINTS.searchPerson(trimmedQuery));
   return data.results;
 };
 
@@ -222,7 +220,7 @@ export const fetchGenres = async (): Promise<Genre[]> => {
 
 export const fetchSimilarMedia = async (
   mediaType: MediaType,
-  mediaId: number,
+  mediaId: number
 ): Promise<TmdbMedia[]> => {
   const endpoint = API_ENDPOINTS.similar(mediaType, mediaId);
   const data = await tmdbClient.get<TmdbPageResponse>(endpoint);

@@ -43,7 +43,7 @@ function LoginPage(): JSX.Element {
       footer={
         <p>
           {t('auth.noAccount')}{' '}
-          <Link to="/register" className="font-bold text-film-blue underline underline-offset-4">
+          <Link to="/register" className="font-bold text-accent underline underline-offset-4">
             {t('auth.createAccount')}
           </Link>
         </p>

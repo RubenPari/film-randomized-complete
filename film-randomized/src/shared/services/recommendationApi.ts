@@ -28,7 +28,7 @@ export interface AiExplainRequest {
 
 export const getAiExplanation = async (
   payload: AiExplainRequest,
-  token: string,
+  token: string
 ): Promise<AiExplainResponse> => {
   return apiClient.post<AiExplainResponse>('/recommend/explain', payload, token);
 };

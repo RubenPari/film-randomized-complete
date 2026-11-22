@@ -4,8 +4,9 @@
 
 @layer base {
   :root {
-    color: #15133c;
-    background: #f7f3e8;
+    color: #ece8df;
+    background: #0b0b10;
+    color-scheme: dark;
     font-family: Manrope, system-ui, sans-serif;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -18,11 +19,9 @@
   }
 
   body {
-    @apply min-h-screen bg-film-screen text-film-ink antialiased;
+    @apply min-h-screen bg-canvas text-fg antialiased;
     margin: 0;
-    font-feature-settings:
-      'kern',
-      'liga';
+    font-feature-settings: 'kern', 'liga';
   }
 
   button,
@@ -38,36 +37,29 @@
   }
 
   :focus-visible {
-    outline: 3px solid #4856e8;
+    outline: 2px solid #f5b544;
     outline-offset: 3px;
   }
 
   ::selection {
-    color: #15133c;
-    background: #ffd166;
+    color: #1a1204;
+    background: #f5b544;
   }
 }
 
 @layer components {
   .ui-button {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 border-2 border-film-ink px-5 py-2.5 font-sans text-sm font-bold;
-    border-radius: 0.625rem;
-    box-shadow: 3px 3px 0 #15133c;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 border border-line px-5 py-2.5 font-sans text-sm font-bold;
+    border-radius: 0.75rem;
     transition:
-      transform 160ms ease,
       box-shadow 160ms ease,
       background-color 160ms ease,
+      border-color 160ms ease,
       color 160ms ease;
   }
 
   .ui-button:hover:not(:disabled) {
-    transform: translate(-1px, -1px);
-    box-shadow: 5px 5px 0 #15133c;
-  }
-
-  .ui-button:active:not(:disabled) {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 #15133c;
+    @apply shadow-glow;
   }
 
   .ui-button:disabled {
@@ -75,59 +67,58 @@
   }
 
   .ui-button--primary {
-    @apply bg-film-blue text-white;
+    @apply border-accent bg-accent text-on-accent;
   }
 
   .ui-button--secondary {
-    @apply bg-film-yellow text-film-ink;
+    @apply bg-surface-2 text-fg;
+  }
+
+  .ui-button--secondary:hover:not(:disabled) {
+    @apply border-accent;
   }
 
   .ui-button--quiet {
-    @apply bg-film-screen text-film-ink;
-    box-shadow: none;
+    @apply border-transparent bg-transparent text-fg;
   }
 
   .ui-button--quiet:hover:not(:disabled) {
-    @apply bg-film-yellow;
-    box-shadow: none;
-    transform: none;
+    @apply bg-surface-2 shadow-none;
   }
 
   .ui-button--danger {
-    @apply bg-danger text-white;
+    @apply border-danger bg-danger text-on-accent;
   }
 
   .ui-icon-button {
-    @apply inline-flex size-11 shrink-0 items-center justify-center border-2 border-film-ink bg-film-screen text-film-ink;
+    @apply inline-flex size-11 shrink-0 items-center justify-center border border-line bg-surface text-fg;
     border-radius: 9999px;
     transition:
       background-color 160ms ease,
-      color 160ms ease,
-      transform 160ms ease;
+      border-color 160ms ease,
+      box-shadow 160ms ease;
   }
 
   .ui-icon-button:hover:not(:disabled) {
-    @apply bg-film-yellow;
-    transform: rotate(-3deg);
+    @apply border-accent bg-surface-2;
   }
 
   .ui-panel {
-    @apply border-2 border-film-ink bg-film-screen;
-    border-radius: 0.875rem;
-    box-shadow: 6px 6px 0 #15133c;
+    @apply border border-line bg-surface;
+    border-radius: 1rem;
   }
 
   .ui-field {
-    @apply min-h-11 w-full border-2 border-film-ink bg-white px-3 py-2 text-film-ink placeholder:text-film-ink/50;
-    border-radius: 0.5rem;
+    @apply min-h-11 w-full border border-line bg-surface-2 px-3 py-2 text-fg placeholder:text-fg/50;
+    border-radius: 0.625rem;
   }
 
   .ui-field:disabled {
-    @apply cursor-not-allowed bg-film-ink/10 opacity-70;
+    @apply cursor-not-allowed bg-fg/10 opacity-70;
   }
 
   .ui-chip {
-    @apply inline-flex min-h-8 items-center gap-1.5 border border-film-ink bg-white px-3 py-1 font-mono text-xs font-semibold uppercase tracking-wide text-film-ink;
+    @apply inline-flex min-h-8 items-center gap-1.5 border border-line bg-surface-2 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-wide text-fg;
     border-radius: 9999px;
   }
 
@@ -141,9 +132,9 @@
     border-radius: 9999px;
     -webkit-appearance: none;
     appearance: none;
-    background: color-mix(in srgb, #15133c 20%, transparent);
+    background: color-mix(in srgb, #ece8df 22%, transparent);
     cursor: pointer;
-    accent-color: #4856e8;
+    accent-color: #f5b544;
   }
 
   input[type='range']::-webkit-slider-thumb {
@@ -151,19 +142,19 @@
     -webkit-appearance: none;
     appearance: none;
     height: 1.25rem;
-    border: 2px solid #15133c;
+    border: 2px solid #0b0b10;
     border-radius: 9999px;
-    background: #ffd166;
-    box-shadow: 2px 2px 0 #15133c;
+    background: #f5b544;
+    box-shadow: 0 0 10px rgba(245, 181, 68, 0.5);
   }
 
   input[type='range']::-moz-range-thumb {
     width: 1.25rem;
     height: 1.25rem;
-    border: 2px solid #15133c;
+    border: 2px solid #0b0b10;
     border-radius: 9999px;
-    background: #ffd166;
-    box-shadow: 2px 2px 0 #15133c;
+    background: #f5b544;
+    box-shadow: 0 0 10px rgba(245, 181, 68, 0.5);
   }
 
   .film-frame-enter {
@@ -218,11 +209,5 @@
 
   .animate-pulse {
     animation: none;
-  }
-
-  .ui-button:hover:not(:disabled),
-  .ui-button:active:not(:disabled),
-  .ui-icon-button:hover:not(:disabled) {
-    transform: none;
   }
 }

@@ -41,8 +41,10 @@ const NavItems = ({ mobile = false }: { mobile?: boolean }) => {
           'group flex items-center font-bold',
           mobile
             ? 'min-w-0 flex-1 flex-col justify-center gap-1 px-1 py-2 text-[0.65rem]'
-            : 'gap-3 border-2 border-transparent px-3 py-3 text-sm',
-          isActive ? 'bg-film-yellow text-film-ink' : 'hover:border-film-ink hover:bg-white',
+            : 'gap-3 rounded-xl border border-transparent px-3 py-3 text-sm',
+          isActive
+            ? 'border-accent/40 bg-accent/15 text-accent'
+            : 'hover:border-line hover:bg-surface',
         ].join(' ')
       }
     >
@@ -64,24 +66,24 @@ function MainAppLayout() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-film-screen text-film-ink">
+      <div className="min-h-screen bg-canvas text-fg">
         <a
           href="#main-content"
-          className="fixed left-4 top-3 z-[70] -translate-y-24 bg-film-yellow px-4 py-2 font-bold focus:translate-y-0"
+          className="fixed left-4 top-3 z-[70] -translate-y-24 bg-accent px-4 py-2 font-bold focus:translate-y-0"
         >
           {t('shell.skipToContent')}
         </a>
 
-        <aside className="fixed inset-y-0 left-0 z-40 hidden w-[232px] flex-col border-r-2 border-film-ink bg-film-screen p-5 lg:flex">
+        <aside className="fixed inset-y-0 left-0 z-40 hidden w-[216px] flex-col border-r border-line bg-canvas p-5 lg:flex">
           <Brand />
           <nav className="mt-12 flex flex-col gap-2" aria-label={t('navigation.primary')}>
             <NavItems />
           </nav>
-          <div className="mt-auto border-t-2 border-film-ink pt-5">
+          <div className="mt-auto border-t border-line pt-5">
             <LanguageSwitcher />
             <div className="mt-5 min-w-0">
               <p className="truncate text-sm font-bold">{user?.username}</p>
-              <p className="truncate font-mono text-[0.65rem] text-film-ink/65">{user?.email}</p>
+              <p className="truncate font-mono text-[0.65rem] text-fg/65">{user?.email}</p>
             </div>
             <button
               type="button"
@@ -94,7 +96,7 @@ function MainAppLayout() {
           </div>
         </aside>
 
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b-2 border-film-ink bg-film-screen px-4 lg:hidden">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-line bg-canvas px-4 lg:hidden">
           <Brand />
           <NavLink
             to="/profile"
@@ -110,12 +112,12 @@ function MainAppLayout() {
           </NavLink>
         </header>
 
-        <main id="main-content" className="pb-safe-tabs min-h-screen lg:ml-[232px] lg:pb-0">
+        <main id="main-content" className="pb-safe-tabs min-h-screen lg:ml-[216px] lg:pb-0">
           <Outlet />
         </main>
 
         <nav
-          className="safe-area-bottom fixed inset-x-0 bottom-0 z-50 flex h-[calc(4.5rem+env(safe-area-inset-bottom))] border-t-2 border-film-ink bg-film-screen lg:hidden"
+          className="safe-area-bottom fixed inset-x-0 bottom-0 z-50 flex h-[calc(4.5rem+env(safe-area-inset-bottom))] border-t border-line bg-canvas lg:hidden"
           aria-label={t('navigation.primary')}
         >
           <NavItems mobile />

@@ -54,7 +54,7 @@ function AuthTextField({
         className="ui-field"
       />
       {hint && (
-        <p id={`${id}-hint`} className="mt-2 text-xs leading-5 text-film-ink/65">
+        <p id={`${id}-hint`} className="mt-2 text-xs leading-5 text-fg/65">
           {hint}
         </p>
       )}

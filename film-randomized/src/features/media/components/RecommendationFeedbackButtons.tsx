@@ -24,11 +24,11 @@ function RecommendationFeedbackButtons({
   const [showDislikeReasons, setShowDislikeReasons] = useState(currentValue === 'dislike');
 
   return (
-    <section className="mt-5 border-t-2 border-film-ink pt-5">
+    <section className="mt-5 border-t border-line pt-5">
       <h3 className="font-mono text-xs font-semibold uppercase tracking-wider">
         {t('recommendation.feedbackPrompt')}
       </h3>
-      <div className="mt-3 grid grid-cols-2 gap-2">
+      <div className="mt-3 grid grid-cols-1 gap-2 min-[380px]:grid-cols-2">
         <button
           type="button"
           onClick={() => {
@@ -36,7 +36,7 @@ function RecommendationFeedbackButtons({
             onFeedback('like');
           }}
           aria-pressed={currentValue === 'like'}
-          className={`ui-button ${currentValue === 'like' ? 'bg-success text-white' : 'ui-button--quiet'}`}
+          className={`ui-button ${currentValue === 'like' ? 'bg-success text-on-accent' : 'ui-button--quiet'}`}
         >
           <AppIcon name="thumbUp" />
           {t('recommendation.like')}
@@ -45,7 +45,7 @@ function RecommendationFeedbackButtons({
           type="button"
           onClick={() => setShowDislikeReasons(true)}
           aria-pressed={currentValue === 'dislike'}
-          className={`ui-button ${currentValue === 'dislike' ? 'bg-film-coral text-film-ink' : 'ui-button--quiet'}`}
+          className={`ui-button ${currentValue === 'dislike' ? 'bg-film-coral text-on-accent' : 'ui-button--quiet'}`}
         >
           <AppIcon name="thumbDown" />
           {t('recommendation.dislike')}
@@ -60,7 +60,7 @@ function RecommendationFeedbackButtons({
                 key={reason}
                 type="button"
                 onClick={() => onFeedback('dislike', reason)}
-                className="ui-chip hover:bg-film-coral"
+                className="ui-chip hover:bg-film-coral hover:text-on-accent"
               >
                 {t(`recommendation.reason.${reason}`)}
               </button>

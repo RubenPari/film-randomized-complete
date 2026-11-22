@@ -37,9 +37,9 @@ function PersonPage() {
   const { personId } = useParams<{ personId: string }>();
 
   const [person, setPerson] = useState<PersonDetails | null>(null);
-  const [filmography, setFilmography] = useState<
-    { media: PersonCredit; mediaType: MediaType }[]
-  >([]);
+  const [filmography, setFilmography] = useState<{ media: PersonCredit; mediaType: MediaType }[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -90,11 +90,11 @@ function PersonPage() {
           <img
             src={`${IMAGE_BASE_URL}${person.profile_path}`}
             alt={person.name}
-            className="h-32 w-24 flex-none border-2 border-film-ink object-cover"
+            className="h-32 w-24 flex-none border border-line object-cover"
           />
         )}
         <div>
-          <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-film-blue">
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-accent">
             {t('person.eyebrow')}
           </p>
           <h1 className="mt-2 font-display text-4xl font-bold uppercase leading-none sm:text-5xl">
@@ -109,19 +109,21 @@ function PersonPage() {
                 <span className="ui-chip">{t('person.bornOn', { date: birthDate })}</span>
               )}
               {person.place_of_birth && (
-                <span className="ui-chip">{t('person.bornIn', { place: person.place_of_birth })}</span>
+                <span className="ui-chip">
+                  {t('person.bornIn', { place: person.place_of_birth })}
+                </span>
               )}
             </div>
           )}
           {!isLoading && person?.biography && (
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-film-ink/75">{person.biography}</p>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-fg/75">{person.biography}</p>
           )}
         </div>
       </header>
 
       {isLoading && (
         <div className="ui-panel flex min-h-52 items-center justify-center gap-3 p-8" role="status">
-          <span className="ui-spinner text-film-blue" aria-hidden="true" />
+          <span className="ui-spinner text-accent" aria-hidden="true" />
           <span className="font-mono text-xs font-semibold uppercase tracking-wider">
             {t('person.loading')}
           </span>
@@ -129,19 +131,26 @@ function PersonPage() {
       )}
 
       {!isLoading && error && (
-        <p className="border-2 border-danger bg-white p-4 text-sm font-semibold text-danger" role="alert">
+        <p
+          className="border border-danger bg-surface p-4 text-sm font-semibold text-danger"
+          role="alert"
+        >
           {error}
         </p>
       )}
 
       {!isLoading && !error && filmography.length === 0 && person && (
-        <p className="font-mono text-sm text-film-ink/60">{t('person.empty')}</p>
+        <p className="font-mono text-sm text-fg/60">{t('person.empty')}</p>
       )}
 
       {!isLoading && !error && filmography.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
           {filmography.map(({ media, mediaType }) => (
-            <SearchResultCard key={`${mediaType}-${media.id}`} media={media} mediaType={mediaType} />
+            <SearchResultCard
+              key={`${mediaType}-${media.id}`}
+              media={media}
+              mediaType={mediaType}
+            />
           ))}
         </div>
       )}

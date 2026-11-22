@@ -127,11 +127,8 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
             const profile = buildAiRequestProfile(feedbackHistory, genres);
             const candidateTitle = result.media.title || result.media.name || '';
             const candidateGenres = (result.media.genres || []).map((g) => g.name);
-            const releaseDate =
-              result.media.release_date || result.media.first_air_date;
-            const releaseYear = releaseDate
-              ? new Date(releaseDate).getFullYear()
-              : undefined;
+            const releaseDate = result.media.release_date || result.media.first_air_date;
+            const releaseYear = releaseDate ? new Date(releaseDate).getFullYear() : undefined;
 
             const aiResult = await getAiExplanation(
               {
@@ -146,7 +143,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
                   runtime: result.media.runtime,
                 },
               },
-              token,
+              token
             );
 
             if (aiResult.explanation) {
@@ -155,7 +152,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           } catch (aiErr) {
             logger.error(
               'useMediaFetcher.aiExplain',
-              aiErr instanceof Error ? aiErr.message : aiErr,
+              aiErr instanceof Error ? aiErr.message : aiErr
             );
           }
         }
@@ -196,10 +193,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
   };
 }
 
-function buildAiRequestProfile(
-  feedbackHistory: RecommendationFeedback[],
-  genres: Genre[],
-) {
+function buildAiRequestProfile(feedbackHistory: RecommendationFeedback[], genres: Genre[]) {
   const genreMap = new Map(genres.map((g) => [g.id, g.name]));
 
   const likedItems = feedbackHistory.filter((f) => f.value === 'like');
