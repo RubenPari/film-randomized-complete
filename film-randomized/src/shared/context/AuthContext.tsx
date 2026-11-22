@@ -5,7 +5,7 @@
 /* eslint-disable react-refresh/only-export-components -- provider and paired hooks belong together */
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authApi } from '../services/authApi.js';
-import { AuthResponse, MessageResponse, User } from '../types/index.js';
+import { ApiError, AuthResponse, MessageResponse, User } from '../types/index.js';
 
 interface AuthContextValue {
   user: User | null;
@@ -36,9 +36,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         .then((userData) => {
           setUser(userData);
         })
-        .catch(() => {
-          localStorage.removeItem('token');
-          setToken(null);
+        .catch((error: unknown) => {
+          // Only a rejected token ends the session; offline/5xx keeps it for the next load.
+          if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {
+            localStorage.removeItem('token');
+            setToken(null);
+          }
         })
         .finally(() => {
           setLoading(false);
