@@ -27,6 +27,7 @@ function FilterPanel() {
     resetFilters,
     isGenresLoading,
     genresError,
+    reloadGenres,
   } = useFilterContext();
 
   return (
@@ -60,6 +61,7 @@ function FilterPanel() {
           handleGenreToggle={handleGenreToggle}
           isLoading={isGenresLoading}
           error={genresError}
+          onRetry={reloadGenres}
         />
       </div>
       <div className="sticky bottom-0 border-t border-line bg-canvas p-5">

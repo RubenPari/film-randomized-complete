@@ -12,7 +12,7 @@ import GenerateButton from './home/GenerateButton.jsx';
 function HomePage(): JSX.Element {
   const { t } = useTranslation();
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const { mediaType, setMediaType } = useFilterContext();
+  const { mediaType, setMediaType, resetFilters } = useFilterContext();
   const {
     generatedMediaType,
     randomMedia,
@@ -22,6 +22,7 @@ function HomePage(): JSX.Element {
     currentMediaFeedbackValue,
     isGenerating,
     error,
+    errorKind,
     generateRandomMedia,
     submitMediaFeedback,
     markSeen,
@@ -102,7 +103,35 @@ function HomePage(): JSX.Element {
             <AppIcon name="alert" className="mt-0.5 shrink-0" />
             <div>
               <p className="font-bold">{t('common.error')}</p>
-              <p>{error}</p>
+              <p>{t(`home.errors.${errorKind ?? 'generic'}`)}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {errorKind === 'noMatch' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setFiltersOpen(true)}
+                      className="ui-button ui-button--secondary"
+                    >
+                      {t('filters.open')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={resetFilters}
+                      className="ui-button ui-button--secondary"
+                    >
+                      {t('filters.reset')}
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={generateRandomMedia}
+                    className="ui-button ui-button--secondary"
+                  >
+                    {t('common.retry')}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}

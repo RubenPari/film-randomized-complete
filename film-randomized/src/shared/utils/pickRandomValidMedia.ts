@@ -6,7 +6,13 @@ import {
   isExcludedForCurrentType,
   type MediaRow,
 } from './mediaUtils.js';
-import { MediaType, RecommendationProfile, TmdbMedia, TmdbPageResponse } from '../types/index.js';
+import {
+  MediaType,
+  NoContentError,
+  RecommendationProfile,
+  TmdbMedia,
+  TmdbPageResponse,
+} from '../types/index.js';
 
 /**
  * Interfaccia per le opzioni di pickRandomValidMedia
@@ -132,5 +138,5 @@ export async function pickRandomValidMedia({
     }
   }
 
-  throw new Error('No content found. Try modifying the filters.');
+  throw new NoContentError();
 }

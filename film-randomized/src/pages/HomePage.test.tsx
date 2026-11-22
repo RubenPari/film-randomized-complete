@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import HomePage from './HomePage.jsx';
 import { MIN_RELEASE_YEAR } from '../shared/constants/config.js';
@@ -37,6 +37,7 @@ let resultsContext = {
   isGenerating: false,
   isFilterPending: false,
   error: null as string | null,
+  errorKind: null as 'noMatch' | 'network' | 'generic' | null,
   generateRandomMedia,
   submitMediaFeedback,
 };
@@ -94,6 +95,7 @@ beforeEach(() => {
     randomMedia: null,
     isGenerating: false,
     error: null,
+    errorKind: null,
   };
 });
 
@@ -137,7 +139,7 @@ describe('HomePage', () => {
 
     resultsContext = { ...resultsContext, isGenerating: false, error: 'generation failed' };
     view.rerender(<HomePage />);
-    expect(screen.getByRole('alert')).toHaveTextContent('generation failed');
+    expect(screen.getByRole('alert')).toHaveTextContent('home.errors.generic');
 
     resultsContext = {
       ...resultsContext,
@@ -148,5 +150,27 @@ describe('HomePage', () => {
     view.rerender(<HomePage />);
     expect(screen.getByText('result-card-tv-42').parentElement).toHaveClass('film-frame-enter');
     expect(screen.getAllByRole('button', { name: 'home.generateAgain' })).toHaveLength(1);
+  });
+
+  it('offers Open filters and Reset filters when nothing matches', () => {
+    resultsContext = { ...resultsContext, error: 'x', errorKind: 'noMatch' };
+    render(<HomePage />);
+    const alert = within(screen.getByRole('alert'));
+
+    expect(alert.getByText('home.errors.noMatch')).toBeInTheDocument();
+    fireEvent.click(alert.getByRole('button', { name: 'filters.reset' }));
+    expect(resetFilters).toHaveBeenCalledTimes(1);
+    fireEvent.click(alert.getByRole('button', { name: 'filters.open' }));
+    expect(screen.getByRole('dialog')).toHaveAttribute('open');
+  });
+
+  it('offers Retry on network errors', () => {
+    resultsContext = { ...resultsContext, error: 'x', errorKind: 'network' };
+    render(<HomePage />);
+
+    fireEvent.click(
+      within(screen.getByRole('alert')).getByRole('button', { name: 'common.retry' })
+    );
+    expect(generateRandomMedia).toHaveBeenCalledTimes(1);
   });
 });

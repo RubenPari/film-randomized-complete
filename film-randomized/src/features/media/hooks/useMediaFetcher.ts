@@ -20,6 +20,7 @@ import {
 } from '../../../shared/services/recommendationFeedbackStore.js';
 import { getAiExplanation } from '../../../shared/services/recommendationApi.js';
 import { fetchGenres } from '../../../shared/services/tmdbApi.js';
+import { NoContentError, TmdbError } from '../../../shared/types/index.js';
 import type {
   MediaFeedbackReason,
   MediaFeedbackValue,
@@ -32,6 +33,21 @@ import type {
   MediaItem,
 } from '../../../shared/types/index.js';
 
+export type GenerationErrorKind = 'noMatch' | 'network' | 'generic';
+
+export function classifyGenerationError(err: unknown): GenerationErrorKind {
+  if (err instanceof NoContentError || (err instanceof TmdbError && err.status === 404)) {
+    return 'noMatch';
+  }
+  if (
+    err instanceof TypeError ||
+    (err instanceof Error && 'status' in err && Number(err.status) >= 500)
+  ) {
+    return 'network';
+  }
+  return 'generic';
+}
+
 export interface UseMediaFetcherReturn {
   randomMedia: TmdbMedia | null;
   generatedMediaType: MediaType | null;
@@ -41,6 +57,7 @@ export interface UseMediaFetcherReturn {
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
   error: string | null;
+  errorKind: GenerationErrorKind | null;
   generateRandomMedia: (filters: MediaFilters, mediaType: MediaType) => Promise<void>;
   submitMediaFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
   markSeen: (() => void) | undefined;
@@ -70,6 +87,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
     useState<MediaFeedbackValue | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [errorKind, setErrorKind] = useState<GenerationErrorKind | null>(null);
   const [seenKey, setSeenKey] = useState<string | null>(null);
   const sessionShown = useRef<MediaItem[]>([]);
 
@@ -106,6 +124,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
     async (filters: MediaFilters, mediaType: MediaType) => {
       setIsLoading(true);
       setError(null);
+      setErrorKind(null);
 
       try {
         const feedbackHistory = loadRecommendationFeedback(user?.id);
@@ -185,6 +204,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
         );
       } catch (err) {
         logger.error('useMediaFetcher.generate', err instanceof Error ? err.message : err);
+        setErrorKind(classifyGenerationError(err));
         setError(
           (err instanceof Error ? err.message : null) ||
             'An error occurred. Please try again later.'
@@ -205,6 +225,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
     currentMediaFeedbackValue,
     isLoading,
     error,
+    errorKind,
     generateRandomMedia,
     submitMediaFeedback,
     markSeen: token ? markSeen : undefined,

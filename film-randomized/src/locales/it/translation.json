@@ -17,7 +17,8 @@
     "all": "Tutti",
     "movies": "Film",
     "tvShows": "Serie TV",
-    "cast": "Cast"
+    "cast": "Cast",
+    "retry": "Riprova"
   },
   "navigation": {
     "primary": "Navigazione principale",
@@ -49,7 +50,12 @@
     "generating": "Ricerca nella libreria...",
     "emptyTitle": "Lo schermo è pronto",
     "emptyDescription": "Regola i filtri o lasciali aperti, poi avvia la pellicola per un solo consiglio.",
-    "resultStage": "Consiglio"
+    "resultStage": "Consiglio",
+    "errors": {
+      "noMatch": "Nessun titolo corrisponde ai filtri. Allargali o azzerali.",
+      "network": "Problema di connessione. Controlla la rete e riprova.",
+      "generic": "Impossibile scegliere un titolo. Riprova."
+    }
   },
   "notFound": {
     "title": "Pagina non trovata",
@@ -203,7 +209,8 @@
     "loading": "Ricerca di titoli simili...",
     "empty": "Nessun titolo simile trovato",
     "error": "Si è verificato un errore durante il caricamento dei titoli simili",
-    "action": "Vedi titoli simili"
+    "action": "Vedi titoli simili",
+    "invalid": "Il link a questo titolo non è valido."
   },
   "person": {
     "eyebrow": "Cast & Crew",

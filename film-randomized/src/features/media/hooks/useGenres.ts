@@ -7,6 +7,7 @@ export interface UseGenresReturn {
   genres: Genre[];
   error: string | null;
   isLoading: boolean;
+  reload: () => void;
 }
 
 /**
@@ -16,11 +17,14 @@ export function useGenres(): UseGenresReturn {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
 
     const loadGenres = async () => {
+      setError(null);
+      setIsLoading(true);
       try {
         const data = await fetchGenres();
         if (isMounted) {
@@ -43,7 +47,7 @@ export function useGenres(): UseGenresReturn {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [attempt]);
 
-  return { genres, error, isLoading };
+  return { genres, error, isLoading, reload: () => setAttempt((n) => n + 1) };
 }

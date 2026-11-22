@@ -8,6 +8,7 @@ interface GenreFilterProps {
   handleGenreToggle: (genreId: number) => void;
   isLoading: boolean;
   error: string | null;
+  onRetry?: () => void;
 }
 
 function GenreFilter({
@@ -16,6 +17,7 @@ function GenreFilter({
   handleGenreToggle,
   isLoading,
   error,
+  onRetry,
 }: GenreFilterProps) {
   const { t } = useTranslation();
 
@@ -37,9 +39,14 @@ function GenreFilter({
         </div>
       )}
       {!isLoading && error && (
-        <p className="border border-danger bg-surface p-3 text-sm text-danger" role="alert">
-          {t('filters.genreError')}
-        </p>
+        <div className="border border-danger bg-surface p-3 text-sm text-danger" role="alert">
+          <p>{t('filters.genreError')}</p>
+          {onRetry && (
+            <button type="button" onClick={onRetry} className="ui-button ui-button--secondary mt-3">
+              {t('common.retry')}
+            </button>
+          )}
+        </div>
       )}
       {!isLoading && !error && (
         <div className="grid max-h-80 grid-cols-1 gap-2 overflow-y-auto pr-1 sm:grid-cols-2">
