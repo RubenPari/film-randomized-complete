@@ -1,4 +1,5 @@
 import { useState, type FormEvent, type JSX } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../shared/context/AuthContext.jsx';
 import { MIN_PASSWORD_LENGTH, validatePasswordForm } from '../shared/utils/passwordValidation.js';
@@ -7,6 +8,7 @@ import AuthTextField from '../shared/components/AuthTextField.jsx';
 import AuthSuccessAlert from '../shared/components/AuthSuccessAlert.jsx';
 import AuthSubmitButton from '../shared/components/AuthSubmitButton.jsx';
 import AppIcon from '../shared/components/AppIcon.jsx';
+import LanguageSwitcher from '../shared/components/LanguageSwitcher.jsx';
 import { useAuthFormFeedback } from '../shared/hooks/useAuthFormFeedback.js';
 
 function ChangePasswordPage(): JSX.Element {
@@ -17,7 +19,8 @@ function ChangePasswordPage(): JSX.Element {
   const { error, success, isLoading, setError, setSuccess, clearMessages, runWithLoading } =
     useAuthFormFeedback();
 
-  const { changePassword, user } = useAuth();
+  const { changePassword, logout, user } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -120,6 +123,22 @@ function ChangePasswordPage(): JSX.Element {
             pendingLabel={t('changePassword.updating')}
           />
         </form>
+      </section>
+
+      {/* Desktop has these in the sidebar; mobile only reaches them here. */}
+      <section className="ui-panel mt-6 flex max-w-xl flex-wrap items-center justify-between gap-4 p-5 lg:hidden">
+        <LanguageSwitcher />
+        <button
+          type="button"
+          onClick={() => {
+            logout();
+            navigate('/login');
+          }}
+          className="ui-button ui-button--secondary"
+        >
+          <AppIcon name="logout" />
+          {t('common.logout')}
+        </button>
       </section>
     </div>
   );
