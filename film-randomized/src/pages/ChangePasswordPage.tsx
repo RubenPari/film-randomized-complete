@@ -51,20 +51,20 @@ function ChangePasswordPage(): JSX.Element {
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
       <header>
-        <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-film-blue">
+        <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-accent">
           {t('navigation.profile')}
         </p>
         <h1 className="mt-2 font-display text-5xl font-bold uppercase leading-none sm:text-6xl">
           {t('changePassword.title')}
         </h1>
-        <p className="mt-3 text-sm text-film-ink/65">
+        <p className="mt-3 text-sm text-fg/65">
           {t('changePassword.description', { email: user?.email ?? '-' })}
         </p>
       </header>
 
       <section className="ui-panel mt-8 max-w-xl p-5 sm:p-7">
-        <div className="flex items-center gap-3 border-b-2 border-film-ink pb-5">
-          <span className="flex size-12 items-center justify-center bg-film-yellow">
+        <div className="flex items-center gap-3 border-b border-line pb-5">
+          <span className="flex size-12 items-center justify-center rounded-xl bg-accent text-on-accent">
             <AppIcon name="profile" />
           </span>
           <div className="min-w-0">
@@ -76,7 +76,7 @@ function ChangePasswordPage(): JSX.Element {
         </div>
 
         {error && (
-          <p className="mt-5 border-2 border-danger bg-white p-4 text-sm text-danger" role="alert">
+          <p className="mt-5 border border-danger bg-surface p-4 text-sm text-danger" role="alert">
             {error}
           </p>
         )}
