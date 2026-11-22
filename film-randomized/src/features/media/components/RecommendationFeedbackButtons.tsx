@@ -6,6 +6,8 @@ import type { MediaFeedbackReason, MediaFeedbackValue } from '../../../shared/ty
 interface RecommendationFeedbackButtonsProps {
   currentValue: MediaFeedbackValue | null;
   onFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
+  onSeen?: () => void;
+  isSeen?: boolean;
 }
 
 const DISLIKE_REASONS: MediaFeedbackReason[] = [
@@ -19,6 +21,8 @@ const DISLIKE_REASONS: MediaFeedbackReason[] = [
 function RecommendationFeedbackButtons({
   currentValue,
   onFeedback,
+  onSeen,
+  isSeen = false,
 }: RecommendationFeedbackButtonsProps) {
   const { t } = useTranslation();
   const [showDislikeReasons, setShowDislikeReasons] = useState(currentValue === 'dislike');
@@ -43,7 +47,10 @@ function RecommendationFeedbackButtons({
         </button>
         <button
           type="button"
-          onClick={() => setShowDislikeReasons(true)}
+          onClick={() => {
+            setShowDislikeReasons(true);
+            onFeedback('dislike');
+          }}
           aria-pressed={currentValue === 'dislike'}
           className={`ui-button ${currentValue === 'dislike' ? 'bg-film-coral text-on-accent' : 'ui-button--quiet'}`}
         >
@@ -51,6 +58,21 @@ function RecommendationFeedbackButtons({
           {t('recommendation.dislike')}
         </button>
       </div>
+      {onSeen && (
+        <>
+          <button
+            type="button"
+            onClick={onSeen}
+            disabled={isSeen}
+            aria-pressed={isSeen}
+            className="ui-button ui-button--secondary mt-2 w-full"
+          >
+            <AppIcon name="check" />
+            {isSeen ? t('recommendation.seenDone') : t('recommendation.seen')}
+          </button>
+          <p className="mt-2 text-xs text-fg/70">{t('recommendation.seenHint')}</p>
+        </>
+      )}
       {showDislikeReasons && (
         <div className="mt-3 border-l-4 border-film-coral pl-3">
           <p className="mb-2 text-sm font-semibold">{t('recommendation.reasonPrompt')}</p>

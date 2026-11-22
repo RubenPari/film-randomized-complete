@@ -7,12 +7,12 @@ vi.mock('react-i18next', () => ({
 }));
 
 describe('RecommendationFeedbackButtons', () => {
-  it('submits like immediately but waits for a dislike reason', () => {
+  it('submits like and dislike immediately, then an optional dislike reason', () => {
     const onFeedback = vi.fn();
     render(<RecommendationFeedbackButtons currentValue={null} onFeedback={onFeedback} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'recommendation.dislike' }));
-    expect(onFeedback).not.toHaveBeenCalled();
+    expect(onFeedback).toHaveBeenCalledWith('dislike');
     expect(
       screen.getByRole('button', { name: 'recommendation.reason.not_in_mood' })
     ).toBeInTheDocument();

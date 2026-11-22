@@ -24,6 +24,8 @@ interface MediaCardProps {
   cast?: MediaCredit[];
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   onFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
+  onSeen?: () => void;
+  isSeen?: boolean;
 }
 
 /**
@@ -39,6 +41,8 @@ function MediaCard({
   cast = [],
   currentMediaFeedbackValue,
   onFeedback,
+  onSeen,
+  isSeen = false,
 }: MediaCardProps) {
   const { t } = useTranslation();
   const [showTrailer, setShowTrailer] = useState(false);
@@ -76,6 +80,8 @@ function MediaCard({
             cast={cast}
             currentFeedbackValue={currentMediaFeedbackValue}
             onFeedback={onFeedback}
+            onSeen={onSeen}
+            isSeen={isSeen}
           >
             <div className="mt-4 flex flex-wrap items-center gap-2">
               <Link
