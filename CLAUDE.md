@@ -93,3 +93,13 @@ Optional:
 - `.github/workflows/ci.yml` runs tests/builds on PRs and pushes to `main` (no deploy).
 - Runtime config (secrets `jwt-secret`, `database-url`) lives on the Cloud Run service / Secret Manager, set once by `scripts/gcp-bootstrap.sh`. GitHub needs secret `VITE_TMDB_API_KEY` and vars `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_WIF_PROVIDER`, `GCP_DEPLOY_SA` (keyless auth via Workload Identity Federation).
 - Migrations run on container start (`film-randomized-back/docker-entrypoint.sh`); health check `GET /api/health`.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues on `RubenPari/film-randomized-complete` (via `gh`). See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` + `docs/adr/`. See `docs/agents/domain.md`.
