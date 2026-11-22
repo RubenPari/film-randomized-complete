@@ -55,7 +55,8 @@
       "noMatch": "No title matches these filters. Loosen them or reset.",
       "network": "Connection problem. Check your network and try again.",
       "generic": "Could not pick a title. Try again."
-    }
+    },
+    "cancel": "Cancel"
   },
   "notFound": {
     "title": "Page not found",
@@ -165,7 +166,8 @@
       "already_seen": "Already seen",
       "too_long": "Too long",
       "too_slow": "Too slow"
-    }
+    },
+    "aiLoading": "Writing why this fits you..."
   },
   "auth": {
     "brandEyebrow": "One title. No endless scrolling.",

@@ -18,6 +18,8 @@ function HomePage(): JSX.Element {
     randomMedia,
     recommendationExplanationKeys,
     aiExplanation,
+    isAiPending,
+    cancelGeneration,
     cast,
     currentMediaFeedbackValue,
     isGenerating,
@@ -74,6 +76,7 @@ function HomePage(): JSX.Element {
               mediaType={generatedMediaType}
               recommendationExplanationKeys={recommendationExplanationKeys}
               aiExplanation={aiExplanation}
+              isAiPending={isAiPending}
               cast={cast}
               currentMediaFeedbackValue={currentMediaFeedbackValue}
               onFeedback={submitMediaFeedback}
@@ -135,11 +138,18 @@ function HomePage(): JSX.Element {
             </div>
           </div>
         )}
-        <GenerateButton
-          isLoading={isGenerating}
-          onGenerate={generateRandomMedia}
-          className="ml-auto"
-        />
+        <div className="ml-auto flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          {isGenerating && (
+            <button
+              type="button"
+              onClick={cancelGeneration}
+              className="ui-button ui-button--secondary"
+            >
+              {t('home.cancel')}
+            </button>
+          )}
+          <GenerateButton isLoading={isGenerating} onGenerate={generateRandomMedia} />
+        </div>
       </section>
 
       <FilterDrawer open={filtersOpen} onClose={() => setFiltersOpen(false)} />

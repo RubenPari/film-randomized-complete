@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMediaFetcher } from './useMediaFetcher.js';
+import { getAiExplanation } from '../../../shared/services/recommendationApi.js';
 import { recordDiscovered } from '../../../shared/services/discoveredApi.js';
 import { buildFeedbackRecord } from '../../../shared/services/recommendationFeedbackStore.js';
 import { pickRandomValidMedia } from '../../../shared/utils/pickRandomValidMedia.js';
@@ -19,9 +20,14 @@ vi.mock('./useMediaExclusionList.js', () => ({
 
 vi.mock('../../../shared/services/tmdbApi.js', () => ({
   discoverMedia: vi.fn().mockResolvedValue({ discoverUrl: '/discover', totalPages: 1 }),
+  fetchGenres: vi.fn().mockResolvedValue([]),
   fetchMediaPage: vi.fn(),
   fetchMediaDetails: vi.fn(),
   fetchMediaCredits: vi.fn().mockResolvedValue({ id: 0, cast: [], crew: [] }),
+}));
+
+vi.mock('../../../shared/services/recommendationApi.js', () => ({
+  getAiExplanation: vi.fn(),
 }));
 
 vi.mock('../../../shared/services/discoveredApi.js', () => ({
@@ -120,5 +126,75 @@ describe('useMediaFetcher generated media type', () => {
     vi.mocked(buildFeedbackRecord).mockReturnValue({ media_type: 'movie' } as never);
     act(() => result.current.submitMediaFeedback('dislike'));
     expect(recordDiscovered).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows the card before the AI explanation, then fills it in', async () => {
+    token = 'tok';
+    let resolveAi!: (v: { explanation: string }) => void;
+    vi.mocked(getAiExplanation).mockReturnValue(
+      new Promise((r) => {
+        resolveAi = r as typeof resolveAi;
+      }) as never
+    );
+    vi.mocked(pickRandomValidMedia).mockResolvedValue({
+      media: { id: 5, title: 'M' },
+      explanationKeys: [],
+    });
+    const { result } = renderHook(() => useMediaFetcher());
+
+    await act(() => result.current.generateRandomMedia(FILTERS, 'movie'));
+    expect(result.current.randomMedia?.id).toBe(5);
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.isAiPending).toBe(true);
+    expect(result.current.aiExplanation).toBeNull();
+
+    await act(async () => resolveAi({ explanation: 'because' }));
+    expect(result.current.aiExplanation).toBe('because');
+    expect(result.current.isAiPending).toBe(false);
+  });
+
+  it('stays silent when the AI explanation fails', async () => {
+    token = 'tok';
+    vi.mocked(getAiExplanation).mockRejectedValue(new Error('ai down'));
+    vi.mocked(pickRandomValidMedia).mockResolvedValue({
+      media: { id: 5, title: 'M' },
+      explanationKeys: [],
+    });
+    const { result } = renderHook(() => useMediaFetcher());
+
+    await act(() => result.current.generateRandomMedia(FILTERS, 'movie'));
+    await act(async () => undefined);
+    expect(result.current.aiExplanation).toBeNull();
+    expect(result.current.isAiPending).toBe(false);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('cancel keeps the previous card and ignores the late result', async () => {
+    let resolvePick!: (v: unknown) => void;
+    vi.mocked(pickRandomValidMedia)
+      .mockResolvedValueOnce({ media: { id: 1, title: 'A' }, explanationKeys: [] })
+      .mockReturnValueOnce(
+        new Promise((r) => {
+          resolvePick = r;
+        }) as never
+      );
+    const { result } = renderHook(() => useMediaFetcher());
+    await act(() => result.current.generateRandomMedia(FILTERS, 'movie'));
+
+    let pending!: Promise<void>;
+    act(() => {
+      pending = result.current.generateRandomMedia(FILTERS, 'movie');
+    });
+    expect(result.current.isLoading).toBe(true);
+
+    act(() => result.current.cancelGeneration());
+    expect(result.current.isLoading).toBe(false);
+
+    await act(async () => {
+      resolvePick({ media: { id: 2, title: 'B' }, explanationKeys: [] });
+      await pending;
+    });
+    expect(result.current.randomMedia?.id).toBe(1);
+    expect(result.current.error).toBeNull();
   });
 });

@@ -21,6 +21,7 @@ interface MediaCardProps {
   mediaType: MediaType;
   recommendationExplanationKeys: string[];
   aiExplanation?: string | null;
+  isAiPending?: boolean;
   cast?: MediaCredit[];
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   onFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
@@ -38,6 +39,7 @@ function MediaCard({
   mediaType,
   recommendationExplanationKeys,
   aiExplanation = null,
+  isAiPending = false,
   cast = [],
   currentMediaFeedbackValue,
   onFeedback,
@@ -77,6 +79,7 @@ function MediaCard({
             overview={media.overview}
             recommendationExplanationKeys={recommendationExplanationKeys}
             aiExplanation={aiExplanation}
+            isAiPending={isAiPending}
             cast={cast}
             currentFeedbackValue={currentMediaFeedbackValue}
             onFeedback={onFeedback}

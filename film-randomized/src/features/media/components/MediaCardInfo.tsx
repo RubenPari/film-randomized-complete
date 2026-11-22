@@ -19,6 +19,7 @@ interface MediaCardInfoProps {
   overview?: string;
   recommendationExplanationKeys?: string[];
   aiExplanation?: string | null;
+  isAiPending?: boolean;
   cast?: MediaCredit[];
   currentFeedbackValue?: MediaFeedbackValue | null;
   onFeedback?: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
@@ -35,6 +36,7 @@ function MediaCardInfo({
   overview,
   recommendationExplanationKeys = [],
   aiExplanation = null,
+  isAiPending = false,
   cast = [],
   currentFeedbackValue = null,
   onFeedback,
@@ -118,6 +120,15 @@ function MediaCardInfo({
           </h3>
           <p className="mt-2 text-sm leading-6 text-fg/85">{aiExplanation}</p>
         </section>
+      )}
+
+      {!aiExplanation && isAiPending && (
+        <p
+          className="mt-6 animate-pulse border border-accent/30 bg-accent/10 p-4 text-sm text-fg/70"
+          role="status"
+        >
+          {t('recommendation.aiLoading')}
+        </p>
       )}
 
       {!aiExplanation && recommendationExplanationKeys.length > 0 && (
