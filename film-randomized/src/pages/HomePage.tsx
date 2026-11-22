@@ -152,7 +152,14 @@ function HomePage(): JSX.Element {
         </div>
       </section>
 
-      <FilterDrawer open={filtersOpen} onClose={() => setFiltersOpen(false)} />
+      <FilterDrawer
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        onApply={() => {
+          setFiltersOpen(false);
+          generateRandomMedia();
+        }}
+      />
     </div>
   );
 }

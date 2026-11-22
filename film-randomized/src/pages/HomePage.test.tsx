@@ -132,6 +132,32 @@ describe('HomePage', () => {
     expect(screen.getByRole('dialog', { hidden: true })).not.toHaveAttribute('open');
   });
 
+  it('Apply and generate closes the drawer and generates', () => {
+    render(<HomePage />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'filters.open' }));
+    fireEvent.click(screen.getByRole('button', { name: 'filters.apply' }));
+    expect(generateRandomMedia).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('dialog', { hidden: true })).not.toHaveAttribute('open');
+  });
+
+  it('removes a filter from its chip and keeps count equal to the chips', () => {
+    const setMinVoteCount = vi.fn();
+    filterContext = {
+      ...filterContext,
+      minRating: 6.5,
+      minVoteCount: 10000,
+      setMinVoteCount,
+    };
+    render(<HomePage />);
+
+    const removers = screen.getAllByRole('button', { name: 'filters.removeChip' });
+    expect(removers).toHaveLength(2);
+    expect(screen.getByLabelText('filters.activeCount:2')).toHaveTextContent('2');
+    fireEvent.click(removers[1]);
+    expect(setMinVoteCount).toHaveBeenCalledWith(0);
+  });
+
   it('shows Cancel only while generating and calls cancelGeneration', () => {
     const view = render(<HomePage />);
     expect(screen.queryByRole('button', { name: 'home.cancel' })).toBeNull();

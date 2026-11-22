@@ -6,9 +6,10 @@ import FilterPanel from './FilterPanel.jsx';
 interface FilterDrawerProps {
   open: boolean;
   onClose: () => void;
+  onApply: () => void;
 }
 
-const FilterDrawer = ({ open, onClose }: FilterDrawerProps) => {
+const FilterDrawer = ({ open, onClose, onApply }: FilterDrawerProps) => {
   const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
@@ -66,6 +67,11 @@ const FilterDrawer = ({ open, onClose }: FilterDrawerProps) => {
         <div className="min-h-0 flex-1 overflow-y-auto">
           <FilterPanel />
         </div>
+        <footer className="safe-area-bottom border-t border-line bg-canvas p-4">
+          <button type="button" onClick={onApply} className="ui-button ui-button--primary w-full">
+            {t('filters.apply')}
+          </button>
+        </footer>
       </div>
     </dialog>
   );

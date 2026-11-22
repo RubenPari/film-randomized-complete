@@ -7,6 +7,7 @@ import {
   checkInWatchlist,
   removeFromWatchlist,
 } from '../../../shared/services/watchlistApi.js';
+import { useToast } from '../../../shared/components/Toast.jsx';
 import { logger } from '../../../shared/utils/logger.js';
 import type { MediaType, TmdbMedia } from '../../../shared/types/index.js';
 
@@ -20,7 +21,7 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
   const { token } = useAuth();
   const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const showToast = useToast();
 
   useEffect(() => {
     if (!token) return;
@@ -40,7 +41,6 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
     if (!token) return;
 
     setIsLoading(true);
-    setError(null);
     try {
       if (isInWatchlist) {
         await removeFromWatchlist(media.id as number, token);
@@ -48,9 +48,16 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
       } else {
         await addToWatchlist(media, mediaType, token);
         setIsInWatchlist(true);
+        showToast({
+          message: t('media.savedToast'),
+          link: { to: '/watchlist', label: t('common.watchlist') },
+        });
       }
     } catch (mutationError) {
-      setError(t(isInWatchlist ? 'media.removeError' : 'media.saveError'));
+      showToast({
+        message: t(isInWatchlist ? 'media.removeError' : 'media.saveError'),
+        tone: 'danger',
+      });
       logger.error('SaveButtons.toggleWatchlist', mutationError);
     } finally {
       setIsLoading(false);
@@ -83,11 +90,6 @@ function SaveButtons({ media, mediaType }: SaveButtonsProps) {
       <span className="sr-only" role="status" aria-live="polite">
         {statusLabel}
       </span>
-      {error && (
-        <p className="mt-3 border border-danger bg-surface p-3 text-sm text-danger" role="alert">
-          {error}
-        </p>
-      )}
     </div>
   );
 }

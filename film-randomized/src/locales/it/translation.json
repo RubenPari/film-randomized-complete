@@ -63,7 +63,12 @@
     "description": "La pagina che cerchi non esiste o è stata spostata.",
     "goHome": "Torna alla home"
   },
+  "toast": {
+    "dismiss": "Chiudi"
+  },
   "filters": {
+    "apply": "Applica e genera",
+    "removeChip": "Rimuovi filtro: {{filter}}",
     "title": "Filtri di scoperta",
     "open": "Apri filtri",
     "close": "Chiudi filtri",
@@ -142,6 +147,7 @@
     "save": "Salva nella watchlist",
     "saved": "Salvato nella watchlist",
     "remove": "Rimuovi dalla watchlist",
+    "savedToast": "Salvato nella tua Watchlist",
     "saveError": "Impossibile salvare il titolo.",
     "removeError": "Impossibile rimuovere il titolo.",
     "overview": "Trama",
@@ -159,6 +165,8 @@
     "feedbackPrompt": "Migliora i prossimi suggerimenti",
     "like": "Continua su questa linea",
     "dislike": "Non fa per me",
+    "dislikeToast": "Ok, affineremo i prossimi suggerimenti",
+    "reasonOptional": "(facoltativo)",
     "reasonPrompt": "Cosa non ha funzionato?",
     "reason": {
       "not_in_mood": "Non sono nel mood",
