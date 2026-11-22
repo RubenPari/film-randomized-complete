@@ -63,7 +63,12 @@
     "description": "The page you are looking for does not exist or has been moved.",
     "goHome": "Back to home"
   },
+  "toast": {
+    "dismiss": "Dismiss"
+  },
   "filters": {
+    "apply": "Apply and generate",
+    "removeChip": "Remove filter: {{filter}}",
     "title": "Discovery filters",
     "open": "Open filters",
     "close": "Close filters",
@@ -142,6 +147,7 @@
     "save": "Save to watchlist",
     "saved": "Saved to watchlist",
     "remove": "Remove from watchlist",
+    "savedToast": "Saved to your Watchlist",
     "saveError": "The title could not be saved.",
     "removeError": "The title could not be removed.",
     "overview": "Overview",
@@ -159,6 +165,8 @@
     "feedbackPrompt": "Improve your next recommendations",
     "like": "Keep this vibe",
     "dislike": "Not for me",
+    "dislikeToast": "Got it, we'll tune your next picks",
+    "reasonOptional": "(optional)",
     "reasonPrompt": "What missed the mark?",
     "reason": {
       "not_in_mood": "Not in the mood",

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '../../../shared/components/Toast.jsx';
 import AppIcon from '../../../shared/components/AppIcon.jsx';
 import type { MediaFeedbackReason, MediaFeedbackValue } from '../../../shared/types/index.js';
 
@@ -25,7 +26,9 @@ function RecommendationFeedbackButtons({
   isSeen = false,
 }: RecommendationFeedbackButtonsProps) {
   const { t } = useTranslation();
+  const showToast = useToast();
   const [showDislikeReasons, setShowDislikeReasons] = useState(currentValue === 'dislike');
+  const [reason, setReason] = useState<MediaFeedbackReason | null>(null);
 
   return (
     <section className="mt-5 border-t border-line pt-5">
@@ -37,6 +40,7 @@ function RecommendationFeedbackButtons({
           type="button"
           onClick={() => {
             setShowDislikeReasons(false);
+            setReason(null);
             onFeedback('like');
           }}
           aria-pressed={currentValue === 'like'}
@@ -50,6 +54,7 @@ function RecommendationFeedbackButtons({
           onClick={() => {
             setShowDislikeReasons(true);
             onFeedback('dislike');
+            showToast({ message: t('recommendation.dislikeToast') });
           }}
           aria-pressed={currentValue === 'dislike'}
           className={`ui-button ${currentValue === 'dislike' ? 'bg-film-coral text-on-accent' : 'ui-button--quiet'}`}
@@ -75,16 +80,25 @@ function RecommendationFeedbackButtons({
       )}
       {showDislikeReasons && (
         <div className="mt-3 border-l-4 border-film-coral pl-3">
-          <p className="mb-2 text-sm font-semibold">{t('recommendation.reasonPrompt')}</p>
+          <p className="mb-2 text-sm font-semibold">
+            {t('recommendation.reasonPrompt')}{' '}
+            <span className="font-normal text-fg/70">{t('recommendation.reasonOptional')}</span>
+          </p>
           <div className="flex flex-wrap gap-2">
-            {DISLIKE_REASONS.map((reason) => (
+            {DISLIKE_REASONS.map((r) => (
               <button
-                key={reason}
+                key={r}
                 type="button"
-                onClick={() => onFeedback('dislike', reason)}
-                className="ui-chip hover:bg-film-coral hover:text-on-accent"
+                onClick={() => {
+                  setReason(r);
+                  onFeedback('dislike', r);
+                }}
+                aria-pressed={reason ? reason === r : undefined}
+                className={`ui-chip hover:bg-film-coral hover:text-on-accent ${
+                  reason === r ? 'bg-film-coral text-on-accent' : ''
+                }`}
               >
-                {t(`recommendation.reason.${reason}`)}
+                {t(`recommendation.reason.${r}`)}
               </button>
             ))}
           </div>

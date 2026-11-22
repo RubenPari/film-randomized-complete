@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import LanguageSwitcher from './LanguageSwitcher.jsx';
 import AppIcon, { type AppIconName } from './AppIcon.jsx';
+import { ToastProvider } from './Toast.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 const APP_DESTINATIONS: readonly {
@@ -66,63 +67,65 @@ function MainAppLayout() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-canvas text-fg">
-        <a
-          href="#main-content"
-          className="fixed left-4 top-3 z-[70] -translate-y-24 bg-accent px-4 py-2 font-bold focus:translate-y-0"
-        >
-          {t('shell.skipToContent')}
-        </a>
-
-        <aside className="fixed inset-y-0 left-0 z-40 hidden w-[216px] flex-col border-r border-line bg-canvas p-5 lg:flex">
-          <Brand />
-          <nav className="mt-12 flex flex-col gap-2" aria-label={t('navigation.primary')}>
-            <NavItems />
-          </nav>
-          <div className="mt-auto border-t border-line pt-5">
-            <LanguageSwitcher />
-            <div className="mt-5 min-w-0">
-              <p className="truncate text-sm font-bold">{user?.username}</p>
-              <p className="truncate font-mono text-[0.65rem] text-fg/65">{user?.email}</p>
-            </div>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="ui-button ui-button--quiet mt-4 w-full justify-start"
-            >
-              <AppIcon name="logout" />
-              {t('common.logout')}
-            </button>
-          </div>
-        </aside>
-
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-line bg-canvas px-4 lg:hidden">
-          <Brand />
-          <NavLink
-            to="/profile"
-            className="flex min-w-0 items-center gap-2 font-bold"
-            aria-label={t('navigation.profile')}
+      <ToastProvider>
+        <div className="min-h-screen bg-canvas text-fg">
+          <a
+            href="#main-content"
+            className="fixed left-4 top-3 z-[70] -translate-y-24 bg-accent px-4 py-2 font-bold focus:translate-y-0"
           >
-            <span className="hidden max-w-32 truncate text-sm min-[390px]:block">
-              {user?.username}
-            </span>
-            <span className="ui-icon-button">
-              <AppIcon name="profile" />
-            </span>
-          </NavLink>
-        </header>
+            {t('shell.skipToContent')}
+          </a>
 
-        <main id="main-content" className="pb-safe-tabs min-h-screen lg:ml-[216px] lg:pb-0">
-          <Outlet />
-        </main>
+          <aside className="fixed inset-y-0 left-0 z-40 hidden w-[216px] flex-col border-r border-line bg-canvas p-5 lg:flex">
+            <Brand />
+            <nav className="mt-12 flex flex-col gap-2" aria-label={t('navigation.primary')}>
+              <NavItems />
+            </nav>
+            <div className="mt-auto border-t border-line pt-5">
+              <LanguageSwitcher />
+              <div className="mt-5 min-w-0">
+                <p className="truncate text-sm font-bold">{user?.username}</p>
+                <p className="truncate font-mono text-[0.65rem] text-fg/65">{user?.email}</p>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="ui-button ui-button--quiet mt-4 w-full justify-start"
+              >
+                <AppIcon name="logout" />
+                {t('common.logout')}
+              </button>
+            </div>
+          </aside>
 
-        <nav
-          className="safe-area-bottom fixed inset-x-0 bottom-0 z-50 flex h-[calc(4.5rem+env(safe-area-inset-bottom))] border-t border-line bg-canvas lg:hidden"
-          aria-label={t('navigation.primary')}
-        >
-          <NavItems mobile />
-        </nav>
-      </div>
+          <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-line bg-canvas px-4 lg:hidden">
+            <Brand />
+            <NavLink
+              to="/profile"
+              className="flex min-w-0 items-center gap-2 font-bold"
+              aria-label={t('navigation.profile')}
+            >
+              <span className="hidden max-w-32 truncate text-sm min-[390px]:block">
+                {user?.username}
+              </span>
+              <span className="ui-icon-button">
+                <AppIcon name="profile" />
+              </span>
+            </NavLink>
+          </header>
+
+          <main id="main-content" className="pb-safe-tabs min-h-screen lg:ml-[216px] lg:pb-0">
+            <Outlet />
+          </main>
+
+          <nav
+            className="safe-area-bottom fixed inset-x-0 bottom-0 z-50 flex h-[calc(4.5rem+env(safe-area-inset-bottom))] border-t border-line bg-canvas lg:hidden"
+            aria-label={t('navigation.primary')}
+          >
+            <NavItems mobile />
+          </nav>
+        </div>
+      </ToastProvider>
     </ProtectedRoute>
   );
 }
