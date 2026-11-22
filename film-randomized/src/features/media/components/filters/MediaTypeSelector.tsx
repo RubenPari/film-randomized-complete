@@ -21,10 +21,10 @@ function MediaTypeSelector({ mediaType, setMediaType }: MediaTypeSelectorProps) 
             type="button"
             onClick={() => setMediaType(type)}
             aria-pressed={mediaType === type}
-            className={`min-h-11 border-2 border-film-ink px-3 py-2 text-sm font-bold ${
+            className={`min-h-11 rounded-xl border border-line px-3 py-2 text-sm font-bold ${
               mediaType === type
-                ? 'bg-film-blue text-white'
-                : 'bg-white text-film-ink hover:bg-film-yellow'
+                ? 'bg-accent text-on-accent'
+                : 'bg-surface text-fg hover:bg-surface-2'
             }`}
           >
             {type === 'movie' ? t('common.movies') : t('common.tvShows')}

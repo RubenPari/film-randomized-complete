@@ -12,15 +12,15 @@ function MediaCardPoster({ posterPath, title }: MediaCardPosterProps) {
   const sprockets = Array.from({ length: 8 }, (_, index) => index);
 
   return (
-    <div className="relative flex h-full min-h-80 bg-film-ink p-4 sm:p-5">
+    <div className="relative flex h-full min-h-80 bg-black p-4 sm:p-5">
       <div className="absolute inset-y-3 left-1.5 flex flex-col justify-around" aria-hidden="true">
         {sprockets.map((index) => (
-          <span key={index} className="block h-4 w-2 bg-film-yellow" />
+          <span key={index} className="block h-4 w-2 rounded-sm bg-fg/25" />
         ))}
       </div>
       <div className="absolute inset-y-3 right-1.5 flex flex-col justify-around" aria-hidden="true">
         {sprockets.map((index) => (
-          <span key={index} className="block h-4 w-2 bg-film-yellow" />
+          <span key={index} className="block h-4 w-2 rounded-sm bg-fg/25" />
         ))}
       </div>
       {posterPath ? (
@@ -30,7 +30,7 @@ function MediaCardPoster({ posterPath, title }: MediaCardPosterProps) {
           className="min-h-full w-full object-cover"
         />
       ) : (
-        <div className="flex min-h-96 w-full flex-col items-center justify-center bg-film-blue p-8 text-center text-white">
+        <div className="flex min-h-96 w-full flex-col items-center justify-center bg-surface-2 p-8 text-center text-fg">
           <AppIcon name="brand" size={64} />
           <span className="mt-4 font-mono text-xs font-semibold uppercase tracking-wider">
             {t('common.noImage')}

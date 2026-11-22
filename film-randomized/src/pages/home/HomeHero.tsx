@@ -12,13 +12,13 @@ function HomeHero({ mediaType }: Props): JSX.Element {
 
   return (
     <header className="max-w-3xl">
-      <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-film-blue">
+      <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-accent">
         {t('home.eyebrow')}
       </p>
       <h1 className="mt-2 font-display text-5xl font-bold uppercase leading-[0.9] sm:text-6xl">
         {t('home.title', { type: typeLabel })}
       </h1>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-film-ink/70">{t('home.description')}</p>
+      <p className="mt-4 max-w-2xl text-base leading-7 text-fg/70">{t('home.description')}</p>
     </header>
   );
 }

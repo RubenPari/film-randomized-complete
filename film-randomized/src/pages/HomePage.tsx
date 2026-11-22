@@ -56,12 +56,12 @@ function HomePage(): JSX.Element {
             role="status"
           >
             <span className="sr-only">{t('home.generating')}</span>
-            <div className="min-h-72 bg-film-ink/15 md:col-span-2" aria-hidden="true" />
+            <div className="min-h-72 bg-fg/15 md:col-span-2" aria-hidden="true" />
             <div className="space-y-5 p-7 md:col-span-3" aria-hidden="true">
-              <div className="h-12 w-4/5 bg-film-ink/15" />
-              <div className="h-7 w-2/5 bg-film-ink/15" />
-              <div className="h-24 w-full bg-film-ink/10" />
-              <div className="h-11 w-1/2 bg-film-ink/15" />
+              <div className="h-12 w-4/5 bg-fg/15" />
+              <div className="h-7 w-2/5 bg-fg/15" />
+              <div className="h-24 w-full bg-fg/10" />
+              <div className="h-11 w-1/2 bg-fg/15" />
             </div>
           </div>
         ) : randomMedia && generatedMediaType ? (
@@ -82,17 +82,17 @@ function HomePage(): JSX.Element {
             <h2 className="mt-6 font-display text-4xl font-bold uppercase">
               {t('home.emptyTitle')}
             </h2>
-            <p className="mt-3 max-w-md text-sm leading-6 text-film-ink/65">
+            <p className="mt-3 max-w-md text-sm leading-6 text-fg/65">
               {t('home.emptyDescription')}
             </p>
           </div>
         )}
       </section>
 
-      <section className="bottom-safe-tabs sticky z-20 -mx-4 border-y-2 border-film-ink bg-film-screen px-4 py-3 sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:flex lg:items-start lg:justify-between lg:gap-5 lg:border-0 lg:bg-transparent lg:p-0">
+      <section className="bottom-safe-tabs sticky z-20 -mx-4 border-y border-line bg-canvas px-4 py-3 sm:-mx-6 sm:px-6 lg:static lg:mx-0 lg:flex lg:items-start lg:justify-between lg:gap-5 lg:border-0 lg:bg-transparent lg:p-0">
         {error && (
           <div
-            className="mb-3 flex items-start gap-3 border-2 border-danger bg-white p-3 text-sm text-danger lg:mb-0 lg:max-w-2xl"
+            className="mb-3 flex items-start gap-3 border border-danger bg-surface p-3 text-sm text-danger lg:mb-0 lg:max-w-2xl"
             role="alert"
           >
             <AppIcon name="alert" className="mt-0.5 shrink-0" />

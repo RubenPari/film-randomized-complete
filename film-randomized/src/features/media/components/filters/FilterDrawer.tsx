@@ -42,13 +42,10 @@ const FilterDrawer = ({ open, onClose }: FilterDrawerProps) => {
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose();
       }}
-      className="fixed bottom-0 left-0 top-auto z-[60] m-0 h-[85dvh] max-h-none w-full max-w-none overflow-hidden border-0 border-t-2 border-film-ink bg-transparent p-0 shadow-[0_0_0_100vmax_rgba(21,19,60,0.45)] backdrop:bg-film-ink/45 md:bottom-0 md:left-auto md:right-0 md:top-0 md:h-dvh md:w-[420px] md:max-w-[420px] md:border-l-2 md:border-t-0"
+      className="fixed bottom-0 left-0 top-auto z-[60] m-0 h-[85dvh] max-h-none w-full max-w-none overflow-hidden border-0 border-t border-line bg-transparent p-0 shadow-xl shadow-black/40 backdrop:bg-black/70 md:bottom-0 md:left-auto md:right-0 md:top-0 md:h-dvh md:w-[420px] md:max-w-[420px] md:border-l md:border-t-0"
     >
-      <div
-        className="flex h-full flex-col bg-film-screen"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <header className="flex items-center justify-between border-b-2 border-film-ink px-5 py-4">
+      <div className="flex h-full flex-col bg-canvas" onClick={(event) => event.stopPropagation()}>
+        <header className="flex items-center justify-between border-b border-line px-5 py-4">
           <div>
             <p className="font-mono text-xs font-semibold uppercase tracking-wider">
               {t('home.eyebrow')}

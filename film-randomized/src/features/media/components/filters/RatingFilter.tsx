@@ -14,10 +14,10 @@ function RatingFilter({ minRating, maxRating, setMinRating, setMaxRating }: Rati
   return (
     <fieldset>
       <legend className="mb-3 flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider">
-        <AppIcon name="star" className="fill-film-yellow" />
+        <AppIcon name="star" className="fill-accent" />
         {t('filters.rating')}
       </legend>
-      <output className="mb-4 block border-2 border-film-ink bg-film-yellow px-3 py-2 text-center font-mono text-sm font-semibold">
+      <output className="mb-4 block border border-accent bg-accent px-3 py-2 text-center text-on-accent font-mono text-sm font-semibold">
         {minRating.toFixed(1)} — {maxRating.toFixed(1)}
       </output>
       <div className="space-y-5">

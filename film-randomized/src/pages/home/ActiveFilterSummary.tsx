@@ -26,7 +26,7 @@ const ActiveFilterSummary = () => {
       className="flex min-w-0 flex-1 flex-wrap items-center gap-2"
       aria-label={t('filters.applied')}
     >
-      <span className="ui-chip bg-film-yellow">
+      <span className="ui-chip bg-accent text-on-accent">
         {mediaType === 'movie' ? t('common.movies') : t('common.tvShows')}
       </span>
       {(minRating !== 0 || maxRating !== 10) && (
@@ -55,7 +55,7 @@ const ActiveFilterSummary = () => {
         </span>
       )}
       <span
-        className="inline-flex size-8 items-center justify-center rounded-full bg-film-coral font-mono text-xs font-semibold text-film-ink"
+        className="inline-flex size-8 items-center justify-center rounded-full bg-film-coral font-mono text-xs font-semibold text-fg"
         aria-label={t('filters.activeCount', { count: changedCategories })}
       >
         {changedCategories}

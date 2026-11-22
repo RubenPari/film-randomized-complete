@@ -31,10 +31,10 @@ function FilterPanel() {
 
   return (
     <div className="space-y-0">
-      <div className="border-b-2 border-film-ink p-5">
+      <div className="border-b border-line p-5">
         <MediaTypeSelector mediaType={mediaType} setMediaType={setMediaType} />
       </div>
-      <div className="border-b-2 border-film-ink p-5">
+      <div className="border-b border-line p-5">
         <RatingFilter
           minRating={minRating}
           maxRating={maxRating}
@@ -42,7 +42,7 @@ function FilterPanel() {
           setMaxRating={setMaxRating}
         />
       </div>
-      <div className="border-b-2 border-film-ink p-5">
+      <div className="border-b border-line p-5">
         <YearFilter
           releaseYearFrom={releaseYearFrom}
           releaseYearTo={releaseYearTo}
@@ -50,7 +50,7 @@ function FilterPanel() {
           setReleaseYearTo={setReleaseYearTo}
         />
       </div>
-      <div className="border-b-2 border-film-ink p-5">
+      <div className="border-b border-line p-5">
         <VoteCountFilter minVoteCount={minVoteCount} setMinVoteCount={setMinVoteCount} />
       </div>
       <div className="p-5">
@@ -62,7 +62,7 @@ function FilterPanel() {
           error={genresError}
         />
       </div>
-      <div className="sticky bottom-0 border-t-2 border-film-ink bg-film-screen p-5">
+      <div className="sticky bottom-0 border-t border-line bg-canvas p-5">
         <button
           type="button"
           onClick={resetFilters}

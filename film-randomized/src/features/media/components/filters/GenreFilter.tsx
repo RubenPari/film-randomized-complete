@@ -30,14 +30,14 @@ function GenreFilter({
           {Array.from({ length: 8 }, (_, index) => (
             <span
               key={index}
-              className="h-11 animate-pulse border-2 border-film-ink/20 bg-film-ink/10"
+              className="h-11 animate-pulse rounded-xl border border-line/20 bg-fg/10"
               aria-hidden="true"
             />
           ))}
         </div>
       )}
       {!isLoading && error && (
-        <p className="border-2 border-danger bg-white p-3 text-sm text-danger" role="alert">
+        <p className="border border-danger bg-surface p-3 text-sm text-danger" role="alert">
           {t('filters.genreError')}
         </p>
       )}
@@ -48,8 +48,8 @@ function GenreFilter({
             return (
               <label
                 key={genre.id}
-                className={`relative flex min-h-11 cursor-pointer items-center gap-3 border-2 border-film-ink px-3 py-2 text-sm font-semibold ${
-                  isSelected ? 'bg-film-blue text-white' : 'bg-white hover:bg-film-yellow'
+                className={`relative flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border border-line px-3 py-2 text-sm font-semibold ${
+                  isSelected ? 'bg-accent text-on-accent' : 'bg-surface hover:bg-surface-2'
                 }`}
               >
                 <input
@@ -58,7 +58,7 @@ function GenreFilter({
                   onChange={() => handleGenreToggle(genre.id)}
                   className="peer sr-only"
                 />
-                <span className="flex size-5 items-center justify-center border-2 border-current bg-white text-film-blue peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-film-blue">
+                <span className="flex size-5 items-center justify-center border border-current bg-surface text-accent peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-film-blue">
                   {isSelected && <AppIcon name="check" size={14} />}
                 </span>
                 <span>{genre.name}</span>

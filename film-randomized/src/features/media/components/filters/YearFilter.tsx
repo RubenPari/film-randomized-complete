@@ -22,7 +22,7 @@ function YearFilter({
       <legend className="font-mono text-xs font-semibold uppercase tracking-wider">
         {t('filters.year')}
       </legend>
-      <p className="mb-4 mt-2 text-sm text-film-ink/65">{t('filters.yearDescription')}</p>
+      <p className="mb-4 mt-2 text-sm text-fg/65">{t('filters.yearDescription')}</p>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label htmlFor="release-year-from" className="mb-1 block text-sm font-semibold">

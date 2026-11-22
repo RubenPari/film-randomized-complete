@@ -11,12 +11,12 @@ function MediaCardTrailer({ trailerKey }: MediaCardTrailerProps) {
   if (!trailerKey) return null;
 
   return (
-    <section className="border-t-2 border-film-ink bg-film-screen p-5 sm:p-7">
+    <section className="border-t border-line bg-canvas p-5 sm:p-7">
       <h3 className="mb-4 flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider">
         <AppIcon name="play" className="fill-film-coral" />
         {t('common.trailer')}
       </h3>
-      <div className="aspect-video w-full overflow-hidden border-2 border-film-ink bg-film-ink">
+      <div className="aspect-video w-full overflow-hidden rounded-xl border border-line bg-black">
         <iframe
           width="100%"
           height="100%"
