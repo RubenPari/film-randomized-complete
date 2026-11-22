@@ -43,6 +43,8 @@ export interface UseMediaGeneratorReturn {
   error: string | null;
   generateRandomMedia: () => void;
   submitMediaFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
+  markSeen: (() => void) | undefined;
+  isCurrentMediaSeen: boolean;
 }
 
 /**
@@ -82,6 +84,8 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     error: fetchError,
     generateRandomMedia,
     submitMediaFeedback,
+    markSeen,
+    isCurrentMediaSeen,
   } = useMediaFetcher();
 
   // useTransition for fluid UI updates when modifying non-critical states (like filters)
@@ -142,5 +146,7 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     error: fetchError,
     generateRandomMedia: handleGenerateRandomMedia,
     submitMediaFeedback,
+    markSeen,
+    isCurrentMediaSeen,
   };
 }

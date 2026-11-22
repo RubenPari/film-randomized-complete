@@ -22,6 +22,8 @@ interface MediaCardInfoProps {
   cast?: MediaCredit[];
   currentFeedbackValue?: MediaFeedbackValue | null;
   onFeedback?: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
+  onSeen?: () => void;
+  isSeen?: boolean;
   children?: ReactNode;
 }
 
@@ -36,6 +38,8 @@ function MediaCardInfo({
   cast = [],
   currentFeedbackValue = null,
   onFeedback,
+  onSeen,
+  isSeen = false,
   children,
 }: MediaCardInfoProps) {
   const { t } = useTranslation();
@@ -70,6 +74,8 @@ function MediaCardInfo({
         <RecommendationFeedbackButtons
           currentValue={currentFeedbackValue}
           onFeedback={onFeedback}
+          onSeen={onSeen}
+          isSeen={isSeen}
         />
       )}
 

@@ -24,6 +24,8 @@ function HomePage(): JSX.Element {
     error,
     generateRandomMedia,
     submitMediaFeedback,
+    markSeen,
+    isCurrentMediaSeen,
   } = useMediaResults();
 
   return (
@@ -74,6 +76,8 @@ function HomePage(): JSX.Element {
               cast={cast}
               currentMediaFeedbackValue={currentMediaFeedbackValue}
               onFeedback={submitMediaFeedback}
+              onSeen={markSeen}
+              isSeen={isCurrentMediaSeen}
             />
           </div>
         ) : (

@@ -1,13 +1,16 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useMediaFetcher } from './useMediaFetcher.js';
+import { recordDiscovered } from '../../../shared/services/discoveredApi.js';
+import { buildFeedbackRecord } from '../../../shared/services/recommendationFeedbackStore.js';
 import { pickRandomValidMedia } from '../../../shared/utils/pickRandomValidMedia.js';
 import type { MediaFilters } from '../../../shared/types/index.js';
 
 const loadExclusionList = vi.fn().mockResolvedValue([]);
+let token: string | null = null;
 
 vi.mock('../../../shared/context/AuthContext.jsx', () => ({
-  useAuth: () => ({ token: null, user: { id: 7 } }),
+  useAuth: () => ({ token, user: { id: 7 } }),
 }));
 
 vi.mock('./useMediaExclusionList.js', () => ({
@@ -22,7 +25,7 @@ vi.mock('../../../shared/services/tmdbApi.js', () => ({
 }));
 
 vi.mock('../../../shared/services/discoveredApi.js', () => ({
-  recordDiscovered: vi.fn(),
+  recordDiscovered: vi.fn().mockResolvedValue({}),
 }));
 
 vi.mock('../../../shared/utils/pickRandomValidMedia.js', () => ({
@@ -47,7 +50,10 @@ const FILTERS: MediaFilters = {
 };
 
 describe('useMediaFetcher generated media type', () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    token = null;
+  });
 
   it('keeps result and media type paired across a failed generation', async () => {
     vi.mocked(pickRandomValidMedia)
@@ -69,5 +75,50 @@ describe('useMediaFetcher generated media type', () => {
     expect(result.current.error).toBeNull();
     expect(result.current.randomMedia?.id).toBe(2);
     expect(result.current.generatedMediaType).toBe('movie');
+  });
+
+  it('records Discovered only on explicit Seen, never on generate', async () => {
+    token = 'tok';
+    vi.mocked(pickRandomValidMedia).mockResolvedValue({
+      media: { id: 5, title: 'M' },
+      explanationKeys: [],
+    });
+    const { result } = renderHook(() => useMediaFetcher());
+
+    await act(() => result.current.generateRandomMedia(FILTERS, 'movie'));
+    expect(recordDiscovered).not.toHaveBeenCalled();
+
+    act(() => result.current.markSeen?.());
+    expect(recordDiscovered).toHaveBeenCalledWith({ id: 5, title: 'M' }, 'movie', 'tok');
+    expect(result.current.isCurrentMediaSeen).toBe(true);
+  });
+
+  it('excludes titles already shown in this session from the next pick', async () => {
+    vi.mocked(pickRandomValidMedia).mockResolvedValue({
+      media: { id: 5, title: 'M' },
+      explanationKeys: [],
+    });
+    const { result } = renderHook(() => useMediaFetcher());
+
+    await act(() => result.current.generateRandomMedia(FILTERS, 'movie'));
+    await act(() => result.current.generateRandomMedia(FILTERS, 'movie'));
+
+    expect(vi.mocked(pickRandomValidMedia).mock.calls[1][0].excludedItems).toContainEqual(
+      expect.objectContaining({ media_type: 'movie', tmdb_id: 5 })
+    );
+  });
+
+  it('records a dislike in Discovered', async () => {
+    token = 'tok';
+    vi.mocked(pickRandomValidMedia).mockResolvedValue({
+      media: { id: 5, title: 'M' },
+      explanationKeys: [],
+    });
+    const { result } = renderHook(() => useMediaFetcher());
+    await act(() => result.current.generateRandomMedia(FILTERS, 'movie'));
+
+    vi.mocked(buildFeedbackRecord).mockReturnValue({ media_type: 'movie' } as never);
+    act(() => result.current.submitMediaFeedback('dislike'));
+    expect(recordDiscovered).toHaveBeenCalledTimes(1);
   });
 });

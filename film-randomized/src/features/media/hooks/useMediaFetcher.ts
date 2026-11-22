@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useAuth } from '../../../shared/context/AuthContext.jsx';
 import { recordDiscovered } from '../../../shared/services/discoveredApi.js';
 import {
@@ -29,6 +29,7 @@ import type {
   RecommendationFeedback,
   Genre,
   MediaCredit,
+  MediaItem,
 } from '../../../shared/types/index.js';
 
 export interface UseMediaFetcherReturn {
@@ -42,6 +43,8 @@ export interface UseMediaFetcherReturn {
   error: string | null;
   generateRandomMedia: (filters: MediaFilters, mediaType: MediaType) => Promise<void>;
   submitMediaFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
+  markSeen: (() => void) | undefined;
+  isCurrentMediaSeen: boolean;
 }
 
 /**
@@ -50,8 +53,9 @@ export interface UseMediaFetcherReturn {
  *   - `useMediaExclusionList` — fetches watchlist + discovered into one list.
  *   - `pickRandomValidMedia`  — recursively picks a valid candidate.
  *
- * This hook only owns React state (`randomMedia`, `isLoading`, `error`) and
- * the "record discovered" side-effect on success.
+ * This hook only owns React state (`randomMedia`, `isLoading`, `error`). A title
+ * enters Discovered only through explicit "Seen" or a dislike; titles shown in
+ * this session are excluded in memory so they are not re-shown.
  */
 export function useMediaFetcher(): UseMediaFetcherReturn {
   const { token, user } = useAuth();
@@ -66,16 +70,36 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
     useState<MediaFeedbackValue | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [seenKey, setSeenKey] = useState<string | null>(null);
+  const sessionShown = useRef<MediaItem[]>([]);
+
+  const recordInDiscovered = useCallback(() => {
+    if (!token || !randomMedia || !generatedMediaType) return;
+    recordDiscovered(randomMedia, generatedMediaType, token).catch((recordErr: unknown) =>
+      logger.error(
+        'useMediaFetcher.recordDiscovered',
+        recordErr instanceof Error ? recordErr.message : recordErr
+      )
+    );
+  }, [token, randomMedia, generatedMediaType]);
+
+  const currentKey = randomMedia ? `${generatedMediaType}-${randomMedia.id}` : null;
+  const markSeen = useCallback(() => {
+    recordInDiscovered();
+    setSeenKey(currentKey);
+  }, [recordInDiscovered, currentKey]);
+
   const submitMediaFeedback = useCallback(
     (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => {
       if (!randomMedia || !generatedMediaType) return;
       const record = buildFeedbackRecord(randomMedia, generatedMediaType, value, reason);
       const history = saveRecommendationFeedback(user?.id, record);
+      if (value === 'dislike' && currentMediaFeedbackValue !== 'dislike') recordInDiscovered();
       setCurrentMediaFeedbackValue(
         getMediaFeedbackValue(history, randomMedia.id, record.media_type)
       );
     },
-    [generatedMediaType, randomMedia, user?.id]
+    [generatedMediaType, randomMedia, user?.id, currentMediaFeedbackValue, recordInDiscovered]
   );
 
   const generateRandomMedia = useCallback(
@@ -93,7 +117,7 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           fetchDetails: (mt: MediaType, id: number) => fetchMediaDetails(mt, id),
           totalPages,
           mediaType,
-          excludedItems,
+          excludedItems: [...excludedItems, ...sessionShown.current],
           recommendationProfile,
           maxAttempts: MAX_GENERATION_ATTEMPTS,
         });
@@ -107,18 +131,6 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
             return null;
           }
         );
-
-        if (token) {
-          try {
-            await recordDiscovered(result.media, mediaType, token);
-          } catch (recordErr) {
-            logger.error(
-              'useMediaFetcher.recordDiscovered',
-              recordErr instanceof Error ? recordErr.message : recordErr
-            );
-            // Do not block the main "generate" flow if discovered persistence fails.
-          }
-        }
 
         let aiExplanationText: string | null = null;
         if (token && user?.id) {
@@ -158,6 +170,11 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
         }
 
         const credits = await creditsPromise;
+        sessionShown.current.push({
+          media_type: mediaType,
+          tmdb_id: result.media.id as number,
+        } as MediaItem);
+        setSeenKey(null);
         setRandomMedia(result.media);
         setGeneratedMediaType(mediaType);
         setRecommendationExplanationKeys(result.explanationKeys);
@@ -190,6 +207,8 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
     error,
     generateRandomMedia,
     submitMediaFeedback,
+    markSeen: token ? markSeen : undefined,
+    isCurrentMediaSeen: seenKey !== null && seenKey === currentKey,
   };
 }
 

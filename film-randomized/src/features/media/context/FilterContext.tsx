@@ -68,5 +68,7 @@ export function useMediaResults() {
     error: v.error,
     generateRandomMedia: v.generateRandomMedia,
     submitMediaFeedback: v.submitMediaFeedback,
+    markSeen: v.markSeen,
+    isCurrentMediaSeen: v.isCurrentMediaSeen,
   };
 }
