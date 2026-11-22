@@ -28,6 +28,8 @@ let filterContext = {
   genresError: null as string | null,
 };
 
+const cancelGeneration = vi.fn();
+
 let resultsContext = {
   generatedMediaType: null as 'movie' | 'tv' | null,
   randomMedia: null as null | { id: number; title: string },
@@ -39,6 +41,7 @@ let resultsContext = {
   error: null as string | null,
   errorKind: null as 'noMatch' | 'network' | 'generic' | null,
   generateRandomMedia,
+  cancelGeneration,
   submitMediaFeedback,
 };
 
@@ -127,6 +130,16 @@ describe('HomePage', () => {
     expect(resetFilters).toHaveBeenCalledTimes(1);
     fireEvent.click(screen.getByRole('button', { name: 'filters.close' }));
     expect(screen.getByRole('dialog', { hidden: true })).not.toHaveAttribute('open');
+  });
+
+  it('shows Cancel only while generating and calls cancelGeneration', () => {
+    const view = render(<HomePage />);
+    expect(screen.queryByRole('button', { name: 'home.cancel' })).toBeNull();
+
+    resultsContext = { ...resultsContext, isGenerating: true };
+    view.rerender(<HomePage />);
+    fireEvent.click(screen.getByRole('button', { name: 'home.cancel' }));
+    expect(cancelGeneration).toHaveBeenCalledTimes(1);
   });
 
   it('renders loading, error, and generated-result states without a second CTA', () => {

@@ -35,6 +35,8 @@ export interface UseMediaGeneratorReturn {
   generatedMediaType: MediaType | null;
   recommendationExplanationKeys: string[];
   aiExplanation: string | null;
+  isAiPending: boolean;
+  cancelGeneration: () => void;
   cast: MediaCredit[];
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
@@ -85,6 +87,8 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     generatedMediaType,
     recommendationExplanationKeys,
     aiExplanation,
+    isAiPending,
+    cancelGeneration,
     cast,
     currentMediaFeedbackValue,
     isLoading: isFetching,
@@ -147,6 +151,8 @@ export function useMediaGenerator(): UseMediaGeneratorReturn {
     generatedMediaType,
     recommendationExplanationKeys,
     aiExplanation,
+    isAiPending,
+    cancelGeneration,
     cast,
     currentMediaFeedbackValue,
     isLoading: isFetching || isPendingFilter,

@@ -61,6 +61,8 @@ export function useMediaResults() {
     randomMedia: v.randomMedia,
     recommendationExplanationKeys: v.recommendationExplanationKeys,
     aiExplanation: v.aiExplanation,
+    isAiPending: v.isAiPending,
+    cancelGeneration: v.cancelGeneration,
     cast: v.cast,
     currentMediaFeedbackValue: v.currentMediaFeedbackValue,
     isLoading: v.isLoading,

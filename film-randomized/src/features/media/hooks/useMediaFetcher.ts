@@ -53,12 +53,14 @@ export interface UseMediaFetcherReturn {
   generatedMediaType: MediaType | null;
   recommendationExplanationKeys: string[];
   aiExplanation: string | null;
+  isAiPending: boolean;
   cast: MediaCredit[];
   currentMediaFeedbackValue: MediaFeedbackValue | null;
   isLoading: boolean;
   error: string | null;
   errorKind: GenerationErrorKind | null;
   generateRandomMedia: (filters: MediaFilters, mediaType: MediaType) => Promise<void>;
+  cancelGeneration: () => void;
   submitMediaFeedback: (value: MediaFeedbackValue, reason?: MediaFeedbackReason) => void;
   markSeen: (() => void) | undefined;
   isCurrentMediaSeen: boolean;
@@ -88,6 +90,8 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [errorKind, setErrorKind] = useState<GenerationErrorKind | null>(null);
+  const [isAiPending, setIsAiPending] = useState(false);
+  const runId = useRef(0);
   const [seenKey, setSeenKey] = useState<string | null>(null);
   const sessionShown = useRef<MediaItem[]>([]);
 
@@ -122,7 +126,10 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
 
   const generateRandomMedia = useCallback(
     async (filters: MediaFilters, mediaType: MediaType) => {
+      const run = ++runId.current;
+      const isStale = () => run !== runId.current;
       setIsLoading(true);
+      setIsAiPending(false);
       setError(null);
       setErrorKind(null);
 
@@ -151,44 +158,8 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
           }
         );
 
-        let aiExplanationText: string | null = null;
-        if (token && user?.id) {
-          try {
-            const genres = await fetchGenres();
-            const profile = buildAiRequestProfile(feedbackHistory, genres);
-            const candidateTitle = result.media.title || result.media.name || '';
-            const candidateGenres = (result.media.genres || []).map((g) => g.name);
-            const releaseDate = result.media.release_date || result.media.first_air_date;
-            const releaseYear = releaseDate ? new Date(releaseDate).getFullYear() : undefined;
-
-            const aiResult = await getAiExplanation(
-              {
-                userProfile: profile,
-                candidate: {
-                  title: candidateTitle,
-                  overview: result.media.overview || '',
-                  genres: candidateGenres,
-                  voteAverage: result.media.vote_average ?? 0,
-                  voteCount: result.media.vote_count ?? 0,
-                  releaseYear,
-                  runtime: result.media.runtime,
-                },
-              },
-              token
-            );
-
-            if (aiResult.explanation) {
-              aiExplanationText = aiResult.explanation;
-            }
-          } catch (aiErr) {
-            logger.error(
-              'useMediaFetcher.aiExplain',
-              aiErr instanceof Error ? aiErr.message : aiErr
-            );
-          }
-        }
-
         const credits = await creditsPromise;
+        if (isStale()) return;
         sessionShown.current.push({
           media_type: mediaType,
           tmdb_id: result.media.id as number,
@@ -197,12 +168,50 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
         setRandomMedia(result.media);
         setGeneratedMediaType(mediaType);
         setRecommendationExplanationKeys(result.explanationKeys);
-        setAiExplanation(aiExplanationText);
+        setAiExplanation(null);
         setCast(credits?.cast ?? []);
         setCurrentMediaFeedbackValue(
           getMediaFeedbackValue(feedbackHistory, result.media.id, mediaType)
         );
+
+        if (token && user?.id) {
+          setIsAiPending(true);
+          void (async () => {
+            try {
+              const genres = await fetchGenres();
+              const profile = buildAiRequestProfile(feedbackHistory, genres);
+              const candidateTitle = result.media.title || result.media.name || '';
+              const candidateGenres = (result.media.genres || []).map((g) => g.name);
+              const releaseDate = result.media.release_date || result.media.first_air_date;
+              const releaseYear = releaseDate ? new Date(releaseDate).getFullYear() : undefined;
+              const aiResult = await getAiExplanation(
+                {
+                  userProfile: profile,
+                  candidate: {
+                    title: candidateTitle,
+                    overview: result.media.overview || '',
+                    genres: candidateGenres,
+                    voteAverage: result.media.vote_average ?? 0,
+                    voteCount: result.media.vote_count ?? 0,
+                    releaseYear,
+                    runtime: result.media.runtime,
+                  },
+                },
+                token
+              );
+              if (!isStale() && aiResult.explanation) setAiExplanation(aiResult.explanation);
+            } catch (aiErr) {
+              logger.error(
+                'useMediaFetcher.aiExplain',
+                aiErr instanceof Error ? aiErr.message : aiErr
+              );
+            } finally {
+              if (!isStale()) setIsAiPending(false);
+            }
+          })();
+        }
       } catch (err) {
+        if (isStale()) return;
         logger.error('useMediaFetcher.generate', err instanceof Error ? err.message : err);
         setErrorKind(classifyGenerationError(err));
         setError(
@@ -210,23 +219,32 @@ export function useMediaFetcher(): UseMediaFetcherReturn {
             'An error occurred. Please try again later.'
         );
       } finally {
-        setIsLoading(false);
+        if (!isStale()) setIsLoading(false);
       }
     },
     [token, loadExclusionList, user?.id]
   );
+
+  // ponytail: ignores late results, does not abort in-flight requests; thread AbortSignal through tmdbApi if needed
+  const cancelGeneration = useCallback(() => {
+    runId.current++;
+    setIsLoading(false);
+    setIsAiPending(false);
+  }, []);
 
   return {
     randomMedia,
     generatedMediaType,
     recommendationExplanationKeys,
     aiExplanation,
+    isAiPending,
     cast,
     currentMediaFeedbackValue,
     isLoading,
     error,
     errorKind,
     generateRandomMedia,
+    cancelGeneration,
     submitMediaFeedback,
     markSeen: token ? markSeen : undefined,
     isCurrentMediaSeen: seenKey !== null && seenKey === currentKey,

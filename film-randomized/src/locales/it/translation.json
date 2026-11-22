@@ -55,7 +55,8 @@
       "noMatch": "Nessun titolo corrisponde ai filtri. Allargali o azzerali.",
       "network": "Problema di connessione. Controlla la rete e riprova.",
       "generic": "Impossibile scegliere un titolo. Riprova."
-    }
+    },
+    "cancel": "Annulla"
   },
   "notFound": {
     "title": "Pagina non trovata",
@@ -165,7 +166,8 @@
       "already_seen": "Già visto",
       "too_long": "Troppo lungo",
       "too_slow": "Troppo lento"
-    }
+    },
+    "aiLoading": "Sto scrivendo perché fa per te..."
   },
   "auth": {
     "brandEyebrow": "Un titolo. Niente scorrimento infinito.",
