@@ -16,7 +16,7 @@ function LanguageSwitcher() {
 
   return (
     <div
-      className="inline-flex items-center gap-1 border-2 border-film-ink bg-white p-1"
+      className="inline-flex items-center gap-1 rounded-xl border border-line bg-surface p-1"
       aria-label={t('language.label')}
     >
       <AppIcon name="language" className="mx-1" />
@@ -29,10 +29,8 @@ function LanguageSwitcher() {
             onClick={() => changeLanguage(language)}
             aria-pressed={selected}
             aria-label={t(`language.${language}`)}
-            className={`min-h-8 px-2 font-mono text-xs font-semibold uppercase ${
-              selected
-                ? 'bg-film-blue text-white'
-                : 'bg-transparent text-film-ink hover:bg-film-yellow'
+            className={`min-h-8 rounded-lg px-2 font-mono text-xs font-semibold uppercase ${
+              selected ? 'bg-accent text-on-accent' : 'bg-transparent text-fg hover:bg-surface-2'
             }`}
           >
             {language}

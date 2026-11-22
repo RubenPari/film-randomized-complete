@@ -26,7 +26,7 @@ const ErrorFallback = ({ error, errorInfo }: ErrorFallbackProps) => {
   const { t } = useTranslation();
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-film-screen p-6">
+    <main className="flex min-h-screen items-center justify-center bg-canvas p-6">
       <section className="ui-panel w-full max-w-md p-8 text-center" role="alert">
         <AppIcon name="alert" size={52} className="mx-auto text-danger" />
         <h1 className="mt-5 font-display text-4xl font-bold uppercase">{t('shell.errorTitle')}</h1>
@@ -43,7 +43,7 @@ const ErrorFallback = ({ error, errorInfo }: ErrorFallbackProps) => {
             <summary className="cursor-pointer font-mono text-xs font-semibold uppercase">
               {t('shell.errorDetails')}
             </summary>
-            <pre className="mt-3 max-h-48 overflow-auto bg-film-ink p-4 text-xs text-film-screen">
+            <pre className="mt-3 max-h-48 overflow-auto bg-black p-4 text-xs text-fg">
               {error.toString()}
               {errorInfo?.componentStack}
             </pre>
