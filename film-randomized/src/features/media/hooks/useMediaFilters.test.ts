@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import { useMediaFilters } from './useMediaFilters.js';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
+import { FILTERS_STORAGE_KEY, useMediaFilters } from './useMediaFilters.js';
 import { MIN_RELEASE_YEAR } from '../../../shared/constants/config.js';
 
 describe('useMediaFilters', () => {
@@ -64,5 +64,47 @@ describe('useMediaFilters', () => {
       result.current.handleGenreToggle(28);
     });
     expect(result.current.selectedGenres).not.toContain(28);
+  });
+});
+
+describe('useMediaFilters persistence', () => {
+  const store = new Map<string, string>();
+
+  beforeEach(() => {
+    store.clear();
+    vi.stubGlobal('localStorage', {
+      getItem: (k: string) => store.get(k) ?? null,
+      setItem: (k: string, v: string) => void store.set(k, v),
+      removeItem: (k: string) => void store.delete(k),
+    });
+  });
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('restores filters saved by a previous mount', () => {
+    const first = renderHook(() => useMediaFilters());
+    act(() => {
+      first.result.current.setMediaType('tv');
+      first.result.current.handleGenreToggle(18);
+    });
+    first.unmount();
+
+    const second = renderHook(() => useMediaFilters());
+    expect(second.result.current.mediaType).toBe('tv');
+    expect(second.result.current.selectedGenres).toEqual([18]);
+  });
+
+  it('reset clears storage', () => {
+    const { result } = renderHook(() => useMediaFilters());
+    act(() => result.current.setMinRating(7));
+    expect(store.has(FILTERS_STORAGE_KEY)).toBe(true);
+    act(() => result.current.resetFilters());
+    expect(store.has(FILTERS_STORAGE_KEY)).toBe(false);
+  });
+
+  it('falls back to defaults on corrupt storage', () => {
+    store.set(FILTERS_STORAGE_KEY, '{not json');
+    const { result } = renderHook(() => useMediaFilters());
+    expect(result.current.minRating).toBe(0);
+    expect(result.current.mediaType).toBe('movie');
   });
 });
