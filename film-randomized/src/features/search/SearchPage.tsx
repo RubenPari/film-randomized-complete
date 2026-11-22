@@ -72,7 +72,7 @@ function SearchPage() {
   return (
     <section className="mx-auto min-h-full w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
       <header className="mb-7">
-        <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-film-blue">
+        <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-accent">
           {t('search.eyebrow')}
         </p>
         <h1 className="mt-2 font-display text-5xl font-bold uppercase leading-none sm:text-6xl">
@@ -84,7 +84,7 @@ function SearchPage() {
         <AppIcon
           name="search"
           size={20}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-film-ink/50"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-fg/50"
         />
         <input
           type="search"
@@ -107,10 +107,10 @@ function SearchPage() {
               type="button"
               onClick={() => setMode(tabMode)}
               aria-pressed={mode === tabMode}
-              className={`min-h-11 border-2 border-film-ink px-4 py-2 text-sm font-bold ${
+              className={`min-h-11 rounded-xl border border-line px-4 py-2 text-sm font-bold ${
                 mode === tabMode
-                  ? 'bg-film-blue text-white'
-                  : 'bg-white text-film-ink hover:bg-film-yellow'
+                  ? 'bg-accent text-on-accent'
+                  : 'bg-surface text-fg hover:bg-surface-2'
               }`}
             >
               {tabMode === 'titles' ? t('search.modeTitles') : t('search.modePeople')}
@@ -121,7 +121,7 @@ function SearchPage() {
 
       {isLoading && (
         <div className="ui-panel flex min-h-52 items-center justify-center gap-3 p-8" role="status">
-          <span className="ui-spinner text-film-blue" aria-hidden="true" />
+          <span className="ui-spinner text-accent" aria-hidden="true" />
           <span className="font-mono text-xs font-semibold uppercase tracking-wider">
             {t('search.loading')}
           </span>
@@ -130,7 +130,7 @@ function SearchPage() {
 
       {!isLoading && error && (
         <p
-          className="border-2 border-danger bg-white p-4 text-sm font-semibold text-danger"
+          className="border border-danger bg-surface p-4 text-sm font-semibold text-danger"
           role="alert"
         >
           {error}
@@ -138,11 +138,11 @@ function SearchPage() {
       )}
 
       {!isLoading && !error && !hasSearched && (
-        <p className="font-mono text-sm text-film-ink/60">{t('search.emptyIdle')}</p>
+        <p className="font-mono text-sm text-fg/60">{t('search.emptyIdle')}</p>
       )}
 
       {!isLoading && !error && hasSearched && !hasResults && (
-        <p className="font-mono text-sm text-film-ink/60">{t('search.noResults')}</p>
+        <p className="font-mono text-sm text-fg/60">{t('search.noResults')}</p>
       )}
 
       {!isLoading && !error && hasResults && mode === 'titles' && (

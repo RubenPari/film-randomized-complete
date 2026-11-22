@@ -16,13 +16,13 @@ function CollectionItemCard({ item, onRemove }: CollectionItemCardProps) {
   const year = item.release_date ? new Date(item.release_date).getFullYear() : null;
 
   return (
-    <article className="flex h-full flex-col overflow-hidden border-2 border-film-ink bg-white">
+    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface">
       <div className="relative">
         <a
           href={`https://www.themoviedb.org/${isTv ? 'tv' : 'movie'}/${tmdbId}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="block aspect-[2/3] overflow-hidden bg-film-ink"
+          className="block aspect-[2/3] overflow-hidden bg-black"
           title={t('media.onTmdb', { title: item.title })}
         >
           {item.poster_path ? (
@@ -32,7 +32,7 @@ function CollectionItemCard({ item, onRemove }: CollectionItemCardProps) {
               className="h-full w-full object-cover"
             />
           ) : (
-            <span className="flex h-full w-full flex-col items-center justify-center gap-3 bg-film-blue p-4 text-center text-white">
+            <span className="flex h-full w-full flex-col items-center justify-center gap-3 bg-surface-2 p-4 text-center text-fg">
               <AppIcon name="brand" size={48} />
               <span className="font-mono text-[0.65rem] font-semibold uppercase">
                 {t('common.noImage')}
@@ -44,7 +44,7 @@ function CollectionItemCard({ item, onRemove }: CollectionItemCardProps) {
           <button
             type="button"
             onClick={() => onRemove(tmdbId, isTv ? 'tv' : 'movie')}
-            className="ui-icon-button absolute left-2 top-2 border-white bg-danger text-white hover:bg-danger sm:left-3 sm:top-3"
+            className="ui-icon-button absolute left-2 top-2 border-danger bg-danger text-on-accent hover:bg-danger sm:left-3 sm:top-3"
             aria-label={`${t('media.remove')}: ${item.title}`}
           >
             <AppIcon name="trash" size={18} />
@@ -53,7 +53,7 @@ function CollectionItemCard({ item, onRemove }: CollectionItemCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col p-3 sm:p-4">
-        <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-wider text-film-blue">
+        <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-wider text-accent">
           {isTv ? t('home.tvShow') : t('home.movie')}
         </p>
         <h2 className="mt-1 line-clamp-2 min-h-10 text-sm font-bold leading-5 sm:text-base">
@@ -62,8 +62,8 @@ function CollectionItemCard({ item, onRemove }: CollectionItemCardProps) {
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
           {year && <span className="ui-chip min-h-7 px-2 py-0.5">{year}</span>}
           {item.vote_average != null && (
-            <span className="ui-chip min-h-7 bg-film-yellow px-2 py-0.5">
-              <AppIcon name="star" size={12} className="fill-film-ink" />
+            <span className="ui-chip min-h-7 bg-accent text-on-accent px-2 py-0.5">
+              <AppIcon name="star" size={12} className="fill-on-accent" />
               {item.vote_average.toFixed(1)}
             </span>
           )}
@@ -73,7 +73,7 @@ function CollectionItemCard({ item, onRemove }: CollectionItemCardProps) {
             {genres.slice(0, 2).map((genre) => (
               <span
                 key={genre.id}
-                className="truncate border border-film-ink px-2 py-1 text-[0.65rem] font-semibold"
+                className="truncate rounded-full border border-line px-2 py-1 text-[0.65rem] font-semibold"
               >
                 {genre.name}
               </span>

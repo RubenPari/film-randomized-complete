@@ -29,11 +29,11 @@ function CollectionEmptyState({ filter, copy, onClearFilter }: CollectionEmptySt
 
   return (
     <div className="ui-panel flex min-h-[28rem] flex-col items-center justify-center px-6 py-16 text-center">
-      <span className="flex size-24 items-center justify-center bg-film-yellow">
+      <span className="flex size-24 items-center justify-center rounded-2xl bg-accent text-on-accent">
         <AppIcon name={copy.emptyIcon} size={56} />
       </span>
       <h2 className="mt-6 font-display text-4xl font-bold uppercase">{t(titleKey)}</h2>
-      <p className="mt-3 max-w-md text-sm leading-6 text-film-ink/65">{description}</p>
+      <p className="mt-3 max-w-md text-sm leading-6 text-fg/65">{description}</p>
       {filter === 'all' ? (
         <Link to={copy.ctaTo ?? '/'} className="ui-button ui-button--primary mt-7">
           <AppIcon name="discover" />

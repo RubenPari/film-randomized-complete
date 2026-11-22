@@ -19,9 +19,9 @@ function PersonResultCard({ person }: PersonResultCardProps) {
   return (
     <Link
       to={`/person/${person.id}`}
-      className="flex h-full flex-col overflow-hidden border-2 border-film-ink bg-white"
+      className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface"
     >
-      <div className="aspect-[2/3] overflow-hidden bg-film-ink">
+      <div className="aspect-[2/3] overflow-hidden bg-black">
         {person.profile_path ? (
           <img
             src={`${IMAGE_BASE_URL}${person.profile_path}`}
@@ -29,7 +29,7 @@ function PersonResultCard({ person }: PersonResultCardProps) {
             className="h-full w-full object-cover"
           />
         ) : (
-          <span className="flex h-full w-full flex-col items-center justify-center gap-3 bg-film-blue p-4 text-center text-white">
+          <span className="flex h-full w-full flex-col items-center justify-center gap-3 bg-surface-2 p-4 text-center text-fg">
             <AppIcon name="profile" size={48} />
             <span className="font-mono text-[0.65rem] font-semibold uppercase">
               {t('common.noImage')}
@@ -40,16 +40,14 @@ function PersonResultCard({ person }: PersonResultCardProps) {
 
       <div className="flex flex-1 flex-col p-3 sm:p-4">
         {person.known_for_department && (
-          <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-wider text-film-blue">
+          <p className="font-mono text-[0.65rem] font-semibold uppercase tracking-wider text-accent">
             {person.known_for_department}
           </p>
         )}
         <h2 className="mt-1 line-clamp-2 min-h-10 text-sm font-bold leading-5 sm:text-base">
           {person.name}
         </h2>
-        {knownForTitles && (
-          <p className="mt-2 line-clamp-2 text-xs text-film-ink/60">{knownForTitles}</p>
-        )}
+        {knownForTitles && <p className="mt-2 line-clamp-2 text-xs text-fg/60">{knownForTitles}</p>}
       </div>
     </Link>
   );
